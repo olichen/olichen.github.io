@@ -83,7 +83,7 @@ This interactive tool lets you explore bus ridership near you - revealing which 
 Data is from [King County Metro](https://kingcounty.gov/en/dept/metro)'s spring 2024 service, roughly June to September of 2024. Special thanks to [Seattle Transit Blog](https://seattletransitblog.com/) for helping me get the data.
 
 <script type="module">
-import * as d3 from "npm:d3";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7";
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
