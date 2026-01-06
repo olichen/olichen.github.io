@@ -1,8 +1,3 @@
----
-title: "Bus Ridership Near You"
-toc: false
----
-
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
 <script type="text/javascript" src="lib/bootstrap/bootstrap.bundle.min.js"></script>
@@ -87,7 +82,7 @@ This interactive tool lets you explore bus ridership near you - revealing which 
 
 Data is from [King County Metro](https://kingcounty.gov/en/dept/metro)'s spring 2024 service, roughly June to September of 2024. Special thanks to [Seattle Transit Blog](https://seattletransitblog.com/) for helping me get the data.
 
-<script>
+<script type="module">
 import * as d3 from "npm:d3";
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
