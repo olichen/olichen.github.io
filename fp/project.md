@@ -87,7 +87,7 @@ This interactive tool lets you explore bus ridership near you - revealing which 
 
 Data is from [King County Metro](https://kingcounty.gov/en/dept/metro)'s spring 2024 service, roughly June to September of 2024. Special thanks to [Seattle Transit Blog](https://seattletransitblog.com/) for helping me get the data.
 
-```js
+<script>
 import * as d3 from "npm:d3";
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
@@ -108,9 +108,9 @@ function clickCallback() {
 }
 
 drawViz(stopData, new Set());
-```
+</script>
 
-```js
+<script>
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");
 const walkTimeLabel = document.getElementById("walkTimeLabel");
@@ -118,9 +118,9 @@ walkTimeInput.oninput = function() {
   walkTimeLabel.innerHTML = `Walk Distance (${this.value} minutes)`;
   clickHandler.setWalkTime(this.value);
 }
-```
+</script>
 
-```js
+<script>
 // Create the route selectors
 let dropdownHtml = "";
 const routeDropdown = document.getElementById("routeDropdown");
@@ -172,4 +172,4 @@ routeNoneButton.onclick = e => {
   clickHandler.getStops();
   clickCallback();
 }
-```
+</script>
