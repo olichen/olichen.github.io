@@ -1,0 +1,98 @@
+COMMON NAME,SCIENTIFIC NAME,CONSERVATION STATUS,LAND/WATER,ANIMAL CLASS
+African forest elephant,,Critically Endangered,Land,Mammal
+Amur Leopard,Panthera pardus orientalis,Critically Endangered,Land,Mammal
+Black Rhino,Diceros bicornis,Critically Endangered,Land,Mammal
+Bornean Orangutan,Pongo pygmaeus,Critically Endangered,Land,Mammal
+Cross River Gorilla,Gorilla gorilla diehli,Critically Endangered,Land,Mammal
+Eastern Lowland Gorilla,Gorilla beringei graueri,Critically Endangered,Land,Mammal
+Hawksbill Turtle,Eretmochelys imbricata,Critically Endangered,Water,Reptile
+Javan Rhino,Rhinoceros sondaicus,Critically Endangered,Land,Mammal
+Orangutan,"Pongo abelii, Pongo pygmaeus",Critically Endangered,Land,Mammal
+Saola,Pseudoryx nghetinhensis,Critically Endangered,Land,Mammal
+Sumatran Elephant,Elephas maximus sumatranus,Critically Endangered,Land,Mammal
+Sumatran Orangutan,Pongo abelii,Critically Endangered,Land,Mammal
+Sumatran Rhino,Dicerorhinus sumatrensis,Critically Endangered,Land,Mammal
+Sunda Tiger,Panthera tigris sondaica,Critically Endangered,Land,Mammal
+Vaquita,Phocoena sinus,Critically Endangered,Water,Mammal
+Western Lowland Gorilla,Gorilla gorilla gorilla,Critically Endangered,Land,Mammal
+Yangtze Finless Porpoise,Neophocaena asiaeorientalis ssp. asiaeorientalis,Critically Endangered,Water,Mammal
+African savanna elephant,Loxodonta africana africana,Endangered,Land,Mammal
+African Wild Dog,Lycaon pictus,Endangered,Land,Mammal
+Asian Elephant,Elephas maximus indicus,Endangered,Land,Mammal
+Black-footed Ferret,Mustela nigripes,Endangered,Land,Mammal
+Blue Whale,Balaenoptera musculus,Endangered,Water,Mammal
+Bluefin Tuna,Thunnus Thynnus,Endangered,Water,Fish
+Bonobo,Pan paniscus,Endangered,Land,Mammal
+Bornean Elephant,Elephas maximus borneensis,Endangered,Land,Mammal
+Chimpanzee,Pan troglodytes,Endangered,Land,Mammal
+Fin Whale,Balaenoptera physalus,Endangered,Water,Mammal
+Galápagos Penguin,Spheniscus mendiculus,Endangered,Water,Bird
+Ganges River Dolphin,Platanista gangetica gangetica,Endangered,Water,Mammal
+Green Turtle,Chelonia mydas,Endangered,Water,Reptile
+Hector's Dolphin,Cephalorhynchus hectori,Endangered,Water,Mammal
+Humphead Wrasse,Cheilinus undulatus,Endangered,Water,Fish
+Indian Elephant,Elephas maximus indicus,Endangered,Land,Mammal
+Indus River Dolphin,Platanista minor,Endangered,Water,Mammal
+Irrawaddy Dolphin,Orcaella brevirostris,Endangered,Water,Mammal
+Monarch Butterfly,Danaus plexippus,Endangered,Land,Insect
+Mountain Gorilla,Gorilla beringei beringei,Endangered,Land,Mammal
+North Atlantic Right Whale,Eubalaena glacialis,Endangered,Water,Mammal
+Red Panda,Ailurus fulgens,Endangered,Land,Mammal
+Sea Lions,Zalophus wollebaeki,Endangered,Water,Mammal
+Sea Turtle,Cheloniidae and Dermochelyidae families,Endangered,Water,Reptile
+Sei Whale,Balaenoptera borealis,Endangered,Water,Mammal
+Sri Lankan Elephant,Elephas maximus maximus,Endangered,Land,Mammal
+Tiger,Panthera tigris,Endangered,Land,Mammal
+Whale,"Balaenoptera, Balaena, Eschrichtius, and Eubalaen",Endangered,Water,Mammal
+Whale Shark,Rhincodon typus,Endangered,Water,Fish
+Bigeye Tuna,Thunnus obesus,Vulnerable,Water,Fish
+Black Spider Monkey,Ateles paniscus,Vulnerable,Land,Mammal
+Dugong,Dugong dugon,Vulnerable,Water,Mammal
+Giant Panda,Ailuropoda melanoleuca,Vulnerable,Land,Mammal
+Giant Tortoise,,Vulnerable,Land,Reptile
+Great White Shark,Carcharodon carcharias,Vulnerable,Water,Fish
+Greater One-Horned Rhino,Rhinoceros unicornis,Vulnerable,Land,Mammal
+Hippopotamus,Hippopotamus amphibius,Vulnerable,Land,Mammal
+Leatherback Turtle,Dermochelys coriacea,Vulnerable,Water,Reptile
+Lion,Panthera Leo,Vulnerable,Land,Mammal
+Loggerhead Turtle,Caretta caretta,Vulnerable,Water,Reptile
+Marine Iguana,Amblyrhynchus cristatus,Vulnerable,Land,Reptile
+Olive Ridley Turtle,Lepidochelys olivacea,Vulnerable,Water,Reptile
+Polar Bear,Ursus maritimus,Vulnerable,Land,Mammal
+Snow Leopard,Panthera uncia,Vulnerable,Land,Mammal
+Southern rockhopper penguin,Eudyptes chrysocome,Vulnerable,Water,Bird
+Albacore Tuna,Thunnus alalunga,Near Threatened,Water,Fish
+Beluga,Delphinapterus leucas,Near Threatened,Water,Mammal
+Greater Sage-Grouse,Centrocercus urophasianus,Near Threatened,Land,Bird
+Jaguar,Panthera onca,Near Threatened,Land,Mammal
+Mountain Plover,Charadrius montanus,Near Threatened,Land,Bird
+Plains Bison,Bison bison bison,Near Threatened,Land,Mammal
+White Rhino,Ceratotherium simum,Near Threatened,Land,Mammal
+Yellowfin Tuna,Thunnus albacares,Near Threatened,Water,Fish
+Arctic Fox,Vulpes lagopus,Least Concern,Land,Mammal
+Arctic Wolf,Canis lupus arctos,Least Concern,Land,Mammal
+Bowhead Whale,Balaena mysticetus,Least Concern,Water,Mammal
+Brown Bear,Ursus arctos,Least Concern,Land,Mammal
+Common Bottlenose Dolphin,Tursiops truncates,Least Concern,Water,Mammal
+Gray Whale,Eschrichtius robustus,Least Concern,Land,Mammal
+Macaw,Ara ararauna,Least Concern,Land,Bird
+Narwhal,Monodon monoceros,Least Concern,Water,Mammal
+Pronghorn,Antilocarpa americana,Least Concern,Land,Mammal
+Skipjack Tuna,Katsuwonus pelamis,Least Concern,Water,Fish
+Swift Fox,Vulpes velox,Least Concern,Land,Mammal
+Tree Kangaroo,Dendrolagus sp.,Least Concern,Land,Mammal
+African Elephant,Loxodonta africana,,Land,Mammal
+Amazon River Dolphin,Scientific Name Inia geoffrensis,,Water,Mammal
+Continental Tiger,Panthera tigris tigris,,Land,Mammal
+Dolphins and Porpoises,,,Water,Mammal
+Elephant,,,Land,Mammal
+Gorilla,Gorilla gorilla and Gorilla beringei,,Land,Mammal
+Pacific Salmon,,,Water,Fish
+Pangolin,,,Land,Mammal
+Penguin,Spheniscidae,,Land,Bird
+Poison Dart Frog,Dendrobates species,,Land,Amphibian
+Rhino,,,Land,Mammal
+Seals,,,Land,Mammal
+Shark,,,Water,Fish
+Sloth,,,Land,Mammal
+Tuna,Thunnus and Katsuwonus species,,Water,Fish
