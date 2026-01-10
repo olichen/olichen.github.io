@@ -1,6 +1,8 @@
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
-<script type="text/javascript" src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+---
+layout: page
+title: Project
+permalink: /project/
+---
 
 # Bus Ridership Near You
 ## How Your Neighborhood Gets Around
@@ -16,7 +18,7 @@ Taking the bus doesn't just take you from point A to point B. It saves you money
 - **Improve Your Health**: By taking public transportation, you not only [boost your physical activity](https://www.sciencedirect.com/science/article/pii/S2214140522000305) but also reduce your risk of being involved in a serious car crash. Driving is the most dangerous thing we do on a regular basis, and public transit is a staggering [17-66 times safer per mile](https://www.sciencedirect.com/science/article/abs/pii/S000145751930644X) than driving.
 
 <p class="d-flex flex-column align-items-center">
-  <img src="./img/bus-car-geometry.jpg" width=400>
+  <img src="/assets/img/bus-car-geometry.jpg" width=400>
   <i>A bus can move many more people with much less space than cars</i>
 </p>
 
@@ -84,12 +86,11 @@ Data is from [King County Metro](https://kingcounty.gov/en/dept/metro)'s spring 
 
 <script type="module">
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7";
-import { LMap } from "./map.js";
-import { StopData } from "./stopData.js";
-import { StopHandler } from "./stopHandler.js";
-import { ClickHandler } from "./clickHandler.js";
-import { render } from "../components/vega-lite.js";
-import { drawViz } from "./vizHandler.js";
+import { LMap } from "/assets/js/map.js";
+import { StopData } from "/assets/js/stopData.js";
+import { StopHandler } from "/assets/js/stopHandler.js";
+import { ClickHandler } from "/assets/js/clickHandler.js";
+import { drawViz } from "/assets/js/vizHandler.js";
 
 // Initialize everything
 const map = new LMap("map");
