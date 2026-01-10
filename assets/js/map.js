@@ -15,7 +15,6 @@ export class LMap {
       + ' | Data: <a href="https://kingcounty.gov/en/dept/metro">KCM</a>,'
       + ' <a href="https://seattletransitblog.com/">STB</a>';
 
-    console.log(element_id)
     this.#map = new L.Map(element_id, { center: [47.65, -122.3], zoom: 14 })
       .addLayer(L.tileLayer(mapUrl, { attribution: mapAttr, subdomains: "abcd", minZoom: 10, maxZoom: 18 }));
 

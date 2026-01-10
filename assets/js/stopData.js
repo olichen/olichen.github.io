@@ -41,8 +41,8 @@ export class StopData {
   }
 
   static async createInstance() {
-    const stopData = d3.csvParse(await this.getFileData("../data/stops.txt"), d3.autoType)
-    const riderData = d3.csvParse(await this.getFileData("../data/ridership-spring-2024.csv"), d3.autoType);
+    const stopData = d3.csvParse(await this.getFileData("/assets/data/stops.txt"), d3.autoType)
+    const riderData = d3.csvParse(await this.getFileData("/assets/data/ridership-spring-2024.csv"), d3.autoType);
     return new StopData(stopData, riderData);
   }
 
