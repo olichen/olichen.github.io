@@ -1,5 +1,5 @@
-// import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7";
-// import * as L from "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js";
+import * as d3 from "d3";
+import * as L from "leaflet";
 
 export class LMap {
   #map;

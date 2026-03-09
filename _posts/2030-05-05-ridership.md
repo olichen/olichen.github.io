@@ -9,12 +9,6 @@ categories: placeholder
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/assets/pkg/leaflet/leaflet.css" />
 <link rel="stylesheet" href="/assets/css/style.css" />
-<script src="/assets/pkg/leaflet/leaflet.js"></script>
-<script src="/assets/pkg/d3/d3.v7.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js" charset="utf-8"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vega/2.6.5/vega.js" charset="utf-8"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/1.3.1/vega-lite.js" charset="utf-8"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/2.2.0/vega-embed.js" charset="utf-8"></script>
 
 <!-- walk distance slider and route selector -->
 <div class="d-flex justify-content-between">
@@ -53,85 +47,4 @@ categories: placeholder
 <!-- some whitespace -->
 <div style="height:20px"></div>
 
-
-<script type="module">
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7";
-import { LMap } from "/assets/js/map.js";
-import { StopData } from "/assets/js/stopData.js";
-import { StopHandler } from "/assets/js/stopHandler.js";
-import { ClickHandler } from "/assets/js/clickHandler.js";
-import { drawViz } from "/assets/js/vizHandler.js";
-
-// Initialize everything
-const map = new LMap("map");
-const stopData = await StopData.createInstance();
-const stopHandler = new StopHandler(map, stopData);
-const stopGroup = stopHandler.stopGroup;
-const clickHandler = new ClickHandler(map, stopData, stopGroup, clickCallback);
-
-function clickCallback() {
-  drawViz(stopData, clickHandler.clickStops);
-}
-
-drawViz(stopData, new Set());
-
-// Bind the walk time slider
-const walkTimeInput = document.getElementById("walkTimeInput");
-const walkTimeLabel = document.getElementById("walkTimeLabel");
-walkTimeInput.oninput = function() {
-  walkTimeLabel.innerHTML = `Walk Distance (${this.value} minutes)`;
-  clickHandler.setWalkTime(this.value);
-}
-
-// Create the route selectors
-let dropdownHtml = "";
-const routeDropdown = document.getElementById("routeDropdown");
-for (const [routeNum, active] of Object.entries(stopData.activeRoutes)) {
-  dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
-  dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
-  dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
-  dropdownHtml += `</div>`;
-}
-routeDropdown.innerHTML += dropdownHtml;
-
-// Bind the route selectors
-for (const routeNum of Object.keys(stopData.activeRoutes)) {
-  const checkbox = document.getElementById(`route${routeNum}`);
-  checkbox.onchange = (e) => {
-    stopData.activeRoutes[routeNum] = e.target.checked;
-    stopHandler.updateStopRadius();
-    clickHandler.getStops();
-    clickCallback();
-  }
-  const label = document.querySelector(`label[for="route${routeNum}"]`);
-  label.onclick = (e) => {
-    e.stopPropagation();
-  }
-}
-
-// Bind the all/none buttons
-const routeAllButton = document.getElementById("routeAll");
-const routeNoneButton = document.getElementById("routeNone");
-routeAllButton.onclick = e => {
-  e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.activeRoutes)) {
-    stopData.activeRoutes[routeNum] = true;
-    const checkbox = document.getElementById(`route${routeNum}`);
-    checkbox.checked = true;
-  }
-  stopHandler.updateStopRadius();
-  clickHandler.getStops();
-  clickCallback();
-}
-routeNoneButton.onclick = e => {
-  e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.activeRoutes)) {
-    stopData.activeRoutes[routeNum] = false;
-    const checkbox = document.getElementById(`route${routeNum}`);
-    checkbox.checked = false;
-  }
-  stopHandler.updateStopRadius();
-  clickHandler.getStops();
-  clickCallback();
-}
-</script>
+<script type="module" src="/assets/dist/ridership.js"></script>

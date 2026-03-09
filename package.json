@@ -1,6 +1,17 @@
 {
+  "scripts": {
+    "postinstall": "cp -r node_modules/leaflet/dist/* assets/pkg/leaflet/",
+    "build": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/",
+    "watch": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/ --watch"
+  },
   "dependencies": {
     "d3": "^7.9.0",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "vega": "^6.2.0",
+    "vega-lite": "^6.4.2",
+    "vega-tooltip": "^1.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3"
   }
 }
