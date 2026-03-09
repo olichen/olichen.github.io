@@ -1,11 +1,11 @@
 {
   "scripts": {
-    "postinstall": "cp -r node_modules/leaflet/dist/* assets/pkg/leaflet/",
-    "build-dev": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/",
-    "build": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/ --minify",
-    "watch": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/ --watch"
+    "build-dev": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --loader:.png=file --outdir=assets/dist/",
+    "build": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --minify --loader:.png=file --outdir=assets/dist/",
+    "watch": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --loader:.png=file --outdir=assets/dist/ --watch"
   },
   "dependencies": {
+    "bootstrap": "^5.3.8",
     "d3": "^7.9.0",
     "leaflet": "^1.9.4",
     "vega": "^6.2.0",
