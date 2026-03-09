@@ -1,7 +1,8 @@
 {
   "scripts": {
     "postinstall": "cp -r node_modules/leaflet/dist/* assets/pkg/leaflet/",
-    "build": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/",
+    "build-dev": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/",
+    "build": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/ --minify",
     "watch": "esbuild assets/js/ridership.js --bundle --format=esm --splitting --outdir=assets/dist/ --watch"
   },
   "dependencies": {

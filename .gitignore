@@ -7,4 +7,3 @@ _site
 vendor
 *.swp
 node_modules/
-assets/dist
