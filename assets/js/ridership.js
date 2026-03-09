@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 import 'leaflet/dist/leaflet.css';
 import '../css/style.css';
 import { LMap } from "./map.js";
