@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import 'leaflet/dist/leaflet.css';
-import '../css/style.css';
-import { LMap } from "./map.js";
+import '../../../css/style.css';
+import { LMap } from "../../lib/map.js";
 import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";

@@ -1,4 +1,4 @@
-import { render } from "./vega-lite.js";
+import { render } from "../../lib/vega-lite.js";
 
 export async function drawViz(stopData, stopIds) {
   const viz1Html = document.getElementById("viz1");

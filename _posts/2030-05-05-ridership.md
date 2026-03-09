@@ -6,7 +6,7 @@ categories: placeholder
 ---
 
 <!-- packages -->
-<link rel="stylesheet" href="/assets/dist/ridership.css" />
+<link rel="stylesheet" href="/assets/dist/index.css" />
 
 <!-- walk distance slider and route selector -->
 <div class="d-flex justify-content-between">
@@ -45,4 +45,4 @@ categories: placeholder
 <!-- some whitespace -->
 <div style="height:20px"></div>
 
-<script type="module" src="/assets/dist/ridership.js"></script>
+<script type="module" src="/assets/dist/index.js"></script>
