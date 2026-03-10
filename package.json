@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "build-dev": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --loader:.png=file --outdir=assets/dist/",
-    "build": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --minify --loader:.png=file --outdir=assets/dist/",
-    "watch": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --loader:.png=file --outdir=assets/dist/ --watch"
+    "build-dev": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --loader:.png=empty --outdir=assets/dist/",
+    "build": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --minify --loader:.png=empty --outdir=assets/dist/",
+    "watch": "esbuild assets/js/posts/ridership/index.js --bundle --format=esm --splitting --loader:.png=empty --outdir=assets/dist/ --watch"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
