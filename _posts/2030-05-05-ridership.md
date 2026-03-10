@@ -34,7 +34,9 @@ categories: placeholder
 </div>
 
 <!-- map -->
-<div id="map" class="mt-2"></div>
+<div id="map-container" class="mt-2">
+  <div id="map"></div>
+</div>
 
 <!-- bar charts -->
 <div id="viz" class="row mt-3">

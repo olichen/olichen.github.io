@@ -44,7 +44,7 @@ export class LMap {
     this.#infobox.update();
 
     // Add a legend
-    const legend = L.control({ position: 'bottomright' });
+    const legend = L.control({ position: 'bottomleft' });
     legend.onAdd = function(map) {
       const div = L.DomUtil.create('div', 'legend p-2 m-2 shadow-sm rounded');
       div.innerHTML = '<div class="d-flex flex-column align-items-center lh-1 mb-1"><b style="font-size:.85rem">Boardings</b><i>(Per Day)</i></div>'
@@ -52,6 +52,26 @@ export class LMap {
       return div;
     }
     legend.addTo(this.#map);
+
+    // Add a fullscreen button
+    const container = document.getElementById(element_id).parentElement;
+    const fullscreen = L.control({ position: 'bottomright' });
+    fullscreen.onAdd = () => {
+      const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control fullscreen-btn');
+      btn.innerHTML = '⛶';
+      btn.title = 'Toggle fullscreen';
+      btn.href = '#';
+      btn.onclick = (e) => {
+        e.preventDefault();
+        document.fullscreenElement ? document.exitFullscreen() : container.requestFullscreen();
+      };
+      document.addEventListener('fullscreenchange', () => {
+        btn.innerHTML = document.fullscreenElement ? '✕' : '⛶';
+        this.#map.invalidateSize();
+      });
+      return btn;
+    };
+    fullscreen.addTo(this.#map);
   }
 
   createGroup() {
