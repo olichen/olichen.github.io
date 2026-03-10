@@ -14,7 +14,16 @@ categories: placeholder
     <label id="walkTimeLabel" for="walkTimeInput" class="fw-bold form-label">Walk Distance (10 minutes)</label>
     <input id="walkTimeInput" type="range" class="form-range" min="1" max="20" value="10" oninput="clickHandler.setWalkTime()">
   </div>
-  <div>
+  <div class="d-flex gap-2">
+    <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="metricButton">
+        Metric
+      </button>
+      <div class="dropdown-menu shadow-sm" id="metricDropdown" style="z-index:10000">
+        <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
+        <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
+      </div>
+    </div>
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Select Routes

@@ -7,6 +7,7 @@ import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
+import { METRIC_TOTAL, METRIC_PER_BUS } from "./constants.js";
 
 // Initialize everything
 const map = new LMap("map");
@@ -15,11 +16,32 @@ const stopHandler = new StopHandler(map, stopData);
 const stopGroup = stopHandler.stopGroup;
 const clickHandler = new ClickHandler(map, stopData, stopGroup, clickCallback);
 
+let metric = METRIC_TOTAL;
+
 function clickCallback() {
-  drawViz(stopData, clickHandler.clickStops);
+  drawViz(stopData, clickHandler.clickStops, metric);
 }
 
-drawViz(stopData, new Set());
+drawViz(stopData, new Set(), metric);
+
+// Bind the metric dropdown
+const metricButton = document.getElementById("metricButton");
+const metricTotal = document.getElementById("metricTotal");
+const metricPerBus = document.getElementById("metricPerBus");
+metricTotal.onclick = () => {
+  metric = METRIC_TOTAL;
+  metricTotal.classList.add("active");
+  metricPerBus.classList.remove("active");
+  stopHandler.setMetric(metric);
+  clickCallback();
+};
+metricPerBus.onclick = () => {
+  metric = METRIC_PER_BUS;
+  metricPerBus.classList.add("active");
+  metricTotal.classList.remove("active");
+  stopHandler.setMetric(metric);
+  clickCallback();
+};
 
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");

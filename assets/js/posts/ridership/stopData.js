@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { METRIC_PER_BUS } from "./constants.js";
 
 export class StopData {
   #stops;
@@ -109,12 +110,12 @@ export class StopData {
     return totalRiders;
   }
 
-  getUsageExtent() {
-    return d3.extent(this.#stops.map(d => this.getTotalRiders(d.stop_id)));
+  getUsageExtent(metric) {
+    return d3.extent(this.#stops.map(d => this.getStopUsage(d.stop_id, metric)));
   }
 
-  getStopUsage(stop_id) {
-    return this.getTotalRiders(stop_id);
+  getStopUsage(stop_id, metric) {
+    return metric === METRIC_PER_BUS ? this.getRidersPerBus(stop_id) : this.getTotalRiders(stop_id);
   }
 
   // Map RapidRide route names

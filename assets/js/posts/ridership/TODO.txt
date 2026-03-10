@@ -1,0 +1,1 @@
+- move METRICS dropdown, route selector, walk distance selector info all into an injectable

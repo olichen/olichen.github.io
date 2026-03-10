@@ -1,6 +1,7 @@
 import { render } from "./vega-lite.js";
+import { METRIC_TOTAL, METRIC_PER_BUS } from "./constants.js";
 
-export async function drawViz(stopData, stopIds) {
+export async function drawViz(stopData, stopIds, metric = METRIC_TOTAL) {
   const viz1Html = document.getElementById("viz1");
   const viz2Html = document.getElementById("viz2");
 
@@ -48,9 +49,9 @@ export async function drawViz(stopData, stopIds) {
         title: "Route",
       },
       y: {
-        field: "riders",
+        field: metric === METRIC_PER_BUS ? "ridersPerBus" : "riders",
         type: "Q",
-        title: "Boardings Per Day",
+        title: metric === METRIC_PER_BUS ? "Boardings Per Bus" : "Boardings Per Day",
       },
       tooltip: [
         {
@@ -103,10 +104,9 @@ export async function drawViz(stopData, stopIds) {
         title: "Stop",
       },
       y: {
-        aggregate: "sum",
-        field: "riders",
+        field: metric === METRIC_PER_BUS ? "ridersPerBus" : "riders",
         type: "Q",
-        title: "Boardings Per Day",
+        title: metric === METRIC_PER_BUS ? "Boardings Per Bus" : "Boardings Per Day",
       },
       tooltip: [
         {
