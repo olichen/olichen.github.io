@@ -1,19 +1,23 @@
 import * as d3 from "d3";
 
 export class StopData {
-  stops;
-  activeRoutes;
+  #stops;
+  #activeRoutes;
   #riderData;
   #stopRiderData;
 
+  get stops() { return this.#stops; }
+  getActiveRoutes() { return this.#activeRoutes; }
+  setRouteActive(routeNum, active) { this.#activeRoutes[routeNum] = active; }
+
   constructor(stopData, riderData) {
-    this.stops = stopData;
-    this.activeRoutes = {};
+    this.#stops = stopData;
+    this.#activeRoutes = {};
     this.#riderData = riderData;
     this.#stopRiderData = {};
 
     // First map the stops to the object by id
-    Object.values(this.stops).filter(d => d.stop_id).forEach(d => this.#stopRiderData[d.stop_id] = d);
+    Object.values(this.#stops).filter(d => d.stop_id).forEach(d => this.#stopRiderData[d.stop_id] = d);
 
     // Next iterate through rider data and map it to a dictionary
     // Nested by: stop_id => route_id => data_id => time_of_day
@@ -26,10 +30,10 @@ export class StopData {
       if (!(d.SERVICE_RTE_NUM in routes)) {
         routes[d.SERVICE_RTE_NUM] = {};
       }
-      if (!(d.SERVICE_RTE_NUM in this.activeRoutes)) {
-        this.activeRoutes[d.SERVICE_RTE_NUM] = true;
+      if (!(d.SERVICE_RTE_NUM in this.#activeRoutes)) {
+        this.#activeRoutes[d.SERVICE_RTE_NUM] = true;
         if (parseInt(d.SERVICE_RTE_NUM) > 800) {
-          this.activeRoutes[d.SERVICE_RTE_NUM] = false;
+          this.#activeRoutes[d.SERVICE_RTE_NUM] = false;
         }
       }
       const curRoute = routes[d.SERVICE_RTE_NUM];
@@ -93,7 +97,7 @@ export class StopData {
       if (route_id && routeId !== route_id) {
         continue;
       }
-      if (!this.activeRoutes[routeId]) {
+      if (!this.#activeRoutes[routeId]) {
         continue;
       }
       for (const dataId of Object.values(route)) {
@@ -106,7 +110,7 @@ export class StopData {
   }
 
   getUsageExtent() {
-    return d3.extent(this.stops.map(d => this.getTotalRiders(d.stop_id)));
+    return d3.extent(this.#stops.map(d => this.getTotalRiders(d.stop_id)));
   }
 
   getStopUsage(stop_id) {

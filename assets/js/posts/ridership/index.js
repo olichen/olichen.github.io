@@ -32,7 +32,7 @@ walkTimeInput.oninput = function() {
 // Create the route selectors
 let dropdownHtml = "";
 const routeDropdown = document.getElementById("routeDropdown");
-for (const [routeNum, active] of Object.entries(stopData.activeRoutes)) {
+for (const [routeNum, active] of Object.entries(stopData.getActiveRoutes())) {
   dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
   dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
   dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
@@ -41,10 +41,10 @@ for (const [routeNum, active] of Object.entries(stopData.activeRoutes)) {
 routeDropdown.innerHTML += dropdownHtml;
 
 // Bind the route selectors
-for (const routeNum of Object.keys(stopData.activeRoutes)) {
+for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
   const checkbox = document.getElementById(`route${routeNum}`);
   checkbox.onchange = (e) => {
-    stopData.activeRoutes[routeNum] = e.target.checked;
+    stopData.setRouteActive(routeNum, e.target.checked);
     stopHandler.updateStopRadius();
     clickHandler.getStops();
     clickCallback();
@@ -57,11 +57,10 @@ for (const routeNum of Object.keys(stopData.activeRoutes)) {
 
 // Bind the all/none buttons
 const routeAllButton = document.getElementById("routeAll");
-const routeNoneButton = document.getElementById("routeNone");
 routeAllButton.onclick = e => {
   e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.activeRoutes)) {
-    stopData.activeRoutes[routeNum] = true;
+  for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
+    stopData.setRouteActive(routeNum, true);
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = true;
   }
@@ -69,10 +68,12 @@ routeAllButton.onclick = e => {
   clickHandler.getStops();
   clickCallback();
 }
+
+const routeNoneButton = document.getElementById("routeNone");
 routeNoneButton.onclick = e => {
   e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.activeRoutes)) {
-    stopData.activeRoutes[routeNum] = false;
+  for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
+    stopData.setRouteActive(routeNum, false);
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = false;
   }
