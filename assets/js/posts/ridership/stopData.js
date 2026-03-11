@@ -80,7 +80,8 @@ export class StopData {
       }
       for (const dataId of Object.values(route)) {
         let routeBuses = 0
-        for (const timeOfDay of Object.values(dataId)) {
+        for (const [period, timeOfDay] of Object.entries(dataId)) {
+          if (!this.#mapOptions.isTimePeriodActive(period)) continue;
           routeBuses += timeOfDay.OBSERVED_TRIPS_IDS;
         }
         numBuses = Math.max(routeBuses, numBuses);
@@ -100,7 +101,8 @@ export class StopData {
         continue;
       }
       for (const dataId of Object.values(route)) {
-        for (const timeOfDay of Object.values(dataId)) {
+        for (const [period, timeOfDay] of Object.entries(dataId)) {
+          if (!this.#mapOptions.isTimePeriodActive(period)) continue;
           totalRiders += timeOfDay.AVG_TOTAL_BOARDINGS;
         }
       }

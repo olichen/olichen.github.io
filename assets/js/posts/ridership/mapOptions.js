@@ -4,11 +4,11 @@ export const Metric = {
 };
 
 export const TimePeriod = {
-  MorningPeak:   "AM",
-  Daytime:       "MID",
+  MorningPeak: "AM",
+  Daytime: "MID",
   AfternoonPeak: "PM",
-  Evening:       "XEV",
-  Night:         "XNT"
+  Evening: "XEV",
+  Night: "XNT"
 };
 
 export class MapOptions {
