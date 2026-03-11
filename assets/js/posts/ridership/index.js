@@ -7,39 +7,38 @@ import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
-import { METRIC_TOTAL, METRIC_PER_BUS } from "./constants.js";
+import { Metric, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
+const mapOptions = new MapOptions();
 const map = new LMap("map");
-const stopData = await StopData.createInstance();
-const stopHandler = new StopHandler(map, stopData);
+const stopData = await StopData.createInstance(mapOptions);
+const stopHandler = new StopHandler(map, stopData, mapOptions);
 const stopGroup = stopHandler.stopGroup;
 const clickHandler = new ClickHandler(map, stopData, stopGroup, clickCallback);
 
-let metric = METRIC_TOTAL;
-
 function clickCallback() {
-  drawViz(stopData, clickHandler.clickStops, metric);
+  drawViz(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
-drawViz(stopData, new Set(), metric);
+drawViz(stopData, new Set(), mapOptions.metric);
 
 // Bind the metric dropdown
 const metricButton = document.getElementById("metricButton");
 const metricTotal = document.getElementById("metricTotal");
 const metricPerBus = document.getElementById("metricPerBus");
 metricTotal.onclick = () => {
-  metric = METRIC_TOTAL;
+  mapOptions.setMetric(Metric.Total);
   metricTotal.classList.add("active");
   metricPerBus.classList.remove("active");
-  stopHandler.setMetric(metric);
+  stopHandler.updateStopRadius();
   clickCallback();
 };
 metricPerBus.onclick = () => {
-  metric = METRIC_PER_BUS;
+  mapOptions.setMetric(Metric.PerBus);
   metricPerBus.classList.add("active");
   metricTotal.classList.remove("active");
-  stopHandler.setMetric(metric);
+  stopHandler.updateStopRadius();
   clickCallback();
 };
 
@@ -54,7 +53,7 @@ walkTimeInput.oninput = function() {
 // Create the route selectors
 let dropdownHtml = "";
 const routeDropdown = document.getElementById("routeDropdown");
-for (const [routeNum, active] of Object.entries(stopData.getActiveRoutes())) {
+for (const [routeNum, active] of mapOptions.routeEntries()) {
   dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
   dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
   dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
@@ -63,10 +62,10 @@ for (const [routeNum, active] of Object.entries(stopData.getActiveRoutes())) {
 routeDropdown.innerHTML += dropdownHtml;
 
 // Bind the route selectors
-for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
+for (const routeNum of mapOptions.routeKeys()) {
   const checkbox = document.getElementById(`route${routeNum}`);
   checkbox.onchange = (e) => {
-    stopData.setRouteActive(routeNum, e.target.checked);
+    mapOptions.setRoute(routeNum, e.target.checked);
     stopHandler.updateStopRadius();
     clickHandler.getStops();
     clickCallback();
@@ -81,8 +80,8 @@ for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
 const routeAllButton = document.getElementById("routeAll");
 routeAllButton.onclick = e => {
   e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
-    stopData.setRouteActive(routeNum, true);
+  for (const routeNum of mapOptions.routeKeys()) {
+    mapOptions.setRoute(routeNum, true);
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = true;
   }
@@ -94,8 +93,8 @@ routeAllButton.onclick = e => {
 const routeNoneButton = document.getElementById("routeNone");
 routeNoneButton.onclick = e => {
   e.stopPropagation();
-  for (const routeNum of Object.keys(stopData.getActiveRoutes())) {
-    stopData.setRouteActive(routeNum, false);
+  for (const routeNum of mapOptions.routeKeys()) {
+    mapOptions.setRoute(routeNum, false);
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = false;
   }

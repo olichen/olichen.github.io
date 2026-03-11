@@ -1,20 +1,20 @@
 import * as d3 from "d3";
-import { METRIC_TOTAL } from "./constants.js";
 
 export class StopHandler {
   #map;
   #stopData;
+  #mapOptions;
 
   stopGroup;
   #circles;
   #legend;
   #zoom;
   #usageScale;
-  #metric = METRIC_TOTAL;
 
-  constructor(map, stopData) {
+  constructor(map, stopData, mapOptions) {
     this.#map = map;
     this.#stopData = stopData;
+    this.#mapOptions = mapOptions;
 
     this.createStops();
 
@@ -70,14 +70,9 @@ export class StopHandler {
       .attr("cy", d => this.getStopCy(d));
   }
 
-  setMetric(metric) {
-    this.#metric = metric;
-    this.updateStopRadius();
-  }
-
   updateStopRadius() {
     // First update the usage scale
-    const usageExtent = this.#stopData.getUsageExtent(this.#metric);
+    const usageExtent = this.#stopData.getUsageExtent(this.#mapOptions.metric);
     const maxUsage = Math.max(0.1, usageExtent[1]);
     const minRadius = 1 + (this.#zoom - 10) / 4;
     const maxRadius = (this.#zoom - 10) * 3 + 8;
@@ -106,7 +101,7 @@ export class StopHandler {
   }
 
   getStopRadius(d) {
-    const usage = this.#stopData.getStopUsage(d.stop_id, this.#metric);
+    const usage = this.#stopData.getStopUsage(d.stop_id, this.#mapOptions.metric);
     if (usage < 0.05) return 0;
     return this.#usageScale(usage);
   }

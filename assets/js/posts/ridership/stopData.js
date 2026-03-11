@@ -1,19 +1,17 @@
 import * as d3 from "d3";
-import { METRIC_PER_BUS } from "./constants.js";
+import { Metric } from "./mapOptions.js";
 
 export class StopData {
   #stops;
-  #activeRoutes;
+  #mapOptions;
   #riderData;
   #stopRiderData;
 
   get stops() { return this.#stops; }
-  getActiveRoutes() { return this.#activeRoutes; }
-  setRouteActive(routeNum, active) { this.#activeRoutes[routeNum] = active; }
 
-  constructor(stopData, riderData) {
+  constructor(stopData, riderData, mapOptions) {
     this.#stops = stopData;
-    this.#activeRoutes = {};
+    this.#mapOptions = mapOptions;
     this.#riderData = riderData;
     this.#stopRiderData = {};
 
@@ -31,10 +29,10 @@ export class StopData {
       if (!(d.SERVICE_RTE_NUM in routes)) {
         routes[d.SERVICE_RTE_NUM] = {};
       }
-      if (!(d.SERVICE_RTE_NUM in this.#activeRoutes)) {
-        this.#activeRoutes[d.SERVICE_RTE_NUM] = true;
+      if (!this.#mapOptions.hasRoute(d.SERVICE_RTE_NUM)) {
+        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, true);
         if (parseInt(d.SERVICE_RTE_NUM) > 800) {
-          this.#activeRoutes[d.SERVICE_RTE_NUM] = false;
+          this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, false);
         }
       }
       const curRoute = routes[d.SERVICE_RTE_NUM];
@@ -47,10 +45,10 @@ export class StopData {
     }
   }
 
-  static async createInstance() {
+  static async createInstance(mapOptions) {
     const stopData = d3.csvParse(await this.getFileData("/assets/data/stops.txt"), d3.autoType)
     const riderData = d3.csvParse(await this.getFileData("/assets/data/ridership-spring-2024.csv"), d3.autoType);
-    return new StopData(stopData, riderData);
+    return new StopData(stopData, riderData, mapOptions);
   }
 
   static async getFileData(fileName) {
@@ -98,7 +96,7 @@ export class StopData {
       if (route_id && routeId !== route_id) {
         continue;
       }
-      if (!this.#activeRoutes[routeId]) {
+      if (!this.#mapOptions.isRouteActive(routeId)) {
         continue;
       }
       for (const dataId of Object.values(route)) {
@@ -115,7 +113,7 @@ export class StopData {
   }
 
   getStopUsage(stop_id, metric) {
-    return metric === METRIC_PER_BUS ? this.getRidersPerBus(stop_id) : this.getTotalRiders(stop_id);
+    return metric === Metric.PerBus ? this.getRidersPerBus(stop_id) : this.getTotalRiders(stop_id);
   }
 
   // Map RapidRide route names
