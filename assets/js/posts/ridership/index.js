@@ -7,7 +7,7 @@ import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
-import { Metric, MapOptions } from "./mapOptions.js";
+import { Metric, TimePeriod, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
 const mapOptions = new MapOptions();
@@ -41,6 +41,17 @@ metricPerBus.onclick = () => {
   stopHandler.updateStopRadius();
   clickCallback();
 };
+
+// Bind the time period checkboxes
+for (const [name, value] of Object.entries(TimePeriod)) {
+  const checkbox = document.getElementById(`tp${value}`);
+  checkbox.onchange = (e) => {
+    mapOptions.setTimePeriodActive(value, e.target.checked);
+    stopHandler.updateStopRadius();
+    clickHandler.getStops();
+    clickCallback();
+  };
+}
 
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");

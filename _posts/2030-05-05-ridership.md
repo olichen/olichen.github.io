@@ -16,10 +16,22 @@ categories: placeholder
   </div>
   <div class="d-flex gap-2">
     <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+        Time Period
+      </button>
+      <div class="dropdown-menu shadow-sm p-2" id="timePeriodDropdown" style="z-index:10000">
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="tpAM" checked><label class="form-check-label" for="tpAM">Morning Peak</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="tpMID" checked><label class="form-check-label" for="tpMID">Daytime</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="tpPM" checked><label class="form-check-label" for="tpPM">Afternoon Peak</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="tpXEV" checked><label class="form-check-label" for="tpXEV">Evening</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="tpXNT" checked><label class="form-check-label" for="tpXNT">Night</label></div>
+      </div>
+    </div>
+    <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="metricButton">
         Metric
       </button>
-      <div class="dropdown-menu shadow-sm" id="metricDropdown" style="z-index:10000">
+      <div class="dropdown-menu shadow-sm py-0" id="metricDropdown" style="z-index:10000">
         <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
         <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
       </div>
@@ -28,7 +40,7 @@ categories: placeholder
       <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Select Routes
       </button>
-      <div class="dropdown-menu shadow-sm" id="routeDropdown" style="max-height: 500px; overflow-y: scroll; opacity: 0.9; z-index: 10000">
+      <div class="dropdown-menu shadow-sm py-0" id="routeDropdown" style="max-height: 500px; overflow-y: scroll; opacity: 0.9; z-index: 10000">
         <div class="d-flex">
           <button id="routeAll" class="w-50 btn btn-outline-secondary btn-sm no-radius">
             All
