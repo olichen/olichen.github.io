@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { Metric } from "./mapOptions.js";
 
 export class StopHandler {
   #map;
@@ -83,7 +84,8 @@ export class StopHandler {
       .attr("r", d => this.getStopRadius(d));
 
     // Update the legend
-    let count = Math.floor(maxUsage / 81)
+    const metric = this.#mapOptions.metric;
+    let count = maxUsage / 81;
     let legendData = [];
     let offset = 0;
     for (let i = 0; i < 5; i++) {
@@ -97,7 +99,7 @@ export class StopHandler {
       count = count * 3;
       offset += Math.max(Math.ceil(radius * 2) + 4, 20);
     }
-    this.drawLegend(legendData);
+    this.drawLegend(legendData, metric);
   }
 
   getStopRadius(d) {
@@ -116,7 +118,10 @@ export class StopHandler {
     return point.y;
   }
 
-  drawLegend(legendData) {
+  drawLegend(legendData, metric) {
+    const formatCount = metric === Metric.PerBus
+      ? d => d.count.toFixed(1)
+      : d => Math.round(d.count);
     const maxRadius = legendData[legendData.length - 1].r;
     const totalHeight = legendData[legendData.length - 1].offset + Math.max(maxRadius * 2, 16) + 4;
     const width = maxRadius * 2 + 35;
@@ -140,7 +145,7 @@ export class StopHandler {
             .attr("text-anchor", "end")
             .attr("x", maxRadius * 2 + 35)
             .attr("y", d => Math.max(d.r + 2, 8) + 4)
-            .text(d => d.count);
+            .text(d => formatCount(d));
         },
         update => {
           update
@@ -154,7 +159,7 @@ export class StopHandler {
           update.select("text")
             .attr("x", maxRadius * 2 + 35)
             .attr("y", d => Math.max(d.r + 2, 8) + 4)
-            .text(d => d.count);
+            .text(d => formatCount(d));
         },
         exit => exit.remove()
       );

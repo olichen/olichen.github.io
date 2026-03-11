@@ -1,1 +1,1 @@
-- move METRICS dropdown, route selector, walk distance selector info all into an injectable
+- fix perbus; it should sum then divide by number of buses, not add up all averages
