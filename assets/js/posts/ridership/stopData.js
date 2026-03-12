@@ -88,6 +88,9 @@ export class StopData {
         }
       }
     }
+    if (numBuses === 0) {
+      numBuses = 1; // Avoid division by zero for stops with riders but no observed buses (e.g. due to data issues)
+    }
     return numBuses;
   }
 
