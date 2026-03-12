@@ -16,6 +16,15 @@ categories: placeholder
   </div>
   <div class="d-flex gap-2">
     <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" id="metricButton">
+        Metric
+      </button>
+      <div class="dropdown-menu shadow-sm py-0" id="metricDropdown" style="z-index:10000">
+        <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
+        <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
+      </div>
+    </div>
+    <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Time Period
       </button>
@@ -28,16 +37,16 @@ categories: placeholder
       </div>
     </div>
     <div class="dropdown">
-      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="metricButton">
-        Metric
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+        Ridership Type
       </button>
-      <div class="dropdown-menu shadow-sm py-0" id="metricDropdown" style="z-index:10000">
-        <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
-        <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
+      <div class="dropdown-menu shadow-sm p-2" id="ridershipTypeDropdown" style="z-index:10000">
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="rtBoardings" checked><label class="form-check-label" for="rtBoardings">Boardings</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="rtAlightings"><label class="form-check-label" for="rtAlightings">Alightings</label></div>
       </div>
     </div>
     <div class="dropdown">
-      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Select Routes
       </button>
       <div class="dropdown-menu shadow-sm py-0" id="routeDropdown" style="max-height: 500px; overflow-y: scroll; opacity: 0.9; z-index: 10000">

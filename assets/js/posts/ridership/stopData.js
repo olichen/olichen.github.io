@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Metric } from "./mapOptions.js";
+import { Metric, RidershipType } from "./mapOptions.js";
 
 export class StopData {
   #stops;
@@ -104,7 +104,8 @@ export class StopData {
       for (const dataId of Object.values(route)) {
         for (const [period, timeOfDay] of Object.entries(dataId)) {
           if (!this.#mapOptions.isTimePeriodActive(period)) continue;
-          totalRiders += timeOfDay.AVG_TOTAL_BOARDINGS;
+          if (this.#mapOptions.isRidershipTypeActive(RidershipType.Boardings)) totalRiders += timeOfDay.AVG_TOTAL_BOARDINGS;
+          if (this.#mapOptions.isRidershipTypeActive(RidershipType.Alightings)) totalRiders += timeOfDay.AVG_TOTAL_ALIGHTINGS;
         }
       }
     }

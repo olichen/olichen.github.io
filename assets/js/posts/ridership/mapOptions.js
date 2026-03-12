@@ -3,6 +3,11 @@ export const Metric = {
   PerBus: "perBus"
 };
 
+export const RidershipType = {
+  Boardings: "boardings",
+  Alightings: "alightings"
+};
+
 export const TimePeriod = {
   MorningPeak: "AM",
   Daytime: "MID",
@@ -15,6 +20,7 @@ export class MapOptions {
   #activeRoutes = {};
   #metric = Metric.Total;
   #timePeriods = new Set(Object.values(TimePeriod));
+  #ridershipTypes = new Set([RidershipType.Boardings]);
 
   get metric() { return this.#metric; }
   setMetric(metric) { this.#metric = metric; }
@@ -22,6 +28,10 @@ export class MapOptions {
   get timePeriods() { return this.#timePeriods; }
   isTimePeriodActive(period) { return this.#timePeriods.has(period); }
   setTimePeriodActive(period, active) { active ? this.#timePeriods.add(period) : this.#timePeriods.delete(period); }
+
+  get ridershipTypes() { return this.#ridershipTypes; }
+  isRidershipTypeActive(type) { return this.#ridershipTypes.has(type); }
+  setRidershipTypeActive(type, active) { active ? this.#ridershipTypes.add(type) : this.#ridershipTypes.delete(type); }
 
   setRoute(routeNum, active) { this.#activeRoutes[routeNum] = active; }
   isRouteActive(routeNum) { return this.#activeRoutes[routeNum]; }

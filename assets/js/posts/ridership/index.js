@@ -7,7 +7,7 @@ import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
-import { Metric, TimePeriod, MapOptions } from "./mapOptions.js";
+import { Metric, TimePeriod, RidershipType, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
 const mapOptions = new MapOptions();
@@ -23,8 +23,15 @@ function clickCallback() {
 
 drawViz(stopData, new Set(), mapOptions.metric);
 
+// Bind the walk time slider
+const walkTimeInput = document.getElementById("walkTimeInput");
+const walkTimeLabel = document.getElementById("walkTimeLabel");
+walkTimeInput.oninput = function() {
+  walkTimeLabel.innerHTML = `Walk Distance (${this.value} minutes)`;
+  clickHandler.setWalkTime(this.value);
+}
+
 // Bind the metric dropdown
-const metricButton = document.getElementById("metricButton");
 const metricTotal = document.getElementById("metricTotal");
 const metricPerBus = document.getElementById("metricPerBus");
 metricTotal.onclick = () => {
@@ -53,12 +60,15 @@ for (const [name, value] of Object.entries(TimePeriod)) {
   };
 }
 
-// Bind the walk time slider
-const walkTimeInput = document.getElementById("walkTimeInput");
-const walkTimeLabel = document.getElementById("walkTimeLabel");
-walkTimeInput.oninput = function() {
-  walkTimeLabel.innerHTML = `Walk Distance (${this.value} minutes)`;
-  clickHandler.setWalkTime(this.value);
+// Bind the ridership type checkboxes
+for (const [name, value] of Object.entries(RidershipType)) {
+  const checkbox = document.getElementById(`rt${name}`);
+  checkbox.onchange = (e) => {
+    mapOptions.setRidershipTypeActive(value, e.target.checked);
+    stopHandler.updateStopRadius();
+    clickHandler.getStops();
+    clickCallback();
+  };
 }
 
 // Create the route selectors
@@ -81,10 +91,12 @@ for (const routeNum of mapOptions.routeKeys()) {
     clickHandler.getStops();
     clickCallback();
   }
+  /*
   const label = document.querySelector(`label[for="route${routeNum}"]`);
   label.onclick = (e) => {
     e.stopPropagation();
   }
+    */
 }
 
 // Bind the all/none buttons

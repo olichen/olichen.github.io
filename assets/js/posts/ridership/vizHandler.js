@@ -5,7 +5,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
   const viz1Html = document.getElementById("viz1");
   const viz2Html = document.getElementById("viz2");
 
-  if (stopIds.size === 0) {
+  if (!stopIds || stopIds.size === 0) {
     viz1Html.innerHTML = '<div class="border h-100 text-center align-content-center">Click a location on the map to see more information</div>';
     viz2Html.innerHTML = viz1Html.innerHTML;
     return;
