@@ -15,11 +15,14 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
   for (const stopId of stopIds) {
     const stopValue = stopData.getStop(stopId);
 
+    const compassDir = stopData.getCompassDir(stopId);
+    const stopLabel = compassDir ? `${stopValue.stop_name} (${compassDir}B)` : stopValue.stop_name;
     for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
       const stopRiders = stopData.getTotalRiders(stopId, routeId);
       if (stopRiders === 0) continue;
       stopValues.push({
         ...stopValue,
+        stopLabel,
         routeName: stopData.getRouteName(routeId),
         numBuses: stopData.getNumBuses(stopId, routeId),
         riders: stopRiders
@@ -92,13 +95,13 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
           { op: "sum", field: "riders", type: "Q", as: "riders" },
           { op: "sum", field: "numBuses", type: "Q", as: "numBuses" },
         ],
-        groupby: [ "stop_name" ]
+        groupby: [ "stopLabel" ]
       },
       { calculate: "datum.riders / datum.numBuses", as: "ridersPerBus" },
     ],
     encoding: {
       x: {
-        field: "stop_name",
+        field: "stopLabel",
         type: "N",
         sort: "-y",
         title: "Stop",
@@ -110,7 +113,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
       },
       tooltip: [
         {
-          field: "stop_name",
+          field: "stopLabel",
           type: "N",
           title: "Stop"
         },

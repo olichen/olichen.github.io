@@ -129,6 +129,18 @@ export class StopData {
     676: "F",
     678: "H"
   };
+  getCompassDir(stop_id) {
+    const routes = this.getRoutes(stop_id);
+    for (const route of Object.values(routes)) {
+      for (const dataId of Object.values(route)) {
+        for (const record of Object.values(dataId)) {
+          return record.TRIP_COMPASS_DIR_CD;
+        }
+      }
+    }
+    return null;
+  }
+
   getRouteName(route_id) {
     if (route_id in this.#routeNameMap) {
       return this.#routeNameMap[route_id];
