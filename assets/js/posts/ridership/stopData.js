@@ -78,13 +78,14 @@ export class StopData {
       if (route_id && routeId !== route_id) {
         continue;
       }
+      if (!this.#mapOptions.isRouteActive(routeId)) {
+        continue;
+      }
       for (const dataId of Object.values(route)) {
-        let routeBuses = 0
         for (const [period, timeOfDay] of Object.entries(dataId)) {
           if (!this.#mapOptions.isTimePeriodActive(period)) continue;
-          routeBuses += timeOfDay.OBSERVED_TRIPS_IDS;
+          numBuses += timeOfDay.OBSERVED_TRIPS_IDS;
         }
-        numBuses = Math.max(routeBuses, numBuses);
       }
     }
     return numBuses;

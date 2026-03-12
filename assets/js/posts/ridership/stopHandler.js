@@ -104,7 +104,8 @@ export class StopHandler {
 
   getStopRadius(d) {
     const usage = this.#stopData.getStopUsage(d.stop_id, this.#mapOptions.metric);
-    if (usage < 0.05) return 0;
+    if (this.#mapOptions.metric === Metric.Total && usage < 0.05) return 0;
+    if (this.#mapOptions.metric === Metric.PerBus && usage < 0.01) return 0;
     return this.#usageScale(usage);
   }
 
