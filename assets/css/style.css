@@ -43,3 +43,7 @@
 h1, p, ul {
   max-width: 960px;
 }
+
+.wrapper {
+  max-width: 1200px;
+}
