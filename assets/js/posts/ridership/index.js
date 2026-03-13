@@ -7,21 +7,31 @@ import { StopData } from "./stopData.js";
 import { StopHandler } from "./stopHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
-import { Metric, TimePeriod, RidershipType, MapOptions } from "./mapOptions.js";
+import { Dataset, Metric, TimePeriod, RidershipType, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
 const mapOptions = new MapOptions();
 const map = new LMap("map");
-const stopData = await StopData.createInstance(mapOptions);
-const stopHandler = new StopHandler(map, stopData, mapOptions);
-const stopGroup = stopHandler.stopGroup;
-const clickHandler = new ClickHandler(map, stopData, stopGroup, clickCallback);
+let stopData = await StopData.createInstance(mapOptions);
+let stopHandler = new StopHandler(map, stopData, mapOptions);
+const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clickCallback);
 
 function clickCallback() {
   drawViz(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
 drawViz(stopData, new Set(), mapOptions.metric);
+
+async function reloadDataset() {
+  stopHandler.destroy();
+  mapOptions.clearRoutes();
+  stopData = await StopData.createInstance(mapOptions);
+  stopHandler = new StopHandler(map, stopData, mapOptions);
+  clickHandler.setStopData(stopData, stopHandler.stopGroup);
+  rebuildRouteDropdown();
+  clickHandler.getStops();
+  clickCallback();
+}
 
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");
@@ -72,32 +82,48 @@ for (const [name, value] of Object.entries(RidershipType)) {
 }
 
 // Create the route selectors
-let dropdownHtml = "";
 const routeDropdown = document.getElementById("routeDropdown");
-for (const [routeNum, active] of mapOptions.routeEntries()) {
-  dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
-  dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
-  dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
-  dropdownHtml += `</div>`;
-}
-routeDropdown.innerHTML += dropdownHtml;
 
-// Bind the route selectors
-for (const routeNum of mapOptions.routeKeys()) {
-  const checkbox = document.getElementById(`route${routeNum}`);
-  checkbox.onchange = (e) => {
-    mapOptions.setRoute(routeNum, e.target.checked);
-    stopHandler.updateStopRadius();
-    clickHandler.getStops();
-    clickCallback();
+function rebuildRouteDropdown() {
+  const firstChild = routeDropdown.firstElementChild;
+  routeDropdown.innerHTML = "";
+  routeDropdown.appendChild(firstChild);
+  let dropdownHtml = "";
+  for (const [routeNum, active] of mapOptions.routeEntries()) {
+    dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
+    dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
+    dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
+    dropdownHtml += `</div>`;
   }
-  /*
-  const label = document.querySelector(`label[for="route${routeNum}"]`);
-  label.onclick = (e) => {
-    e.stopPropagation();
+  routeDropdown.insertAdjacentHTML("beforeend", dropdownHtml);
+  for (const routeNum of mapOptions.routeKeys()) {
+    const checkbox = document.getElementById(`route${routeNum}`);
+    checkbox.onchange = (e) => {
+      mapOptions.setRoute(routeNum, e.target.checked);
+      stopHandler.updateStopRadius();
+      clickHandler.getStops();
+      clickCallback();
+    }
   }
-    */
 }
+
+rebuildRouteDropdown();
+
+// Bind the dataset dropdown
+const datasetSpring2024 = document.getElementById("datasetSpring2024");
+const datasetFall2024 = document.getElementById("datasetFall2024");
+datasetSpring2024.onclick = async () => {
+  mapOptions.setDataset(Dataset.Spring2024);
+  datasetSpring2024.classList.add("active");
+  datasetFall2024.classList.remove("active");
+  await reloadDataset();
+};
+datasetFall2024.onclick = async () => {
+  mapOptions.setDataset(Dataset.Fall2024);
+  datasetFall2024.classList.add("active");
+  datasetSpring2024.classList.remove("active");
+  await reloadDataset();
+};
 
 // Bind the all/none buttons
 const routeAllButton = document.getElementById("routeAll");

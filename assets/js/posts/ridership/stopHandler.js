@@ -64,6 +64,10 @@ export class StopHandler {
       });
   }
 
+  destroy() {
+    this.stopGroup.remove();
+  }
+
   updateStops() {
     this.updateStopRadius();
     this.#circles

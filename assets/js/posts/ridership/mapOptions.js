@@ -1,3 +1,8 @@
+export const Dataset = {
+  Spring2024: "24-spring",
+  Fall2024: "24-fall"
+};
+
 export const Metric = {
   Total: "total",
   PerBus: "perBus"
@@ -21,6 +26,10 @@ export class MapOptions {
   #metric = Metric.Total;
   #timePeriods = new Set(Object.values(TimePeriod));
   #ridershipTypes = new Set([RidershipType.Boardings]);
+  #dataset = Dataset.Fall2024;
+
+  get dataset() { return this.#dataset; }
+  setDataset(dataset) { this.#dataset = dataset; }
 
   get metric() { return this.#metric; }
   setMetric(metric) { this.#metric = metric; }
@@ -33,6 +42,7 @@ export class MapOptions {
   isRidershipTypeActive(type) { return this.#ridershipTypes.has(type); }
   setRidershipTypeActive(type, active) { active ? this.#ridershipTypes.add(type) : this.#ridershipTypes.delete(type); }
 
+  clearRoutes() { this.#activeRoutes = {}; }
   setRoute(routeNum, active) { this.#activeRoutes[routeNum] = active; }
   isRouteActive(routeNum) { return this.#activeRoutes[routeNum]; }
   hasRoute(routeNum) { return routeNum in this.#activeRoutes; }

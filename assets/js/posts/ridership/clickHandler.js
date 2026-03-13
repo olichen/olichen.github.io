@@ -44,6 +44,11 @@ export class ClickHandler {
     });
   }
 
+  setStopData(stopData, stopGroup) {
+    this.#stopData = stopData;
+    this.#stopGroup = stopGroup;
+  }
+
   setWalkTime(walkTime) {
     this.#walkTime = walkTime;
     this.setClickRadius();

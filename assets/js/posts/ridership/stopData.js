@@ -46,8 +46,9 @@ export class StopData {
   }
 
   static async createInstance(mapOptions) {
-    const stopData = d3.csvParse(await this.getFileData("/assets/data/24-spring/stops.txt"), d3.autoType)
-    const riderData = d3.csvParse(await this.getFileData("/assets/data/24-spring/stopdata.csv"), d3.autoType);
+    const dataFolder = `/assets/data/${mapOptions.dataset}`;
+    const stopData = d3.csvParse(await this.getFileData(`${dataFolder}/stops.txt`), d3.autoType)
+    const riderData = d3.csvParse(await this.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
     return new StopData(stopData, riderData, mapOptions);
   }
 
@@ -125,13 +126,14 @@ export class StopData {
 
   // Map RapidRide route names
   #routeNameMap = {
-    671: "A",
-    672: "B",
-    673: "C",
-    674: "D",
-    675: "E",
-    676: "F",
-    678: "H"
+    671: "A Line",
+    672: "B Line",
+    673: "C Line",
+    674: "D Line",
+    675: "E Line",
+    676: "F Line",
+    677: "G Line",
+    678: "H Line"
   };
   getCompassDir(stop_id) {
     const routes = this.getRoutes(stop_id);
