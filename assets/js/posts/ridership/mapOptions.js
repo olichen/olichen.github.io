@@ -1,3 +1,8 @@
+export const VizType = {
+  Scatterplot: "scatterplot",
+  Heatmap: "heatmap"
+};
+
 export const Dataset = {
   Spring2024: "24-spring",
   Fall2024: "24-fall"
@@ -27,9 +32,13 @@ export class MapOptions {
   #timePeriods = new Set(Object.values(TimePeriod));
   #ridershipTypes = new Set([RidershipType.Boardings]);
   #dataset = Dataset.Fall2024;
+  #vizType = VizType.Scatterplot;
 
   get dataset() { return this.#dataset; }
   setDataset(dataset) { this.#dataset = dataset; }
+
+  get vizType() { return this.#vizType; }
+  setVizType(vizType) { this.#vizType = vizType; }
 
   get metric() { return this.#metric; }
   setMetric(metric) { this.#metric = metric; }

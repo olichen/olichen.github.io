@@ -4,16 +4,16 @@ import 'leaflet/dist/leaflet.css';
 import '../../../css/style.css';
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
-import { StopHandler } from "./stopHandler.js";
+import { ScatterplotHandler } from "./scatterplotHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
-import { Dataset, Metric, TimePeriod, RidershipType, MapOptions } from "./mapOptions.js";
+import { Dataset, Metric, TimePeriod, RidershipType, VizType, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
 const mapOptions = new MapOptions();
 const map = new LMap("map");
 let stopData = await StopData.createInstance(mapOptions);
-let stopHandler = new StopHandler(map, stopData, mapOptions);
+let stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
 const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clickCallback);
 
 function clickCallback() {
@@ -26,7 +26,7 @@ async function reloadDataset() {
   stopHandler.destroy();
   mapOptions.clearRoutes();
   stopData = await StopData.createInstance(mapOptions);
-  stopHandler = new StopHandler(map, stopData, mapOptions);
+  stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
   clickHandler.setStopData(stopData, stopHandler.stopGroup);
   rebuildRouteDropdown();
   clickHandler.getStops();
@@ -48,14 +48,14 @@ metricTotal.onclick = () => {
   mapOptions.setMetric(Metric.Total);
   metricTotal.classList.add("active");
   metricPerBus.classList.remove("active");
-  stopHandler.updateStopRadius();
+  stopHandler.updateStops();
   clickCallback();
 };
 metricPerBus.onclick = () => {
   mapOptions.setMetric(Metric.PerBus);
   metricPerBus.classList.add("active");
   metricTotal.classList.remove("active");
-  stopHandler.updateStopRadius();
+  stopHandler.updateStops();
   clickCallback();
 };
 
@@ -64,7 +64,7 @@ for (const [name, value] of Object.entries(TimePeriod)) {
   const checkbox = document.getElementById(`tp${value}`);
   checkbox.onchange = (e) => {
     mapOptions.setTimePeriodActive(value, e.target.checked);
-    stopHandler.updateStopRadius();
+    stopHandler.updateStops();
     clickHandler.getStops();
     clickCallback();
   };
@@ -75,7 +75,7 @@ for (const [name, value] of Object.entries(RidershipType)) {
   const checkbox = document.getElementById(`rt${name}`);
   checkbox.onchange = (e) => {
     mapOptions.setRidershipTypeActive(value, e.target.checked);
-    stopHandler.updateStopRadius();
+    stopHandler.updateStops();
     clickHandler.getStops();
     clickCallback();
   };
@@ -100,7 +100,7 @@ function rebuildRouteDropdown() {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.onchange = (e) => {
       mapOptions.setRoute(routeNum, e.target.checked);
-      stopHandler.updateStopRadius();
+      stopHandler.updateStops();
       clickHandler.getStops();
       clickCallback();
     }
@@ -108,6 +108,24 @@ function rebuildRouteDropdown() {
 }
 
 rebuildRouteDropdown();
+
+// Bind the visualization type dropdown
+const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
+const vizTypeHeatmap = document.getElementById("vizTypeHeatmap");
+vizTypeScatterplot.onclick = () => {
+  mapOptions.setVizType(VizType.Scatterplot);
+  vizTypeScatterplot.classList.add("active");
+  vizTypeHeatmap.classList.remove("active");
+  stopHandler.updateStops();
+  clickCallback();
+};
+vizTypeHeatmap.onclick = () => {
+  mapOptions.setVizType(VizType.Heatmap);
+  vizTypeHeatmap.classList.add("active");
+  vizTypeScatterplot.classList.remove("active");
+  stopHandler.updateStops();
+  clickCallback();
+};
 
 // Bind the dataset dropdown
 const datasetSpring2024 = document.getElementById("datasetSpring2024");
@@ -134,7 +152,7 @@ routeAllButton.onclick = e => {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = true;
   }
-  stopHandler.updateStopRadius();
+  stopHandler.updateStops();
   clickHandler.getStops();
   clickCallback();
 }
@@ -147,7 +165,7 @@ routeNoneButton.onclick = e => {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = false;
   }
-  stopHandler.updateStopRadius();
+  stopHandler.updateStops();
   clickHandler.getStops();
   clickCallback();
 }

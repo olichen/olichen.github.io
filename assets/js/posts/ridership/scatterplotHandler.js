@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import { Metric } from "./mapOptions.js";
+import { Metric, VizType } from "./mapOptions.js";
 
-export class StopHandler {
+export class ScatterplotHandler {
   #map;
   #stopData;
   #mapOptions;
@@ -17,7 +17,7 @@ export class StopHandler {
     this.#stopData = stopData;
     this.#mapOptions = mapOptions;
 
-    this.createStops();
+    this.#initStops();
 
     this.#zoom = 14;
     this.updateStops();
@@ -28,7 +28,7 @@ export class StopHandler {
     });
   }
 
-  createStops() {
+  #initStops() {
     const map = this.#map;
     const stopData = this.#stopData;
 
@@ -69,14 +69,14 @@ export class StopHandler {
   }
 
   updateStops() {
-    this.updateStopRadius();
-    this.#circles
-      .attr("cx", d => this.getStopCx(d))
-      .attr("cy", d => this.getStopCy(d));
+    this.#updateStopRadius();
+      this.#circles
+        .attr("cx", d => this.#getStopCx(d))
+        .attr("cy", d => this.#getStopCy(d));
   }
 
-  updateStopRadius() {
-    // First update the usage scale
+  #updateStopRadius() {
+    // Update the usage scale
     const usageExtent = this.#stopData.getUsageExtent(this.#mapOptions.metric);
     const maxUsage = Math.max(0.1, usageExtent[1]);
     const minRadius = 1 + (this.#zoom - 10) / 4;
@@ -84,8 +84,7 @@ export class StopHandler {
     this.#usageScale = d3.scaleSqrt().domain([0, maxUsage]).range([minRadius, maxRadius]);
 
     // Update stop radius
-    this.#circles
-      .attr("r", d => this.getStopRadius(d));
+    this.#circles.attr("r", d => this.#getStopRadius(d));
 
     // Update the legend
     const metric = this.#mapOptions.metric;
@@ -94,36 +93,31 @@ export class StopHandler {
     let offset = 0;
     for (let i = 0; i < 5; i++) {
       const radius = this.#usageScale(count);
-      legendData.push({
-        count: count,
-        r: radius,
-        offset: offset,
-        i: i
-      });
+      legendData.push({ count, r: radius, offset, i });
       count = count * 3;
       offset += Math.max(Math.ceil(radius * 2) + 4, 20);
     }
-    this.drawLegend(legendData, metric);
+    this.#drawLegend(legendData, metric);
   }
 
-  getStopRadius(d) {
+  #getStopRadius(d) {
     const usage = this.#stopData.getStopUsage(d.stop_id, this.#mapOptions.metric);
     if (this.#mapOptions.metric === Metric.Total && usage < 0.05) return 0;
     if (this.#mapOptions.metric === Metric.PerBus && usage < 0.01) return 0;
     return this.#usageScale(usage);
   }
 
-  getStopCx(d) {
+  #getStopCx(d) {
     const point = this.#map.latLngToPoint(d.stop_lat, d.stop_lon);
     return point.x;
   }
 
-  getStopCy(d) {
+  #getStopCy(d) {
     const point = this.#map.latLngToPoint(d.stop_lat, d.stop_lon);
     return point.y;
   }
 
-  drawLegend(legendData, metric) {
+  #drawLegend(legendData, metric) {
     const formatCount = metric === Metric.PerBus
       ? d => d.count.toFixed(1)
       : d => Math.round(d.count);

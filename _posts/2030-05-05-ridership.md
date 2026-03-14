@@ -15,6 +15,15 @@ categories: placeholder
     <input id="walkTimeInput" type="range" class="form-range" min="1" max="20" value="10" oninput="clickHandler.setWalkTime()">
   </div>
   <div class="d-flex gap-2">
+    <div class="dropdown" hidden>
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Visualization
+      </button>
+      <div class="dropdown-menu shadow-sm py-0" id="vizTypeDropdown" style="z-index:10000">
+        <button class="dropdown-item active" id="vizTypeScatterplot">Scatterplot</button>
+        <button class="dropdown-item" id="vizTypeHeatmap">Heatmap</button>
+      </div>
+    </div>
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="datasetButton">
         Service Change
