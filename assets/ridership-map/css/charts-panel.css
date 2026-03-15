@@ -23,6 +23,33 @@
   height: var(--panel-open-height);
 }
 
+/* ── Close button ── */
+.charts-close-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #6c757d;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff,
+               -1px  1px 0 #fff, 1px  1px 0 #fff,
+               -1px  0   0 #fff, 1px  0   0 #fff,
+                0   -1px 0 #fff, 0    1px 0 #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 1;
+}
+
+.charts-close-btn:hover {
+  color: #212529;
+}
+
 /* ── Body ── */
 .charts-body {
   flex: 1;
