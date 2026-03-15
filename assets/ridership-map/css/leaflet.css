@@ -1,0 +1,44 @@
+/* leaflet.css
+ * Styles for Leaflet-created DOM elements (infobox, legend, fullscreen button)
+ * and positioning of Leaflet controls relative to the charts panel.
+ * Depends on custom properties defined in layout.css.
+ */
+
+/* ── Controls positioning ── */
+/* Keep bottom controls above the collapsed handle at all times */
+#map .leaflet-bottom {
+  bottom: var(--handle-height);
+  transition: bottom var(--ease);
+}
+
+#map-container.charts-open #map .leaflet-bottom {
+  bottom: var(--panel-open-height);
+}
+
+/* ── Infobox ── */
+.infobox {
+  background: rgba(255, 255, 255, 0.8);
+  max-width: 350px;
+  font-size: 1rem;
+}
+
+.infobox-sm {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* ── Legend ── */
+.legend {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Fullscreen button ── */
+.fullscreen-btn {
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}

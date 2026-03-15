@@ -8,141 +8,6 @@ permalink: /ridership-map/
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/assets/dist/index.css">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .toolbar {
-      flex-shrink: 0;
-      padding: 6px 10px;
-      background: #fff;
-      border-bottom: 1px solid #dee2e6;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .toolbar-walk {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    /* Map container fills all remaining vertical space and is the fullscreen root */
-    #map-container {
-      flex: 1;
-      min-height: 0;
-      position: relative;
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* ── Charts panel ── */
-    /* Overlays the bottom of the map. The map never resizes. */
-    .charts-panel {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 36px;           /* collapsed: handle only */
-      overflow: hidden;
-      transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      background: #fff;
-      border-top: 2px solid #dee2e6;
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-      z-index: 500;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .charts-panel.open {
-      height: 450px; /* 36 handle + 1 border + 8 pad-top + 395 chart + 10 pad-bottom */
-    }
-
-    .charts-handle {
-      height: 36px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 14px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .charts-handle:hover { background: #f8f9fa; }
-
-    .handle-grip {
-      width: 28px; height: 3px;
-      border-radius: 2px;
-      background: #ced4da;
-      flex-shrink: 0;
-    }
-
-    .handle-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #495057;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .handle-spacer { flex: 1; }
-
-    .handle-chevron {
-      font-size: 0.7rem;
-      color: #adb5bd;
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .charts-panel.open .handle-chevron {
-      transform: rotate(180deg);
-    }
-
-    .charts-body {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      border-top: 1px solid #dee2e6;
-      overflow-x: auto;
-    }
-
-    .chart-pane {
-      flex: 1;
-      min-width: 300px;
-      padding: 8px 8px;
-    }
-
-    .chart-pane + .chart-pane {
-      border-left: 1px solid #dee2e6;
-    }
-
-    /* Fixed height so Vega-Lite always reads a valid size, even when the
-       panel is collapsed (overflow:hidden hides the charts visually). */
-    #viz1, #viz2 {
-      height: 395px;
-      min-width: 284px;
-    }
-
-    /* Keep Leaflet bottom controls above the charts handle at all times */
-    #map .leaflet-bottom {
-      bottom: 36px;
-      transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    #map-container.charts-open #map .leaflet-bottom {
-      bottom: 450px;
-    }
-  </style>
 </head>
 <body>
 
@@ -151,7 +16,7 @@ permalink: /ridership-map/
 
   <div class="toolbar-walk">
     <label id="walkTimeLabel" for="walkTimeInput" class="fw-bold form-label mb-0">Walk Distance (10 minutes)</label>
-    <input id="walkTimeInput" type="range" class="form-range mb-0" min="1" max="20" value="10" style="width:120px">
+    <input id="walkTimeInput" type="range" class="form-range mb-0 walk-slider" min="1" max="20" value="10">
   </div>
 
   <div class="d-flex gap-2 flex-wrap">
@@ -165,7 +30,7 @@ permalink: /ridership-map/
       <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Service Change
       </button>
-      <div class="dropdown-menu shadow-sm py-0" style="z-index:10000">
+      <div class="dropdown-menu shadow-sm py-0">
         <button class="dropdown-item" id="datasetSpring2024">Spring 2024</button>
         <button class="dropdown-item active" id="datasetFall2024">Fall 2024</button>
       </div>
@@ -175,7 +40,7 @@ permalink: /ridership-map/
       <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Metric
       </button>
-      <div class="dropdown-menu shadow-sm py-0" style="z-index:10000">
+      <div class="dropdown-menu shadow-sm py-0">
         <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
         <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
       </div>
@@ -185,7 +50,7 @@ permalink: /ridership-map/
       <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Time Period
       </button>
-      <div class="dropdown-menu shadow-sm p-2" style="z-index:10000">
+      <div class="dropdown-menu shadow-sm p-2">
         <div class="form-check"><input class="form-check-input" type="checkbox" id="tpAM" checked><label class="form-check-label" for="tpAM">Morning Peak</label></div>
         <div class="form-check"><input class="form-check-input" type="checkbox" id="tpMID" checked><label class="form-check-label" for="tpMID">Daytime</label></div>
         <div class="form-check"><input class="form-check-input" type="checkbox" id="tpPM" checked><label class="form-check-label" for="tpPM">Afternoon Peak</label></div>
@@ -198,7 +63,7 @@ permalink: /ridership-map/
       <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Ridership Type
       </button>
-      <div class="dropdown-menu shadow-sm p-2" style="z-index:10000">
+      <div class="dropdown-menu shadow-sm p-2">
         <div class="form-check"><input class="form-check-input" type="checkbox" id="rtBoardings" checked><label class="form-check-label" for="rtBoardings">Boardings</label></div>
         <div class="form-check"><input class="form-check-input" type="checkbox" id="rtAlightings"><label class="form-check-label" for="rtAlightings">Alightings</label></div>
       </div>
@@ -208,7 +73,7 @@ permalink: /ridership-map/
       <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
         Select Routes
       </button>
-      <div class="dropdown-menu shadow-sm py-0" id="routeDropdown" style="max-height:500px;overflow-y:scroll;z-index:10000">
+      <div class="dropdown-menu shadow-sm py-0 route-dropdown-menu" id="routeDropdown">
         <div class="d-flex">
           <button id="routeAll" class="w-50 btn btn-outline-secondary btn-sm no-radius">All</button>
           <button id="routeNone" class="w-50 btn btn-outline-secondary btn-sm no-radius">None</button>
@@ -223,24 +88,24 @@ permalink: /ridership-map/
 <div id="map-container">
   <div id="map"></div>
 
-  <!-- Charts panel — flex sibling of map inside the same container -->
+  <!-- Charts panel — overlays the map bottom, slides open on toggle -->
   <div class="charts-panel" id="chartsPanel">
-  <div class="charts-handle" id="chartsHandle">
-    <div class="handle-grip"></div>
-    <span class="handle-label">Charts</span>
-    <span class="handle-spacer"></span>
-    <span class="handle-chevron">▲</span>
-  </div>
-  <div class="charts-body">
-    <div class="chart-pane">
-      <div id="viz1"></div>
+    <div class="charts-handle" id="chartsHandle">
+      <div class="handle-grip"></div>
+      <span class="handle-label">Charts</span>
+      <span class="handle-spacer"></span>
+      <span class="handle-chevron">▲</span>
     </div>
-    <div class="chart-pane">
-      <div id="viz2"></div>
+    <div class="charts-body">
+      <div class="chart-pane">
+        <div id="viz1"></div>
+      </div>
+      <div class="chart-pane">
+        <div id="viz2"></div>
+      </div>
     </div>
   </div>
-  </div><!-- end .charts-panel -->
-</div><!-- end #map-container -->
+</div>
 
 <script type="module" src="/assets/dist/index.js"></script>
 
@@ -250,7 +115,6 @@ permalink: /ridership-map/
     const container = document.getElementById('map-container');
     panel.classList.toggle('open');
     container.classList.toggle('charts-open');
-    // Tell Vega-Lite to recalculate widths after the panel finishes animating
     if (panel.classList.contains('open')) {
       setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
     }

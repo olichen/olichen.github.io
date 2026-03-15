@@ -1,0 +1,96 @@
+/* charts-panel.css
+ * Self-contained styles for the collapsible charts panel.
+ * Depends on custom properties defined in layout.css.
+ */
+
+/* ── Panel ── */
+/* Overlays the bottom of the map — the map never resizes */
+.charts-panel {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: var(--handle-height);    /* collapsed: handle only */
+  overflow: hidden;
+  transition: height var(--ease);
+  background: #fff;
+  border-top: 2px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+}
+
+.charts-panel.open {
+  height: var(--panel-open-height);
+}
+
+/* ── Handle ── */
+.charts-handle {
+  height: var(--handle-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.charts-handle:hover {
+  background: #f8f9fa;
+}
+
+.handle-grip {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: #ced4da;
+  flex-shrink: 0;
+}
+
+.handle-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.handle-spacer {
+  flex: 1;
+}
+
+.handle-chevron {
+  font-size: 0.7rem;
+  color: #adb5bd;
+  transition: transform var(--ease);
+}
+
+.charts-panel.open .handle-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Body ── */
+.charts-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.chart-pane {
+  flex: 1;
+  min-width: 300px;
+  padding: 8px;
+}
+
+.chart-pane + .chart-pane {
+  border-left: 1px solid var(--border);
+}
+
+/* Explicit height so Vega-Lite reads a valid size even when the panel is
+   collapsed and overflow:hidden hides the charts visually. */
+#viz1, #viz2 {
+  height: var(--chart-height);
+  min-width: var(--chart-min-width);
+}
