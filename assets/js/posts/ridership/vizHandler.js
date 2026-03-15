@@ -82,7 +82,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
       ],
     },
     width: "container",
-    height: 300,
+    height: "250",
     title: "Daily Boardings By Route"
   };
 
@@ -98,12 +98,21 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
         groupby: [ "stopLabel" ]
       },
       { calculate: "datum.riders / datum.numBuses", as: "ridersPerBus" },
+      { calculate: [
+          "lastindexof(datum.stopLabel, ' (') >= 0",
+          "  ? (length(slice(datum.stopLabel, 0, lastindexof(datum.stopLabel, ' ('))) > 10",
+          "     ? slice(datum.stopLabel, 0, 10) + '…' + slice(datum.stopLabel, lastindexof(datum.stopLabel, ' ('))",
+          "     : datum.stopLabel)",
+          "  : (length(datum.stopLabel) > 10",
+          "     ? slice(datum.stopLabel, 0, 10) + '…'",
+          "     : datum.stopLabel)",
+        ].join(" "), as: "stopLabelShort" },
     ],
     encoding: {
       x: {
-        field: "stopLabel",
+        field: "stopLabelShort",
         type: "N",
-        sort: "-y",
+        sort: { field: metric === Metric.PerBus ? "ridersPerBus" : "riders", order: "descending" },
         title: "Stop",
       },
       y: {
@@ -137,13 +146,13 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
       ]
     },
     width: "container",
-    height: 300,
+    height: "250",
     title: "Daily Boardings By Stop",
   };
 
   viz1Html.innerHTML = null;
-  viz1Html.appendChild(await render(viz1));
+  await render(viz1, viz1Html);
   viz2Html.innerHTML = null;
-  viz2Html.appendChild(await render(viz2));
+  await render(viz2, viz2Html);
   window.dispatchEvent(new Event("resize"));
 }

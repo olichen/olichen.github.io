@@ -8,19 +8,23 @@ const config = {
 };
 
 /**
- * Render a Vega-Lite JSON specification.
- * @returns The rendered HTML element.
+ * Render a Vega-Lite JSON specification into a container element.
+ * Pass an in-DOM element as `container` so that height:"container" in the
+ * spec reads the correct computed size instead of 0 from a detached node.
+ * @returns The container element.
  */
-export async function render(spec) {
+export async function render(spec, container) {
   const compiled = vegalite.compile({ ...spec, config });
-  const div = document.createElement('div');
-  div.style['overflow-x'] = 'auto';
+  if (!container) {
+    container = document.createElement('div');
+    container.style['overflow-x'] = 'auto';
+  }
   const view = new vega.View(vega.parse(compiled.spec), {
     renderer: 'svg',
-    container: div,
+    container,
     logLevel: vega.Warn,
   });
   view.tooltip(new tooltip.Handler().call);
   await view.runAsync();
-  return div;
+  return container;
 }

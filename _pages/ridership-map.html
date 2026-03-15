@@ -60,14 +60,17 @@ permalink: /ridership-map/
       border-top: 2px solid #dee2e6;
       box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
       z-index: 500;
+      display: flex;
+      flex-direction: column;
     }
 
     .charts-panel.open {
-      height: 356px;          /* 36px handle + 320px charts area */
+      height: 450px; /* 36 handle + 1 border + 8 pad-top + 395 chart + 10 pad-bottom */
     }
 
     .charts-handle {
       height: 36px;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -106,22 +109,26 @@ permalink: /ridership-map/
     }
 
     .charts-body {
+      flex: 1;
+      min-height: 0;
       display: flex;
       border-top: 1px solid #dee2e6;
     }
 
     .chart-pane {
       flex: 1;
-      padding: 8px 12px 10px;
       min-width: 0;
+      padding: 8px 12px 10px;
     }
 
     .chart-pane + .chart-pane {
       border-left: 1px solid #dee2e6;
     }
 
+    /* Fixed height so Vega-Lite always reads a valid size, even when the
+       panel is collapsed (overflow:hidden hides the charts visually). */
     #viz1, #viz2 {
-      height: 300px;
+      height: 395px;
     }
 
     /* Keep Leaflet bottom controls above the charts handle at all times */
@@ -131,7 +138,7 @@ permalink: /ridership-map/
     }
 
     #map-container.charts-open #map .leaflet-bottom {
-      bottom: 356px;
+      bottom: 450px;
     }
   </style>
 </head>
