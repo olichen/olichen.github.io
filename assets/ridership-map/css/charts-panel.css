@@ -8,7 +8,7 @@
 .charts-panel {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: var(--handle-height);    /* collapsed: handle only */
+  height: 0;                        /* collapsed: fully hidden */
   overflow: hidden;
   transition: height var(--ease);
   background: #fff;
@@ -21,52 +21,6 @@
 
 .charts-panel.open {
   height: var(--panel-open-height);
-}
-
-/* ── Handle ── */
-.charts-handle {
-  height: var(--handle-height);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.charts-handle:hover {
-  background: #f8f9fa;
-}
-
-.handle-grip {
-  width: 28px;
-  height: 3px;
-  border-radius: 2px;
-  background: #ced4da;
-  flex-shrink: 0;
-}
-
-.handle-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #495057;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.handle-spacer {
-  flex: 1;
-}
-
-.handle-chevron {
-  font-size: 0.7rem;
-  color: #adb5bd;
-  transition: transform var(--ease);
-}
-
-.charts-panel.open .handle-chevron {
-  transform: rotate(180deg);
 }
 
 /* ── Body ── */

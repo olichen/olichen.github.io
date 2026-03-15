@@ -7,7 +7,7 @@
 /* ── Controls positioning ── */
 /* Keep bottom controls above the collapsed handle at all times */
 #map .leaflet-bottom {
-  bottom: var(--handle-height);
+  bottom: 0;
   transition: bottom var(--ease);
 }
 
@@ -20,8 +20,10 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
-/* ── Fullscreen button ── */
-.fullscreen-btn {
+/* ── Map buttons (fullscreen, chart, settings) ── */
+.fullscreen-btn,
+.chart-btn,
+.settings-btn {
   cursor: pointer;
   font-size: 1.2rem;
   width: 30px !important;

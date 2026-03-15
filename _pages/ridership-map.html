@@ -90,12 +90,6 @@ permalink: /ridership-map/
 
   <!-- Charts panel — overlays the map bottom, slides open on toggle -->
   <div class="charts-panel" id="chartsPanel">
-    <div class="charts-handle" id="chartsHandle">
-      <div class="handle-grip"></div>
-      <span class="handle-label">Location Analysis</span>
-      <span class="handle-spacer"></span>
-      <span class="handle-chevron">▲</span>
-    </div>
     <div class="charts-body">
 
       <div class="stats-panel">
@@ -130,17 +124,6 @@ permalink: /ridership-map/
 
 <script type="module" src="/assets/dist/index.js"></script>
 
-<script>
-  document.getElementById('chartsHandle').addEventListener('click', () => {
-    const panel = document.getElementById('chartsPanel');
-    const container = document.getElementById('map-container');
-    panel.classList.toggle('open');
-    container.classList.toggle('charts-open');
-    if (panel.classList.contains('open')) {
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
-    }
-  });
-</script>
 
 </body>
 </html>

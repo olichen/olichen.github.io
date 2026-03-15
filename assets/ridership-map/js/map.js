@@ -55,9 +55,48 @@ export class LMap {
         btn.innerHTML = document.fullscreenElement ? '✕' : '⛶';
         this.#map.invalidateSize();
       });
+      L.DomEvent.disableClickPropagation(btn);
       return btn;
     };
     fullscreen.addTo(this.#map);
+
+    // Add a settings button (topright, first = top)
+    const settings = L.control({ position: 'topright' });
+    settings.onAdd = () => {
+      const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control settings-btn');
+      btn.innerHTML = '⚙';
+      btn.title = 'Settings';
+      btn.href = '#';
+      btn.onclick = (e) => {
+        e.preventDefault();
+        // TODO: settings hook
+      };
+      L.DomEvent.disableClickPropagation(btn);
+      return btn;
+    };
+    settings.addTo(this.#map);
+
+    // Add a chart button (topright, second = below settings)
+    const chart = L.control({ position: 'topright' });
+    chart.onAdd = () => {
+      const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control chart-btn');
+      btn.innerHTML = '📊';
+      btn.title = 'Chart';
+      btn.href = '#';
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const panel = document.getElementById('chartsPanel');
+        const container = document.getElementById('map-container');
+        panel.classList.toggle('open');
+        container.classList.toggle('charts-open');
+        if (panel.classList.contains('open')) {
+          setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
+        }
+      };
+      L.DomEvent.disableClickPropagation(btn);
+      return btn;
+    };
+    chart.addTo(this.#map);
   }
 
   createGroup() {
@@ -77,5 +116,4 @@ export class LMap {
   on(event, func) {
     return this.#map.on(event, func);
   }
-
 }
