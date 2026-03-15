@@ -14,13 +14,8 @@
   bottom: var(--panel-open-height);
 }
 
-#map .leaflet-top {
-  top: 0;
-  transition: top var(--ease);
-}
-
 #map-container.toolbar-open #map .leaflet-top {
-  top: var(--toolbar-panel-height);
+  top: var(--toolbar-actual-height, 0);
 }
 
 /* ── Legend ── */

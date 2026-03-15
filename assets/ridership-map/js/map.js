@@ -98,6 +98,13 @@ export class LMap {
       return btn;
     };
     chart.addTo(this.#map);
+
+    // Keep Leaflet top controls flush with the bottom of the toolbar panel
+    const toolbarPanel = document.getElementById('toolbarPanel');
+    const mapContainer = document.getElementById('map-container');
+    new ResizeObserver(([entry]) => {
+      mapContainer.style.setProperty('--toolbar-actual-height', entry.contentRect.height + 'px');
+    }).observe(toolbarPanel);
   }
 
   createGroup() {
