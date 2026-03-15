@@ -113,12 +113,13 @@ permalink: /ridership-map/
       min-height: 0;
       display: flex;
       border-top: 1px solid #dee2e6;
+      overflow-x: auto;
     }
 
     .chart-pane {
       flex: 1;
-      min-width: 0;
-      padding: 8px 12px 10px;
+      min-width: 300px;
+      padding: 8px 8px;
     }
 
     .chart-pane + .chart-pane {
@@ -129,6 +130,7 @@ permalink: /ridership-map/
        panel is collapsed (overflow:hidden hides the charts visually). */
     #viz1, #viz2 {
       height: 395px;
+      min-width: 284px;
     }
 
     /* Keep Leaflet bottom controls above the charts handle at all times */
