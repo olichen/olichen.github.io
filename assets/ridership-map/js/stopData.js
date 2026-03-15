@@ -46,7 +46,7 @@ export class StopData {
   }
 
   static async createInstance(mapOptions) {
-    const dataFolder = `/assets/data/${mapOptions.dataset}`;
+    const dataFolder = `/assets/ridership-map/data/${mapOptions.dataset}`;
     const stopData = d3.csvParse(await this.getFileData(`${dataFolder}/stops.txt`), d3.autoType)
     const riderData = d3.csvParse(await this.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
     return new StopData(stopData, riderData, mapOptions);

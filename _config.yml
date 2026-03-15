@@ -37,7 +37,8 @@ include:
 exclude:
   - node_modules/
   - suggestions/
-  - assets/js/
+  - assets/ridership-map/js/
+  - assets/ridership-map/css/
   - package.json
   - package-lock.json
   - README.md
