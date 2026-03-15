@@ -157,4 +157,42 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
   viz2Html.innerHTML = null;
   await render(viz2, viz2Html);
   window.dispatchEvent(new Event("resize"));
+  updateStatsPanel(stopData, stopIds);
+}
+
+function updateStatsPanel(stopData, stopIds) {
+  const statRidership = document.getElementById("statRidership");
+  const statPerBus = document.getElementById("statPerBus");
+  const statStops = document.getElementById("statStops");
+  const statRoutes = document.getElementById("statRoutes");
+
+  if (!stopIds || stopIds.size === 0) {
+    statRidership.textContent = "—";
+    statPerBus.textContent = "—";
+    statStops.textContent = "—";
+    statRoutes.textContent = "—";
+    return;
+  }
+
+  let totalRiders = 0;
+  const routeBuses = {};
+  const routeSet = new Set();
+
+  for (const stopId of stopIds) {
+    totalRiders += stopData.getTotalRiders(stopId);
+    for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
+      routeSet.add(routeId);
+      const buses = stopData.getNumBuses(stopId, routeId);
+      routeBuses[routeId] = Math.max(routeBuses[routeId] ?? 0, buses);
+    }
+  }
+
+  const totalBuses = Object.values(routeBuses).reduce((sum, b) => sum + b, 0);
+  const ridersPerBus = totalBuses > 0 ? totalRiders / totalBuses : 0;
+  const displayRiders = totalRiders < 10 ? Math.round(totalRiders * 10) / 10 : Math.round(totalRiders);
+
+  statRidership.textContent = displayRiders.toLocaleString();
+  statPerBus.textContent = ridersPerBus.toFixed(1);
+  statStops.textContent = stopIds.size;
+  statRoutes.textContent = routeSet.size;
 }

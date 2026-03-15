@@ -5,7 +5,6 @@ export class LMap {
   #map;
   #topLeft;
   #bottomRight;
-  #infobox;
 
   constructor(element_id) {
     // map found here: https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -29,19 +28,6 @@ export class LMap {
       .attr("height", this.#bottomRight.y - this.#topLeft.y)
       .style("left", this.#topLeft.x + "px")
       .style("top", this.#topLeft.y + "px");
-
-    // Add an infobox
-    this.#infobox = L.control({ position: 'topright' });
-    this.#infobox.onAdd = () => this._div = L.DomUtil.create('div', 'infobox p-2 m-2 shadow-sm rounded');
-    this.#infobox.update = (innerHTML) => {
-      if (innerHTML) {
-        this._div.innerHTML = innerHTML;
-      } else {
-        this._div.innerHTML = "Mouse over a bus stop or click a location on the map to see more information";
-      }
-    }
-    this.#infobox.addTo(this.#map);
-    this.#infobox.update();
 
     // Add a legend
     const legend = L.control({ position: 'bottomleft' });
@@ -92,17 +78,4 @@ export class LMap {
     return this.#map.on(event, func);
   }
 
-  #infoboxText;
-  setInfobox(innerHTML) {
-    this.#infoboxText = innerHTML;
-    this.#infobox.update(this.#infoboxText);
-  }
-
-  overlayInfobox(innerHTML) {
-    if (innerHTML) {
-      this.#infobox.update(innerHTML);
-    } else {
-      this.#infobox.update(this.#infoboxText);
-    }
-  }
 }

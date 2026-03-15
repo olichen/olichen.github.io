@@ -36,30 +36,10 @@ export class ScatterplotHandler {
     this.#circles = this.stopGroup.selectAll("circle").data(stopData.stops, d => d.stop_id).join("circle")
       .attr("fill", "steelblue")
       .attr("opacity", 0.7)
-      .on("mouseover", function(event, d) { 
-        let riderCount = stopData.getTotalRiders(d.stop_id);
-        riderCount = riderCount < 10 ? Math.round(riderCount * 10) / 10 : Math.round(riderCount);
-        const routes = stopData.getRoutes(d.stop_id);
-        const routeCount = Object.keys(routes).length;
-        let overlayText = `<div>`
-          + `<div><b>${d.stop_name}</b></div>`
-          + `<div>- Every day, <b>${riderCount}</b> people board at this stop</div>`
-          + `<div>- <b>${routeCount}</b> ${routeCount > 1 ? "different routes serve" : "route serves"} this stop</div>`
-          + `<div class="infobox-sm">Routes (daily boardings): `;
-        for (const [routeId, data] of Object.entries(routes)) {
-          let routeRiders = stopData.getTotalRiders(d.stop_id, routeId);
-          if (routeRiders === 0) continue;
-          routeRiders = routeRiders < 10 ? Math.round(routeRiders * 10) / 10 : Math.round(routeRiders);
-          overlayText += `<b>${stopData.getRouteName(routeId)}</b>`
-            + ` (${routeRiders}), `
-        }
-        overlayText = overlayText.slice(0, -2);
-        overlayText += `</div>`;
-        map.overlayInfobox(overlayText);
+      .on("mouseover", function(event, d) {
         d3.select(this).attr("stroke", "black")
       })
       .on("mouseout", function(event, d) {
-        map.overlayInfobox(null);
         d3.select(this).attr("stroke", null)
       });
   }
