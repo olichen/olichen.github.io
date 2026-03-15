@@ -6,8 +6,8 @@
 /* ── Custom properties ── */
 :root {
   --handle-height: 36px;
-  --panel-open-height: 450px;
-  --chart-height: 395px;   /* panel-open - handle - 1px border - 8px/10px padding */
+  --panel-open-height: 387px;
+  --chart-height: 334px;   /* panel-open - handle - 1px border - 8px*2 padding */
   --chart-min-width: 284px;
   --border: #dee2e6;
   --ease: 0.25s cubic-bezier(0.4, 0, 0.2, 1);

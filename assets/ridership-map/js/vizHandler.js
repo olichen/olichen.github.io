@@ -2,6 +2,8 @@ import { render } from "./vega-lite.js";
 import { Metric } from "./mapOptions.js";
 
 export async function drawViz(stopData, stopIds, metric = Metric.Total) {
+  const CHART_HEIGHT = 190;
+
   const viz1Html = document.getElementById("viz1");
   const viz2Html = document.getElementById("viz2");
 
@@ -82,7 +84,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
       ],
     },
     width: "container",
-    height: "250",
+    height: CHART_HEIGHT,
     title: "Daily Boardings By Route"
   };
 
@@ -146,7 +148,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
       ]
     },
     width: "container",
-    height: "250",
+    height: CHART_HEIGHT,
     title: "Daily Boardings By Stop",
   };
 
