@@ -60,7 +60,15 @@ export class LMap {
     };
     fullscreen.addTo(this.#map);
 
+    // Keep Leaflet top controls flush with the bottom of the toolbar panel
+    const toolbar = document.getElementById('toolbar');
+    const mapContainer = document.getElementById('map-container');
+    new ResizeObserver(([entry]) => {
+      mapContainer.style.setProperty('--toolbar-actual-height', entry.contentRect.height + 12 + 'px');
+    }).observe(toolbar);
+
     // Add a settings button (topright, first = top)
+    const toolbarPanel = document.getElementById('toolbarPanel');
     const settings = L.control({ position: 'topright' });
     settings.onAdd = () => {
       const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control settings-btn');
@@ -69,8 +77,8 @@ export class LMap {
       btn.href = '#';
       btn.onclick = (e) => {
         e.preventDefault();
-        document.getElementById('toolbarPanel').classList.toggle('open');
-        document.getElementById('map-container').classList.toggle('toolbar-open');
+        toolbarPanel.classList.toggle('open');
+        mapContainer.classList.toggle('toolbar-open');
       };
       L.DomEvent.disableClickPropagation(btn);
       return btn;
@@ -99,12 +107,6 @@ export class LMap {
     };
     chart.addTo(this.#map);
 
-    // Keep Leaflet top controls flush with the bottom of the toolbar panel
-    const toolbarPanel = document.getElementById('toolbarPanel');
-    const mapContainer = document.getElementById('map-container');
-    new ResizeObserver(([entry]) => {
-      mapContainer.style.setProperty('--toolbar-actual-height', entry.contentRect.height + 'px');
-    }).observe(toolbarPanel);
   }
 
   createGroup() {

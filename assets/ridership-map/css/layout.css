@@ -26,18 +26,23 @@ html, body {
 .toolbar-panel {
   position: absolute;
   top: 0; left: 0; right: 0;
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ease);
   overflow: hidden;
-  transition: max-height var(--ease);
   background: #fff;
   z-index: 500;
 }
 
 .toolbar-panel.open {
-  max-height: 300px;
+  grid-template-rows: 1fr;
   overflow: visible;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar-panel-inner {
+  min-height: 0;
 }
 
 /* ── Toolbar ── */
