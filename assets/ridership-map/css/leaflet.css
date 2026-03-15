@@ -5,7 +5,6 @@
  */
 
 /* ── Controls positioning ── */
-/* Keep bottom controls above the collapsed handle at all times */
 #map .leaflet-bottom {
   bottom: 0;
   transition: bottom var(--ease);
@@ -13,6 +12,15 @@
 
 #map-container.charts-open #map .leaflet-bottom {
   bottom: var(--panel-open-height);
+}
+
+#map .leaflet-top {
+  top: 0;
+  transition: top var(--ease);
+}
+
+#map-container.toolbar-open #map .leaflet-top {
+  top: var(--toolbar-panel-height);
 }
 
 /* ── Legend ── */

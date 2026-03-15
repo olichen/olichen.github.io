@@ -69,7 +69,8 @@ export class LMap {
       btn.href = '#';
       btn.onclick = (e) => {
         e.preventDefault();
-        // TODO: settings hook
+        document.getElementById('toolbarPanel').classList.toggle('open');
+        document.getElementById('map-container').classList.toggle('toolbar-open');
       };
       L.DomEvent.disableClickPropagation(btn);
       return btn;

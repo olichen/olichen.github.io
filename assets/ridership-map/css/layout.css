@@ -5,6 +5,7 @@
 
 /* ── Custom properties ── */
 :root {
+  --toolbar-panel-height: 44px;
   --panel-open-height: 350px;
   --chart-height: 333px;   /* panel-open - 1px border - 8px*2 padding */
   --chart-min-width: 284px;
@@ -20,6 +21,24 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* ── Toolbar panel ── */
+.toolbar-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0;
+  overflow: hidden;
+  transition: height var(--ease);
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 500;
+}
+
+.toolbar-panel.open {
+  height: var(--toolbar-panel-height);
+  overflow: visible;
 }
 
 /* ── Toolbar ── */
