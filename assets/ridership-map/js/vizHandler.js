@@ -2,14 +2,56 @@ import { render } from "./vega-lite.js";
 import { Metric } from "./mapOptions.js";
 
 export async function drawViz(stopData, stopIds, metric = Metric.Total) {
-  const CHART_HEIGHT = 190;
+  updateStatsPanel(stopData, stopIds);
+  drawCharts(stopData, stopIds, metric);
+}
 
-  const viz1Html = document.getElementById("viz1");
-  const viz2Html = document.getElementById("viz2");
+function updateStatsPanel(stopData, stopIds) {
+  const statRidership = document.getElementById("statRidership");
+  const statPerBus = document.getElementById("statPerBus");
+  const statStops = document.getElementById("statStops");
+  const statRoutes = document.getElementById("statRoutes");
 
   if (!stopIds || stopIds.size === 0) {
-    viz1Html.innerHTML = '<div class="border h-100 text-center align-content-center">Click a location on the map to see more information</div>';
-    viz2Html.innerHTML = viz1Html.innerHTML;
+    statRidership.textContent = "—";
+    statPerBus.textContent = "—";
+    statStops.textContent = "—";
+    statRoutes.textContent = "—";
+    return;
+  }
+
+  let totalRiders = 0;
+  const routeBuses = {};
+  const routeSet = new Set();
+
+  for (const stopId of stopIds) {
+    totalRiders += stopData.getTotalRiders(stopId);
+    for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
+      routeSet.add(routeId);
+      const buses = stopData.getNumBuses(stopId, routeId);
+      routeBuses[routeId] = Math.max(routeBuses[routeId] ?? 0, buses);
+    }
+  }
+
+  const totalBuses = Object.values(routeBuses).reduce((sum, b) => sum + b, 0);
+  const ridersPerBus = totalBuses > 0 ? totalRiders / totalBuses : 0;
+  const displayRiders = totalRiders < 10 ? Math.round(totalRiders * 10) / 10 : Math.round(totalRiders);
+
+  statRidership.textContent = displayRiders.toLocaleString();
+  statPerBus.textContent = ridersPerBus.toFixed(1);
+  statStops.textContent = stopIds.size;
+  statRoutes.textContent = routeSet.size;
+}
+
+async function drawCharts(stopData, stopIds, metric) {
+  const CHART_HEIGHT = 190;
+
+  const chart1Html = document.getElementById("chart1");
+  const chart2Html = document.getElementById("chart2");
+
+  if (!stopIds || stopIds.size === 0) {
+    chart1Html.innerHTML = '<div class="border h-100 text-center align-content-center">Click a location on the map to see more information</div>';
+    chart2Html.innerHTML = chart1Html.innerHTML;
     return;
   }
 
@@ -32,7 +74,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
     }
   }
 
-  const viz1 = {
+  const chart1 = {
     mark: "bar",
     data: { values: stopValues },
     transform: [
@@ -88,7 +130,7 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
     title: "Daily Boardings By Route"
   };
 
-  const viz2 = {
+  const chart2 = {
     mark: "bar",
     data: { values: stopValues },
     transform: [
@@ -152,47 +194,9 @@ export async function drawViz(stopData, stopIds, metric = Metric.Total) {
     title: "Daily Boardings By Stop",
   };
 
-  viz1Html.innerHTML = null;
-  await render(viz1, viz1Html);
-  viz2Html.innerHTML = null;
-  await render(viz2, viz2Html);
+  chart1Html.innerHTML = null;
+  await render(chart1, chart1Html);
+  chart2Html.innerHTML = null;
+  await render(chart2, chart2Html);
   window.dispatchEvent(new Event("resize"));
-  updateStatsPanel(stopData, stopIds);
-}
-
-function updateStatsPanel(stopData, stopIds) {
-  const statRidership = document.getElementById("statRidership");
-  const statPerBus = document.getElementById("statPerBus");
-  const statStops = document.getElementById("statStops");
-  const statRoutes = document.getElementById("statRoutes");
-
-  if (!stopIds || stopIds.size === 0) {
-    statRidership.textContent = "—";
-    statPerBus.textContent = "—";
-    statStops.textContent = "—";
-    statRoutes.textContent = "—";
-    return;
-  }
-
-  let totalRiders = 0;
-  const routeBuses = {};
-  const routeSet = new Set();
-
-  for (const stopId of stopIds) {
-    totalRiders += stopData.getTotalRiders(stopId);
-    for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
-      routeSet.add(routeId);
-      const buses = stopData.getNumBuses(stopId, routeId);
-      routeBuses[routeId] = Math.max(routeBuses[routeId] ?? 0, buses);
-    }
-  }
-
-  const totalBuses = Object.values(routeBuses).reduce((sum, b) => sum + b, 0);
-  const ridersPerBus = totalBuses > 0 ? totalRiders / totalBuses : 0;
-  const displayRiders = totalRiders < 10 ? Math.round(totalRiders * 10) / 10 : Math.round(totalRiders);
-
-  statRidership.textContent = displayRiders.toLocaleString();
-  statPerBus.textContent = ridersPerBus.toFixed(1);
-  statStops.textContent = stopIds.size;
-  statRoutes.textContent = routeSet.size;
 }

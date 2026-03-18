@@ -35,6 +35,12 @@ async function reloadDataset() {
   clickCallback();
 }
 
+// Bind the charts close button
+document.getElementById('chartsCloseBtn').addEventListener('click', () => {
+  document.getElementById('chartsPanel').classList.remove('open');
+  document.getElementById('map-container').classList.remove('charts-open');
+});
+
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");
 const walkTimeLabel = document.getElementById("walkTimeLabel");

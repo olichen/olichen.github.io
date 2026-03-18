@@ -57,6 +57,7 @@
   display: flex;
   border-top: 1px solid var(--border);
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* ── Stats panel ── */
@@ -103,15 +104,10 @@
   flex: 1;
   min-width: 350px;
   padding: 8px;
-}
-
-.chart-pane + .chart-pane {
   border-left: 1px solid var(--border);
 }
 
-/* Explicit height so Vega-Lite reads a valid size even when the panel is
-   collapsed and overflow:hidden hides the charts visually. */
-#viz1, #viz2 {
+.chart {
   height: var(--chart-height);
   min-width: var(--chart-min-width);
 }
