@@ -9,16 +9,23 @@ import { StopData } from "./stopData.js";
 import { ScatterplotHandler } from "./scatterplotHandler.js";
 import { ClickHandler } from "./clickHandler.js";
 import { drawViz } from "./vizHandler.js";
+import { PanelHandler } from "./panelHandler.js";
 import { Dataset, Metric, TimePeriod, RidershipType, VizType, MapOptions } from "./mapOptions.js";
 
 // Initialize everything
 const mapOptions = new MapOptions();
-const map = new LMap("map");
+const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
+const map = new LMap("map", panelHandler);
 let stopData = await StopData.createInstance(mapOptions);
 let stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
 const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clickCallback);
 
+let chartsEverOpened = false;
 function clickCallback() {
+  if (!chartsEverOpened) {
+    panelHandler.openCharts();
+    chartsEverOpened = true;
+  }
   drawViz(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
@@ -36,10 +43,7 @@ async function reloadDataset() {
 }
 
 // Bind the charts close button
-document.getElementById('chartsCloseBtn').addEventListener('click', () => {
-  document.getElementById('chartsPanel').classList.remove('open');
-  document.getElementById('map-container').classList.remove('charts-open');
-});
+document.getElementById('chartsCloseBtn').addEventListener('click', () => panelHandler.closeCharts());
 
 // Bind the walk time slider
 const walkTimeInput = document.getElementById("walkTimeInput");

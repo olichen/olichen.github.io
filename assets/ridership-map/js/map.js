@@ -6,7 +6,7 @@ export class LMap {
   #topLeft;
   #bottomRight;
 
-  constructor(element_id) {
+  constructor(element_id, panelHandler) {
     // map found here: https://leaflet-extras.github.io/leaflet-providers/preview/
     const mapUrl = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
     const mapAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
@@ -71,18 +71,13 @@ export class LMap {
     }).observe(toolbar);
 
     // Add a settings button (topright, first = top)
-    const toolbarPanel = document.getElementById('toolbarPanel');
     const settings = L.control({ position: 'topright' });
     settings.onAdd = () => {
       const btn = L.DomUtil.create('a', 'leaflet-bar leaflet-control settings-btn');
       btn.innerHTML = '⚙';
       btn.title = 'Settings';
       btn.href = '#';
-      btn.onclick = (e) => {
-        e.preventDefault();
-        toolbarPanel.classList.toggle('open');
-        mapContainer.classList.toggle('toolbar-open');
-      };
+      btn.onclick = (e) => { e.preventDefault(); panelHandler.toggleToolbar(); };
       L.DomEvent.disableClickPropagation(btn);
       return btn;
     };
@@ -95,16 +90,7 @@ export class LMap {
       btn.innerHTML = '📊';
       btn.title = 'Chart';
       btn.href = '#';
-      btn.onclick = (e) => {
-        e.preventDefault();
-        const panel = document.getElementById('chartsPanel');
-        const container = document.getElementById('map-container');
-        panel.classList.toggle('open');
-        container.classList.toggle('charts-open');
-        if (panel.classList.contains('open')) {
-          setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
-        }
-      };
+      btn.onclick = (e) => { e.preventDefault(); panelHandler.toggleCharts(); };
       L.DomEvent.disableClickPropagation(btn);
       return btn;
     };
