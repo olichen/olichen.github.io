@@ -16,7 +16,6 @@ permalink: /ridership-map/
 
   <!-- Toolbar panel — overlays the map top, open by default -->
   <div class="toolbar-panel open" id="toolbarPanel">
-    <div class="toolbar-panel-inner">
     <div class="toolbar" id="toolbar">
 
       <div class="toolbar-walk">
@@ -88,7 +87,6 @@ permalink: /ridership-map/
 
       </div>
     </div>
-    </div>
   </div>
 
   <div id="map"></div>
@@ -127,13 +125,6 @@ permalink: /ridership-map/
 </div>
 
 <script type="module" src="/assets/dist/index.js"></script>
-<script>
-  document.getElementById('chartsCloseBtn').addEventListener('click', () => {
-    document.getElementById('chartsPanel').classList.remove('open');
-    document.getElementById('map-container').classList.remove('charts-open');
-  });
-</script>
-
 
 </body>
 </html>

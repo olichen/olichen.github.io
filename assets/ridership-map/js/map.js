@@ -64,7 +64,10 @@ export class LMap {
     const toolbar = document.getElementById('toolbar');
     const mapContainer = document.getElementById('map-container');
     new ResizeObserver(([entry]) => {
+      // Remove the animate, wait a tick for the height to actually update, then add it back to trigger the transition
+      mapContainer.classList.remove('animate');
       mapContainer.style.setProperty('--toolbar-actual-height', entry.contentRect.height + 12 + 'px');
+      setTimeout(() => mapContainer.classList.add('animate'), 0);
     }).observe(toolbar);
 
     // Add a settings button (topright, first = top)
@@ -106,7 +109,6 @@ export class LMap {
       return btn;
     };
     chart.addTo(this.#map);
-
   }
 
   createGroup() {

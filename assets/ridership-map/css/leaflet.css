@@ -18,6 +18,10 @@
   top: var(--toolbar-actual-height, 0);
 }
 
+#map-container.animate .leaflet-top {
+  transition: top var(--ease);
+}
+
 /* ── Legend ── */
 .legend {
   background: rgba(255, 255, 255, 0.8);

@@ -9,7 +9,7 @@
   --chart-height: 333px;   /* panel-open - 1px border - 8px*2 padding */
   --chart-min-width: 284px;
   --border: #dee2e6;
-  --ease: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --ease: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── Page layout ── */
@@ -25,24 +25,18 @@ html, body {
 /* ── Toolbar panel ── */
 .toolbar-panel {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--ease);
-  overflow: hidden;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--toolbar-actual-height, 0px));
+  transition: top var(--ease);
   background: #fff;
   z-index: 500;
 }
 
 .toolbar-panel.open {
-  grid-template-rows: 1fr;
-  overflow: visible;
+  top: 0;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.toolbar-panel-inner {
-  min-height: 0;
 }
 
 /* ── Toolbar ── */
