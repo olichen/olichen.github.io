@@ -6,9 +6,11 @@ export class HeatmapDrawer {
   #stopData;
   #mapOptions;
   #group;
+  #bins;  // [{ nx, ny, contributions: [{stopId, weight}] }]
+  #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 150;
+  static #HEX_RADIUS_METERS = 200;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
@@ -21,17 +23,13 @@ export class HeatmapDrawer {
     this.#mapOptions = mapOptions;
 
     this.#initStops();
-    this.updateStops();
+    this.#updatePositions();
+    this.#updateColors();
 
-    map.on("zoomend", () => this.updateStops());
-  }
-
-  #initStops() {
-    this.#group = this.#map.createGroup();
+    map.on("zoomend", () => this.#updatePositions());
   }
 
   // Convert the geographic radius to pixels using the map's current projection.
-  // Projects two reference points a known distance apart and scales accordingly.
   #hexRadius() {
     const refA = this.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON);
     const refB = this.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON + 0.1);
@@ -40,31 +38,34 @@ export class HeatmapDrawer {
     return (refPixels / refMeters) * HeatmapDrawer.#HEX_RADIUS_METERS;
   }
 
-  // Spread a stop's usage across a grid of nearby sample points weighted by a
-  // 2D Gaussian, normalized so the total contributed usage equals the original.
-  #gaussianSamples(cx, cy, usage, sigma) {
+  // Returns normalized Gaussian offsets (weights summing to 1) for a given sigma.
+  // Computed once and reused for every stop.
+  #gaussianOffsets(sigma) {
     const range = Math.ceil(2 * sigma);
     const step = sigma * 0.5;
-    const samples = [];
+    const offsets = [];
     let totalWeight = 0;
 
     for (let dx = -range; dx <= range; dx += step) {
       for (let dy = -range; dy <= range; dy += step) {
         const w = Math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
-        samples.push({ x: cx + dx, y: cy + dy, w });
+        offsets.push({ dx, dy, w });
         totalWeight += w;
       }
     }
 
-    return samples.map(s => ({ x: s.x, y: s.y, usage: usage * s.w / totalWeight }));
+    for (const o of offsets) o.w /= totalWeight;
+    return offsets;
   }
 
-  updateStops() {
+  // Runs once: generates the hexbin grid and precomputes per-bin stop contributions.
+  // Bin centers are stored normalized (in units of the reference radius) so they
+  // can be rescaled to any zoom level in updateStops() without re-binning.
+  #initStops() {
+    this.#group = this.#map.createGroup();
+
     const radius = this.#hexRadius();
     const sigma = radius * 1.2;
-
-    // Project the anchor to pixels — all sample coordinates are expressed relative
-    // to this so the hexbin lattice stays geographically fixed across zoom levels.
     const anchor = this.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON);
 
     const hexbinGenerator = d3Hexbin()
@@ -72,28 +73,62 @@ export class HeatmapDrawer {
       .x(d => d.x)
       .y(d => d.y);
 
+    const offsets = this.#gaussianOffsets(sigma);
+
     const samples = [];
     for (const stop of this.#stopData.stops) {
       const point = this.#map.latLngToPoint(stop.stop_lat, stop.stop_lon);
-      const usage = this.#stopData.getStopUsage(stop.stop_id, this.#mapOptions.metric);
-      if (usage <= 0) continue;
-      samples.push(...this.#gaussianSamples(point.x - anchor.x, point.y - anchor.y, usage, sigma));
+      const relX = point.x - anchor.x;
+      const relY = point.y - anchor.y;
+      for (const { dx, dy, w } of offsets) {
+        samples.push({ x: relX + dx, y: relY + dy, stopId: stop.stop_id, weight: w });
+      }
     }
 
-    const bins = hexbinGenerator(samples);
+    const rawBins = hexbinGenerator(samples);
 
-    const maxValue = d3.max(bins, bin => d3.sum(bin, d => d.usage)) || 1;
-    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxValue / 2]);
+    // Aggregate normalized Gaussian weights per stop per bin
+    this.#bins = rawBins.map(bin => {
+      const stopWeights = {};
+      for (const s of bin) {
+        stopWeights[s.stopId] = (stopWeights[s.stopId] || 0) + s.weight;
+      }
+      return {
+        nx: bin.x / radius,
+        ny: bin.y / radius,
+        contributions: Object.entries(stopWeights).map(([stopId, weight]) => ({ stopId, weight }))
+      };
+    });
 
-    this.#group.selectAll("path")
-      .data(bins)
+    this.#paths = this.#group.selectAll("path")
+      .data(this.#bins)
       .join("path")
-      .attr("d", hexbinGenerator.hexagon())
-      .attr("transform", d => `translate(${d.x + anchor.x}, ${d.y + anchor.y})`)
-      .attr("fill", d => colorScale(d3.sum(d, p => p.usage)))
       .attr("stroke", "white")
       .attr("stroke-width", 0.5)
       .attr("opacity", 0.7);
+  }
+
+  #updatePositions() {
+    if (!this.#bins) return;
+    const radius = this.#hexRadius();
+    const anchor = this.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON);
+    this.#paths
+      .attr("d", d3Hexbin().hexagon(radius))
+      .attr("transform", d => `translate(${d.nx * radius + anchor.x}, ${d.ny * radius + anchor.y})`);
+  }
+
+  #updateColors() {
+    if (!this.#bins) return;
+    const getBinUsage = bin => d3.sum(bin.contributions, c =>
+      c.weight * this.#stopData.getStopUsage(c.stopId, this.#mapOptions.metric)
+    );
+    const maxValue = d3.max(this.#bins, getBinUsage) || 1;
+    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxValue / 2]);
+    this.#paths.attr("fill", d => colorScale(getBinUsage(d)));
+  }
+
+  updateStops() {
+    this.#updateColors();
   }
 
   highlightStops(stopIds) {
