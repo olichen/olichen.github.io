@@ -2,7 +2,7 @@ export class ClickHandler {
   #map;
   #stopData;
   #stopGroup;
-  #clickCallback;
+  #chartsHandler;
 
   #clickLatLon = { lat: 0, lon: 0 };
   #walkTime = 10;
@@ -11,11 +11,11 @@ export class ClickHandler {
   clickData;
   clickStops;
 
-  constructor(map, stopData, stopGroup, clickCallback = null) {
+  constructor(map, stopData, stopGroup, chartsHandler) {
     this.#map = map;
     this.#stopData = stopData;
     this.#stopGroup = stopGroup;
-    this.#clickCallback = clickCallback ?? (() => null);
+    this.#chartsHandler = chartsHandler;
 
     const clickGroup = map.createGroup();
     this.#clickCircle = clickGroup.append("circle")
@@ -35,7 +35,6 @@ export class ClickHandler {
       this.placeClick();
       this.setClickRadius();
       this.getStops();
-      this.#clickCallback();
     });
 
     this.#map.on("zoomend", () => {
@@ -53,7 +52,6 @@ export class ClickHandler {
     this.#walkTime = walkTime;
     this.setClickRadius();
     this.getStops();
-    this.#clickCallback();
   }
 
   setClickRadius() {
@@ -103,5 +101,6 @@ export class ClickHandler {
     }
     this.#stopGroup.selectAll("circle").data(this.#stopData.stops, d => d.stop_id)
       .attr("fill", d => this.clickStops.has(d.stop_id) ? "red" : "steelblue");
+    this.#chartsHandler.update(this.clickStops);
   }
 }

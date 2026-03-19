@@ -8,7 +8,7 @@ import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
 import { ScatterplotHandler } from "./scatterplotHandler.js";
 import { ClickHandler } from "./clickHandler.js";
-import { updateChartsPanel } from "./chartsHandler.js";
+import { ChartsHandler } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
 import { Dataset, Metric, TimePeriod, RidershipType, VizType, MapOptions } from "./mapOptions.js";
 
@@ -17,30 +17,27 @@ const mapOptions = new MapOptions();
 const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
 const map = new LMap("map", panelHandler);
 let stopData = await StopData.createInstance(mapOptions);
+let chartsHandler = new ChartsHandler(stopData, mapOptions, panelHandler);
 let stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
-const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clickCallback);
-
-function clickCallback() {
-  panelHandler.openCharts();
-  updateChartsPanel(stopData, clickHandler.clickStops, mapOptions.metric);
-}
+const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, chartsHandler);
 
 panelHandler.setOnCloseCharts(() => {
   clickHandler.reset();
-  updateChartsPanel(stopData, new Set(), mapOptions.metric);
+  chartsHandler.update(new Set());
 });
 
-updateChartsPanel(stopData, new Set(), mapOptions.metric);
+chartsHandler.update(new Set());
 
 async function reloadDataset() {
   stopHandler.destroy();
   mapOptions.clearRoutes();
   stopData = await StopData.createInstance(mapOptions);
+  chartsHandler.setStopData(stopData);
   stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
   clickHandler.setStopData(stopData, stopHandler.stopGroup);
   rebuildRouteDropdown();
   clickHandler.getStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 }
 
 // Bind the charts close button
@@ -62,14 +59,14 @@ metricTotal.onclick = () => {
   metricTotal.classList.add("active");
   metricPerBus.classList.remove("active");
   stopHandler.updateStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 };
 metricPerBus.onclick = () => {
   mapOptions.setMetric(Metric.PerBus);
   metricPerBus.classList.add("active");
   metricTotal.classList.remove("active");
   stopHandler.updateStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 };
 
 // Bind the time period checkboxes
@@ -79,7 +76,7 @@ for (const [name, value] of Object.entries(TimePeriod)) {
     mapOptions.setTimePeriodActive(value, e.target.checked);
     stopHandler.updateStops();
     clickHandler.getStops();
-    clickCallback();
+    chartsHandler.update(clickHandler.clickStops);
   };
 }
 
@@ -90,7 +87,7 @@ for (const [name, value] of Object.entries(RidershipType)) {
     mapOptions.setRidershipTypeActive(value, e.target.checked);
     stopHandler.updateStops();
     clickHandler.getStops();
-    clickCallback();
+    chartsHandler.update(clickHandler.clickStops);
   };
 }
 
@@ -115,7 +112,7 @@ function rebuildRouteDropdown() {
       mapOptions.setRoute(routeNum, e.target.checked);
       stopHandler.updateStops();
       clickHandler.getStops();
-      clickCallback();
+      chartsHandler.update(clickHandler.clickStops);
     }
   }
 }
@@ -130,14 +127,14 @@ vizTypeScatterplot.onclick = () => {
   vizTypeScatterplot.classList.add("active");
   vizTypeHeatmap.classList.remove("active");
   stopHandler.updateStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 };
 vizTypeHeatmap.onclick = () => {
   mapOptions.setVizType(VizType.Heatmap);
   vizTypeHeatmap.classList.add("active");
   vizTypeScatterplot.classList.remove("active");
   stopHandler.updateStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 };
 
 // Bind the dataset dropdown
@@ -167,7 +164,7 @@ routeAllButton.onclick = e => {
   }
   stopHandler.updateStops();
   clickHandler.getStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 }
 
 const routeNoneButton = document.getElementById("routeNone");
@@ -180,5 +177,5 @@ routeNoneButton.onclick = e => {
   }
   stopHandler.updateStops();
   clickHandler.getStops();
-  clickCallback();
+  chartsHandler.update(clickHandler.clickStops);
 }
