@@ -20,12 +20,8 @@ let stopData = await StopData.createInstance(mapOptions);
 let stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
 const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clickCallback);
 
-let chartsEverOpened = false;
 function clickCallback() {
-  if (!chartsEverOpened) {
-    panelHandler.openCharts();
-    chartsEverOpened = true;
-  }
+  panelHandler.openCharts();
   drawViz(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
