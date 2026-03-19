@@ -8,7 +8,7 @@ import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
 import { ScatterplotHandler } from "./scatterplotHandler.js";
 import { ClickHandler } from "./clickHandler.js";
-import { drawViz } from "./vizHandler.js";
+import { updateChartsPanel } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
 import { Dataset, Metric, TimePeriod, RidershipType, VizType, MapOptions } from "./mapOptions.js";
 
@@ -22,10 +22,10 @@ const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, clic
 
 function clickCallback() {
   panelHandler.openCharts();
-  drawViz(stopData, clickHandler.clickStops, mapOptions.metric);
+  updateChartsPanel(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
-drawViz(stopData, new Set(), mapOptions.metric);
+updateChartsPanel(stopData, new Set(), mapOptions.metric);
 
 async function reloadDataset() {
   stopHandler.destroy();

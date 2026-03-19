@@ -1,7 +1,7 @@
 import { render } from "./vega-lite.js";
 import { Metric } from "./mapOptions.js";
 
-export async function drawViz(stopData, stopIds, metric = Metric.Total) {
+export async function updateChartsPanel(stopData, stopIds, metric = Metric.Total) {
   updateStatsPanel(stopData, stopIds);
   drawCharts(stopData, stopIds, metric);
 }
