@@ -25,6 +25,11 @@ function clickCallback() {
   updateChartsPanel(stopData, clickHandler.clickStops, mapOptions.metric);
 }
 
+panelHandler.setOnCloseCharts(() => {
+  clickHandler.reset();
+  updateChartsPanel(stopData, new Set(), mapOptions.metric);
+});
+
 updateChartsPanel(stopData, new Set(), mapOptions.metric);
 
 async function reloadDataset() {

@@ -75,6 +75,12 @@ export class ClickHandler {
     return Math.sqrt(deltaX * deltaX + deltaY * deltaY)
   }
 
+  reset() {
+    this.#clickLatLon = { lat: 0, lon: 0 };
+    this.placeClick();
+    this.getStops();
+  }
+
   getStops() {
     this.clickData = {};
     this.clickStops = new Set();

@@ -2,6 +2,7 @@ export class PanelHandler {
   #mapContainer;
   #toolbarPanel;
   #chartsPanel;
+  #onCloseCharts = null;
 
   constructor(mapContainerId, toolbarPanelId, chartsPanelId) {
     this.#mapContainer = document.getElementById(mapContainerId);
@@ -29,9 +30,14 @@ export class PanelHandler {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 260);
   }
 
+  setOnCloseCharts(cb) {
+    this.#onCloseCharts = cb;
+  }
+
   closeCharts() {
     this.#chartsPanel.classList.remove('open');
     this.#mapContainer.classList.remove('charts-open');
+    this.#onCloseCharts?.();
   }
 
   toggleCharts() {

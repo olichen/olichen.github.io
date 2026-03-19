@@ -2,11 +2,11 @@ import { render } from "./vega-lite.js";
 import { Metric } from "./mapOptions.js";
 
 export async function updateChartsPanel(stopData, stopIds, metric = Metric.Total) {
-  updateStatsPanel(stopData, stopIds);
+  updateStats(stopData, stopIds);
   drawCharts(stopData, stopIds, metric);
 }
 
-function updateStatsPanel(stopData, stopIds) {
+function updateStats(stopData, stopIds) {
   const statRidership = document.getElementById("statRidership");
   const statPerBus = document.getElementById("statPerBus");
   const statStops = document.getElementById("statStops");
