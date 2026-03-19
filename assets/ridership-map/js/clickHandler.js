@@ -1,7 +1,7 @@
 export class ClickHandler {
   #map;
   #stopData;
-  #scatterplotDrawer;
+  #vizDrawer;
   #chartsHandler;
 
   #clickLatLon = { lat: 0, lon: 0 };
@@ -11,10 +11,10 @@ export class ClickHandler {
   clickData;
   clickStops;
 
-  constructor(map, stopData, scatterplotDrawer, chartsHandler) {
+  constructor(map, stopData, vizDrawer, chartsHandler) {
     this.#map = map;
     this.#stopData = stopData;
-    this.#scatterplotDrawer = scatterplotDrawer;
+    this.#vizDrawer = vizDrawer;
     this.#chartsHandler = chartsHandler;
 
     const clickGroup = map.createGroup();
@@ -43,9 +43,9 @@ export class ClickHandler {
     });
   }
 
-  setStopData(stopData, scatterplotDrawer) {
+  setStopData(stopData, vizDrawer) {
     this.#stopData = stopData;
-    this.#scatterplotDrawer = scatterplotDrawer;
+    this.#vizDrawer = vizDrawer;
   }
 
   setWalkTime(walkTime) {
@@ -99,7 +99,7 @@ export class ClickHandler {
         }
       }
     }
-    this.#scatterplotDrawer.highlightStops(this.clickStops);
+    this.#vizDrawer.highlightStops(this.clickStops);
     this.#chartsHandler.update(this.clickStops);
   }
 }

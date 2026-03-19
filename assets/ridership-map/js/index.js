@@ -6,7 +6,7 @@ import '../css/charts-panel.css';
 import '../css/leaflet.css';
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
-import { ScatterplotDrawer } from "./scatterplotDrawer.js";
+import { VisualizationDrawer } from "./visualizationDrawer.js";
 import { ClickHandler } from "./clickHandler.js";
 import { ChartsHandler } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
@@ -18,8 +18,8 @@ const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPa
 const map = new LMap("map", panelHandler);
 let stopData = await StopData.createInstance(mapOptions);
 let chartsHandler = new ChartsHandler(stopData, mapOptions, panelHandler);
-let stopHandler = new ScatterplotDrawer(map, stopData, mapOptions);
-const clickHandler = new ClickHandler(map, stopData, stopHandler, chartsHandler);
+let vizDrawer = new VisualizationDrawer(map, stopData, mapOptions);
+const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler);
 
 panelHandler.setOnCloseCharts(() => {
   clickHandler.reset();
@@ -29,12 +29,11 @@ panelHandler.setOnCloseCharts(() => {
 chartsHandler.update(new Set());
 
 async function reloadDataset() {
-  stopHandler.destroy();
   mapOptions.clearRoutes();
   stopData = await StopData.createInstance(mapOptions);
   chartsHandler.setStopData(stopData);
-  stopHandler = new ScatterplotDrawer(map, stopData, mapOptions);
-  clickHandler.setStopData(stopData, stopHandler);
+  vizDrawer.setStopData(stopData);
+  clickHandler.setStopData(stopData, vizDrawer);
   rebuildRouteDropdown();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
@@ -58,14 +57,14 @@ metricTotal.onclick = () => {
   mapOptions.setMetric(Metric.Total);
   metricTotal.classList.add("active");
   metricPerBus.classList.remove("active");
-  stopHandler.updateStops();
+  vizDrawer.updateStops();
   chartsHandler.update(clickHandler.clickStops);
 };
 metricPerBus.onclick = () => {
   mapOptions.setMetric(Metric.PerBus);
   metricPerBus.classList.add("active");
   metricTotal.classList.remove("active");
-  stopHandler.updateStops();
+  vizDrawer.updateStops();
   chartsHandler.update(clickHandler.clickStops);
 };
 
@@ -74,7 +73,7 @@ for (const [name, value] of Object.entries(TimePeriod)) {
   const checkbox = document.getElementById(`tp${value}`);
   checkbox.onchange = (e) => {
     mapOptions.setTimePeriodActive(value, e.target.checked);
-    stopHandler.updateStops();
+    vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
   };
@@ -85,7 +84,7 @@ for (const [name, value] of Object.entries(RidershipType)) {
   const checkbox = document.getElementById(`rt${name}`);
   checkbox.onchange = (e) => {
     mapOptions.setRidershipTypeActive(value, e.target.checked);
-    stopHandler.updateStops();
+    vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
   };
@@ -110,7 +109,7 @@ function rebuildRouteDropdown() {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.onchange = (e) => {
       mapOptions.setRoute(routeNum, e.target.checked);
-      stopHandler.updateStops();
+      vizDrawer.updateStops();
       clickHandler.getStops();
       chartsHandler.update(clickHandler.clickStops);
     }
@@ -126,14 +125,18 @@ vizTypeScatterplot.onclick = () => {
   mapOptions.setVizType(VizType.Scatterplot);
   vizTypeScatterplot.classList.add("active");
   vizTypeHeatmap.classList.remove("active");
-  stopHandler.updateStops();
+  vizDrawer.setVizType(VizType.Scatterplot);
+  clickHandler.setStopData(stopData, vizDrawer);
+  clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 };
 vizTypeHeatmap.onclick = () => {
   mapOptions.setVizType(VizType.Heatmap);
   vizTypeHeatmap.classList.add("active");
   vizTypeScatterplot.classList.remove("active");
-  stopHandler.updateStops();
+  vizDrawer.setVizType(VizType.Heatmap);
+  clickHandler.setStopData(stopData, vizDrawer);
+  clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 };
 
@@ -162,7 +165,7 @@ routeAllButton.onclick = e => {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = true;
   }
-  stopHandler.updateStops();
+  vizDrawer.updateStops();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 }
@@ -175,7 +178,7 @@ routeNoneButton.onclick = e => {
     const checkbox = document.getElementById(`route${routeNum}`);
     checkbox.checked = false;
   }
-  stopHandler.updateStops();
+  vizDrawer.updateStops();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 }
