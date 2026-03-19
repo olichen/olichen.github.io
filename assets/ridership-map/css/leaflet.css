@@ -4,7 +4,7 @@
  * Depends on custom properties defined in layout.css.
  */
 
-/* ── Controls positioning ── */
+/* -- Controls positioning -- */
 #map .leaflet-bottom {
   bottom: 0;
   transition: bottom var(--ease);
@@ -22,12 +22,12 @@
   transition: top var(--ease);
 }
 
-/* ── Legend ── */
+/* -- Legend -- */
 .legend {
   background: rgba(255, 255, 255, 0.8);
 }
 
-/* ── Map buttons (fullscreen, chart, settings) ── */
+/* -- Map buttons (fullscreen, chart, settings) -- */
 .fullscreen-btn,
 .chart-btn,
 .settings-btn {

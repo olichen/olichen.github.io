@@ -3,7 +3,7 @@
  * CSS custom properties used across all ridership-map stylesheets are defined here.
  */
 
-/* ── Custom properties ── */
+/* -- Custom properties -- */
 :root {
   --panel-open-height: 350px;
   --chart-height: 333px;   /* panel-open - 1px border - 8px*2 padding */
@@ -12,7 +12,7 @@
   --ease: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Page layout ── */
+/* -- Page layout -- */
 html, body {
   height: 100%;
   margin: 0;
@@ -22,7 +22,7 @@ html, body {
   flex-direction: column;
 }
 
-/* ── Toolbar panel ── */
+/* -- Toolbar panel -- */
 .toolbar-panel {
   position: absolute;
   left: 0;
@@ -39,7 +39,7 @@ html, body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Toolbar ── */
+/* -- Toolbar -- */
 .toolbar {
   flex-shrink: 0;
   padding: 6px 10px;
@@ -72,7 +72,7 @@ html, body {
   overflow-y: scroll;
 }
 
-/* ── Map ── */
+/* -- Map -- */
 #map-container {
   flex: 1;
   min-height: 0;
@@ -84,7 +84,7 @@ html, body {
   height: 100%;
 }
 
-/* ── Utilities ── */
+/* -- Utilities -- */
 .no-radius {
   border-radius: 0 !important;
 }

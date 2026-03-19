@@ -3,14 +3,14 @@
  * Depends on custom properties defined in layout.css.
  */
 
-/* ── Panel ── */
+/* -- Panel -- */
 /* Overlays the bottom of the map — the map never resizes */
 .charts-panel {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 0;                        /* collapsed: fully hidden */
-  overflow: hidden;
-  transition: height var(--ease);
+  bottom: calc(-1 * var(--panel-open-height));
+  left: 0; right: 0;
+  height: var(--panel-open-height);
+  transition: bottom var(--ease);
   background: #fff;
   border-top: 2px solid var(--border);
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
@@ -20,10 +20,10 @@
 }
 
 .charts-panel.open {
-  height: var(--panel-open-height);
+  bottom: 0;
 }
 
-/* ── Close button ── */
+/* -- Close button -- */
 .charts-close-btn {
   position: absolute;
   top: 4px;
@@ -50,17 +50,16 @@
   color: #212529;
 }
 
-/* ── Body ── */
+/* -- Body -- */
 .charts-body {
-  flex: 1;
-  min-height: 0;
+  height: calc(var(--panel-open-height) - 3px); /* panel-open - 2px panel border - 1px body border */
   display: flex;
   border-top: 1px solid var(--border);
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-/* ── Stats panel ── */
+/* -- Stats panel -- */
 .stats-panel {
   flex-shrink: 0;
   width: 130px;
@@ -99,10 +98,11 @@
   line-height: 1.3;
 }
 
-/* ── Chart panes ── */
+/* -- Chart panes -- */
 .chart-pane {
   flex: 1;
   min-width: 350px;
+  max-width: 600px;
   padding: 8px;
   border-left: 1px solid var(--border);
 }
@@ -110,4 +110,9 @@
 .chart {
   height: var(--chart-height);
   min-width: var(--chart-min-width);
+}
+
+/* -- Filler -- */
+.charts-panel-filler {
+  flex: 0;
 }
