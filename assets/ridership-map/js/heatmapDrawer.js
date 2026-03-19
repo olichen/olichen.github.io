@@ -10,7 +10,10 @@ export class HeatmapDrawer {
   #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 200;
+  static #HEX_RADIUS_METERS = 100;
+
+  // Gaussian blur sigma in meters
+  static #GAUSSIAN_METERS = 100;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
@@ -65,7 +68,7 @@ export class HeatmapDrawer {
     this.#group = this.#map.createGroup();
 
     const radius = this.#hexRadius();
-    const sigma = radius * 1.2;
+    const sigma = radius * HeatmapDrawer.#GAUSSIAN_METERS / HeatmapDrawer.#HEX_RADIUS_METERS;
     const anchor = this.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON);
 
     const hexbinGenerator = d3Hexbin()
@@ -124,7 +127,9 @@ export class HeatmapDrawer {
     );
     const maxValue = d3.max(this.#bins, getBinUsage) || 1;
     const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxValue / 2]);
-    this.#paths.attr("fill", d => colorScale(getBinUsage(d)));
+    this.#paths
+      .attr("fill", d => colorScale(getBinUsage(d)))
+      .attr("display", d => getBinUsage(d) < 0.01 ? "none" : null);
   }
 
   updateStops() {
