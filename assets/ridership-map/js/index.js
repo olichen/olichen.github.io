@@ -6,7 +6,7 @@ import '../css/charts-panel.css';
 import '../css/leaflet.css';
 import { LMap } from "./map.js";
 import { StopData } from "./stopData.js";
-import { ScatterplotHandler } from "./scatterplotHandler.js";
+import { ScatterplotDrawer } from "./scatterplotDrawer.js";
 import { ClickHandler } from "./clickHandler.js";
 import { ChartsHandler } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
@@ -18,8 +18,8 @@ const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPa
 const map = new LMap("map", panelHandler);
 let stopData = await StopData.createInstance(mapOptions);
 let chartsHandler = new ChartsHandler(stopData, mapOptions, panelHandler);
-let stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
-const clickHandler = new ClickHandler(map, stopData, stopHandler.stopGroup, chartsHandler);
+let stopHandler = new ScatterplotDrawer(map, stopData, mapOptions);
+const clickHandler = new ClickHandler(map, stopData, stopHandler, chartsHandler);
 
 panelHandler.setOnCloseCharts(() => {
   clickHandler.reset();
@@ -33,8 +33,8 @@ async function reloadDataset() {
   mapOptions.clearRoutes();
   stopData = await StopData.createInstance(mapOptions);
   chartsHandler.setStopData(stopData);
-  stopHandler = new ScatterplotHandler(map, stopData, mapOptions);
-  clickHandler.setStopData(stopData, stopHandler.stopGroup);
+  stopHandler = new ScatterplotDrawer(map, stopData, mapOptions);
+  clickHandler.setStopData(stopData, stopHandler);
   rebuildRouteDropdown();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);

@@ -1,7 +1,7 @@
 export class ClickHandler {
   #map;
   #stopData;
-  #stopGroup;
+  #scatterplotDrawer;
   #chartsHandler;
 
   #clickLatLon = { lat: 0, lon: 0 };
@@ -11,10 +11,10 @@ export class ClickHandler {
   clickData;
   clickStops;
 
-  constructor(map, stopData, stopGroup, chartsHandler) {
+  constructor(map, stopData, scatterplotDrawer, chartsHandler) {
     this.#map = map;
     this.#stopData = stopData;
-    this.#stopGroup = stopGroup;
+    this.#scatterplotDrawer = scatterplotDrawer;
     this.#chartsHandler = chartsHandler;
 
     const clickGroup = map.createGroup();
@@ -43,9 +43,9 @@ export class ClickHandler {
     });
   }
 
-  setStopData(stopData, stopGroup) {
+  setStopData(stopData, scatterplotDrawer) {
     this.#stopData = stopData;
-    this.#stopGroup = stopGroup;
+    this.#scatterplotDrawer = scatterplotDrawer;
   }
 
   setWalkTime(walkTime) {
@@ -99,8 +99,7 @@ export class ClickHandler {
         }
       }
     }
-    this.#stopGroup.selectAll("circle").data(this.#stopData.stops, d => d.stop_id)
-      .attr("fill", d => this.clickStops.has(d.stop_id) ? "red" : "steelblue");
+    this.#scatterplotDrawer.highlightStops(this.clickStops);
     this.#chartsHandler.update(this.clickStops);
   }
 }

@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import { Metric, VizType } from "./mapOptions.js";
+import { Metric } from "./mapOptions.js";
 
-export class ScatterplotHandler {
+export class ScatterplotDrawer {
   #map;
   #stopData;
   #mapOptions;
@@ -46,6 +46,11 @@ export class ScatterplotHandler {
 
   destroy() {
     this.stopGroup.remove();
+  }
+
+  highlightStops(stopIds) {
+    this.#circles
+      .attr("fill", d => stopIds.has(d.stop_id) ? "red" : "steelblue");
   }
 
   updateStops() {
