@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { hexbin as d3Hexbin } from "d3-hexbin";
+import { Metric } from "./mapOptions.js";
 
 export class HeatmapDrawer {
   #map;
@@ -13,7 +14,7 @@ export class HeatmapDrawer {
   static #HEX_RADIUS_METERS = 100;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 100;
+  static #GAUSSIAN_METERS = 200;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
@@ -122,14 +123,29 @@ export class HeatmapDrawer {
 
   #updateColors() {
     if (!this.#bins) return;
-    const getBinUsage = bin => d3.sum(bin.contributions, c =>
-      c.weight * this.#stopData.getStopUsage(c.stopId, this.#mapOptions.metric)
-    );
-    const maxValue = d3.max(this.#bins, getBinUsage) || 1;
-    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxValue / 2]);
+    const metric = this.#mapOptions.metric;
+    let getBinUsage;
+    if (metric === Metric.PerBus) {
+      getBinUsage = bin => {
+        // Sum Gaussian-weighted buses across all contributing stops.
+        // Stops with more buses have proportionally more influence on the result.
+        const weightedBuses = d3.sum(bin.contributions, c => c.weight * this.#stopData.getNumBuses(c.stopId));
+        if (weightedBuses === 0) return 0;
+        // Divide Gaussian-weighted total riders by Gaussian-weighted buses to get
+        // an efficiency value equivalent to pooling all nearby riders and buses.
+        return d3.sum(bin.contributions, c => c.weight * this.#stopData.getStopUsage(c.stopId, Metric.Total)) / weightedBuses;
+      };
+    } else {
+      getBinUsage = bin => d3.sum(bin.contributions, c =>
+        c.weight * this.#stopData.getStopUsage(c.stopId, metric)
+      );
+    }
+    const usages = this.#bins.map(getBinUsage);
+    const p95 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
+    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, p95]);
     this.#paths
-      .attr("fill", d => colorScale(getBinUsage(d)))
-      .attr("display", d => getBinUsage(d) < 0.01 ? "none" : null);
+      .attr("fill", (d, i) => colorScale(usages[i]))
+      .attr("display", (d, i) => usages[i] < 0.01 ? "none" : null);
   }
 
   updateStops() {
