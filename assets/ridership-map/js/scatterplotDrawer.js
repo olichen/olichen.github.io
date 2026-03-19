@@ -29,7 +29,6 @@ export class ScatterplotDrawer {
   }
 
   #initStops() {
-    const map = this.#map;
     const stopData = this.#stopData;
 
     this.stopGroup = this.#map.createGroup();
@@ -55,9 +54,9 @@ export class ScatterplotDrawer {
 
   updateStops() {
     this.#updateStopRadius();
-      this.#circles
-        .attr("cx", d => this.#getStopCx(d))
-        .attr("cy", d => this.#getStopCy(d));
+    this.#circles
+      .attr("cx", d => this.#getStopCx(d))
+      .attr("cy", d => this.#getStopCy(d));
   }
 
   #updateStopRadius() {

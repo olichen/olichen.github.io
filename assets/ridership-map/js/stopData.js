@@ -10,8 +10,12 @@ export class StopData {
   get stops() { return this.#stops; }
 
   constructor(stopData, riderData, mapOptions) {
-    this.#stops = stopData;
     this.#mapOptions = mapOptions;
+    this.#init(stopData, riderData);
+  }
+
+  #init(stopData, riderData) {
+    this.#stops = stopData;
     this.#riderData = riderData;
     this.#stopRiderData = {};
 
@@ -50,6 +54,13 @@ export class StopData {
     const stopData = d3.csvParse(await this.getFileData(`${dataFolder}/stops.txt`), d3.autoType)
     const riderData = d3.csvParse(await this.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
     return new StopData(stopData, riderData, mapOptions);
+  }
+
+  async reload() {
+    const dataFolder = `/assets/ridership-map/data/${this.#mapOptions.dataset}`;
+    const stopData = d3.csvParse(await StopData.getFileData(`${dataFolder}/stops.txt`), d3.autoType);
+    const riderData = d3.csvParse(await StopData.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
+    this.#init(stopData, riderData);
   }
 
   static async getFileData(fileName) {

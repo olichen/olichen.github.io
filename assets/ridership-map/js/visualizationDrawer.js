@@ -27,8 +27,7 @@ export class VisualizationDrawer {
     this.#drawer = this.#createDrawer();
   }
 
-  setStopData(stopData) {
-    this.#stopData = stopData;
+  reload() {
     this.#drawer.destroy();
     this.#drawer = this.#createDrawer();
   }

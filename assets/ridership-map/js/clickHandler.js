@@ -43,11 +43,6 @@ export class ClickHandler {
     });
   }
 
-  setStopData(stopData, vizDrawer) {
-    this.#stopData = stopData;
-    this.#vizDrawer = vizDrawer;
-  }
-
   setWalkTime(walkTime) {
     this.#walkTime = walkTime;
     this.setClickRadius();

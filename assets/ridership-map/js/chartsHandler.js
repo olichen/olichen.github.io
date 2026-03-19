@@ -12,10 +12,6 @@ export class ChartsHandler {
     this.#panelHandler = panelHandler;
   }
 
-  setStopData(stopData) {
-    this.#stopData = stopData;
-  }
-
   update(stopIds) {
     if (stopIds && stopIds.size > 0) {
       this.#panelHandler.openCharts();

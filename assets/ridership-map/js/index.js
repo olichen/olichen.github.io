@@ -30,10 +30,8 @@ chartsHandler.update(new Set());
 
 async function reloadDataset() {
   mapOptions.clearRoutes();
-  stopData = await StopData.createInstance(mapOptions);
-  chartsHandler.setStopData(stopData);
-  vizDrawer.setStopData(stopData);
-  clickHandler.setStopData(stopData, vizDrawer);
+  await stopData.reload();
+  vizDrawer.reload();
   rebuildRouteDropdown();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
@@ -126,7 +124,6 @@ vizTypeScatterplot.onclick = () => {
   vizTypeScatterplot.classList.add("active");
   vizTypeHeatmap.classList.remove("active");
   vizDrawer.setVizType(VizType.Scatterplot);
-  clickHandler.setStopData(stopData, vizDrawer);
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 };
@@ -135,7 +132,6 @@ vizTypeHeatmap.onclick = () => {
   vizTypeHeatmap.classList.add("active");
   vizTypeScatterplot.classList.remove("active");
   vizDrawer.setVizType(VizType.Heatmap);
-  clickHandler.setStopData(stopData, vizDrawer);
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
 };
