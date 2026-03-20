@@ -124,25 +124,12 @@ export class HeatmapDrawer {
   #updateColors() {
     if (!this.#bins) return;
     const metric = this.#mapOptions.metric;
-    let getBinUsage;
-    if (metric === Metric.PerBus) {
-      getBinUsage = bin => {
-        // Sum Gaussian-weighted buses across all contributing stops.
-        // Stops with more buses have proportionally more influence on the result.
-        const weightedBuses = d3.sum(bin.contributions, c => c.weight * this.#stopData.getNumBuses(c.stopId));
-        if (weightedBuses === 0) return 0;
-        // Divide Gaussian-weighted total riders by Gaussian-weighted buses to get
-        // an efficiency value equivalent to pooling all nearby riders and buses.
-        return d3.sum(bin.contributions, c => c.weight * this.#stopData.getStopUsage(c.stopId, Metric.Total)) / weightedBuses;
-      };
-    } else {
-      getBinUsage = bin => d3.sum(bin.contributions, c =>
-        c.weight * this.#stopData.getStopUsage(c.stopId, metric)
-      );
-    }
+    const getBinUsage = bin => d3.sum(bin.contributions, c =>
+      c.weight * this.#stopData.getStopUsage(c.stopId, metric)
+    );
     const usages = this.#bins.map(getBinUsage);
-    const p95 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
-    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, p95]);
+    const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
+    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, p99]);
     this.#paths
       .attr("fill", (d, i) => colorScale(usages[i]))
       .attr("display", (d, i) => usages[i] < 0.01 ? "none" : null);
