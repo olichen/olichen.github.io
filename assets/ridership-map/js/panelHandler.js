@@ -37,7 +37,7 @@ export class PanelHandler {
   closeCharts() {
     this.#chartsPanel.classList.remove('open');
     this.#mapContainer.classList.remove('charts-open');
-    this.#onCloseCharts?.();
+    setTimeout(() => this.#onCloseCharts?.(), 250);
   }
 
   toggleCharts() {

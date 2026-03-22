@@ -10,6 +10,16 @@
   --chart-min-width: 284px;
   --border: #dee2e6;
   --ease: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* z-index scale
+   * Leaflet controls (.leaflet-top/.leaflet-bottom) sit at 1000.
+   * --z-panel must be below toolbar so dropdowns extend over the map correctly.
+   * --z-toolbar must exceed Leaflet controls (1000) so dropdowns clear them.
+   * --z-dropdown and z-panel-close-btn only need to clear siblings within their context. */
+  --z-panel-close-btn: 1;
+  --z-dropdown:        1;
+  --z-panel:           500;
+  --z-toolbar:         1001;
 }
 
 /* -- Page layout -- */
@@ -30,7 +40,7 @@ html, body {
   top: calc(-1 * var(--toolbar-actual-height, 0px));
   transition: top var(--ease);
   background: #fff;
-  z-index: 500;
+  z-index: var(--z-toolbar);
 }
 
 .toolbar-panel.open {
@@ -64,7 +74,7 @@ html, body {
 
 /* Toolbar dropdowns must clear the Leaflet map layer */
 .toolbar .dropdown-menu {
-  z-index: 10000;
+  z-index: var(--z-dropdown);
 }
 
 .route-dropdown-menu {

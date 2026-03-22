@@ -11,7 +11,7 @@ export class HeatmapDrawer {
   #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 100;
+  static #HEX_RADIUS_METERS = 200;
 
   // Gaussian blur sigma in meters
   static #GAUSSIAN_METERS = 200;
