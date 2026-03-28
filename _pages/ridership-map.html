@@ -18,26 +18,30 @@ permalink: /ridership-map/
   <div class="toolbar-panel open" id="toolbarPanel">
     <div class="toolbar" id="toolbar">
 
-      <div class="toolbar-walk">
-        <label id="walkTimeLabel" for="walkTimeInput" class="fw-bold form-label mb-0">Walk Distance (10 minutes)</label>
-        <input id="walkTimeInput" type="range" class="form-range mb-0 walk-slider" min="1" max="20" value="10">
+      <div style="display:flex;align-items:center;gap:0.45rem">
+        <span class="tb-label">Walk</span>
+        <div class="walk-group">
+          <input type="range" id="walkTimeInput" min="1" max="20" value="10">
+          <span class="walk-val" id="walkTimeLabel">10 min</span>
+        </div>
       </div>
 
       <div class="d-flex gap-2 flex-wrap">
 
-        <div>
-          <button id="vizTypeScatterplot">Scatterplot</button>
-          <button id="vizTypeHeatmap">Heatmap</button>
+        <div style="display:flex;align-items:center;gap:0.4rem">
+          <span class="tb-label">View</span>
+          <div class="seg-control">
+            <button class="seg-btn active" id="vizTypeScatterplot">Scatterplot</button>
+            <button class="seg-btn" id="vizTypeHeatmap">Heatmap</button>
+          </div>
         </div>
 
-        <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Service Change
-          </button>
-          <div class="dropdown-menu shadow-sm py-0">
-            <button class="dropdown-item" id="datasetSpring2024">Spring 2024</button>
-            <button class="dropdown-item active" id="datasetFall2024">Fall 2024</button>
-          </div>
+        <div style="display:flex;align-items:center;gap:0.4rem">
+          <span class="tb-label">Service</span>
+          <select class="compact-select" id="datasetSelect">
+            <option value="fall2024">Fall 2024</option>
+            <option value="spring2024">Spring 2024</option>
+          </select>
         </div>
 
         <div class="dropdown">

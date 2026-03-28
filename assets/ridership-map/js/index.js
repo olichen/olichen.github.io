@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import 'leaflet/dist/leaflet.css';
 import '../css/layout.css';
+import '../css/toolbar-panel.css';
 import '../css/charts-panel.css';
 import '../css/leaflet.css';
 import { LMap } from "./map.js";
@@ -44,7 +45,7 @@ document.getElementById('chartsCloseBtn').addEventListener('click', () => panelH
 const walkTimeInput = document.getElementById("walkTimeInput");
 const walkTimeLabel = document.getElementById("walkTimeLabel");
 walkTimeInput.oninput = function() {
-  walkTimeLabel.innerHTML = `Walk Distance (${this.value} minutes)`;
+  walkTimeLabel.textContent = `${this.value} min`;
   clickHandler.setWalkTime(this.value);
 }
 
@@ -136,19 +137,10 @@ vizTypeHeatmap.onclick = () => {
   chartsHandler.update(clickHandler.clickStops);
 };
 
-// Bind the dataset dropdown
-const datasetSpring2024 = document.getElementById("datasetSpring2024");
-const datasetFall2024 = document.getElementById("datasetFall2024");
-datasetSpring2024.onclick = async () => {
-  mapOptions.setDataset(Dataset.Spring2024);
-  datasetSpring2024.classList.add("active");
-  datasetFall2024.classList.remove("active");
-  await reloadDataset();
-};
-datasetFall2024.onclick = async () => {
-  mapOptions.setDataset(Dataset.Fall2024);
-  datasetFall2024.classList.add("active");
-  datasetSpring2024.classList.remove("active");
+// Bind the dataset select
+const datasetSelect = document.getElementById("datasetSelect");
+datasetSelect.onchange = async function() {
+  mapOptions.setDataset(this.value === "spring2024" ? Dataset.Spring2024 : Dataset.Fall2024);
   await reloadDataset();
 };
 
