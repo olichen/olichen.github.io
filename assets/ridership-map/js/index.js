@@ -49,7 +49,7 @@ walkTimeInput.oninput = function() {
   clickHandler.setWalkTime(this.value);
 }
 
-// Bind the metric dropdown
+// Bind the metric seg-control
 const metricTotal = document.getElementById("metricTotal");
 const metricPerBus = document.getElementById("metricPerBus");
 metricTotal.onclick = () => {
@@ -67,22 +67,24 @@ metricPerBus.onclick = () => {
   chartsHandler.update(clickHandler.clickStops);
 };
 
-// Bind the time period checkboxes
+// Bind the time period pills
 for (const [name, value] of Object.entries(TimePeriod)) {
-  const checkbox = document.getElementById(`tp${value}`);
-  checkbox.onchange = (e) => {
-    mapOptions.setTimePeriodActive(value, e.target.checked);
+  const pill = document.getElementById(`tp${value}`);
+  pill.onclick = () => {
+    const active = pill.classList.toggle('active');
+    mapOptions.setTimePeriodActive(value, active);
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
   };
 }
 
-// Bind the ridership type checkboxes
+// Bind the ridership type pills
 for (const [name, value] of Object.entries(RidershipType)) {
-  const checkbox = document.getElementById(`rt${name}`);
-  checkbox.onchange = (e) => {
-    mapOptions.setRidershipTypeActive(value, e.target.checked);
+  const pill = document.getElementById(`rt${name}`);
+  pill.onclick = () => {
+    const active = pill.classList.toggle('active');
+    mapOptions.setRidershipTypeActive(value, active);
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);

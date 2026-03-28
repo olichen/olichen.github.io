@@ -78,6 +78,42 @@
   border-color: var(--seg-primary);
 }
 
+/* Pill toggles */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  background: var(--seg-card);
+  color: var(--seg-text);
+  cursor: pointer;
+  transition: all 0.11s;
+  white-space: nowrap;
+  user-select: none;
+}
+.pill:hover { border-color: var(--seg-primary); color: var(--seg-primary); }
+.pill.active {
+  background: var(--primary-light);
+  border-color: var(--seg-primary);
+  color: var(--seg-primary);
+  font-weight: 500;
+}
+.pill-group { display: flex; gap: 0.28rem; align-items: center; flex-wrap: wrap; }
+.tb-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; margin-left: calc(10px - 0.4rem); }
+.pill-shelf {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  background: var(--seg-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.25rem;
+  flex-wrap: wrap;
+}
+
 /* Toolbar dropdowns must clear the Leaflet map layer */
 .toolbar .dropdown-menu {
   z-index: var(--z-dropdown);

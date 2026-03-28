@@ -18,77 +18,73 @@ permalink: /ridership-map/
   <div class="toolbar-panel open" id="toolbarPanel">
     <div class="toolbar" id="toolbar">
 
-      <div style="display:flex;align-items:center;gap:0.45rem">
+      <div style="display:flex;align-items:center;gap:0.4rem">
         <span class="tb-label">Walk</span>
         <div class="walk-group">
           <input type="range" id="walkTimeInput" min="1" max="20" value="10">
           <span class="walk-val" id="walkTimeLabel">10 min</span>
         </div>
+        <div class="tb-sep"></div>
       </div>
 
-      <div class="d-flex gap-2 flex-wrap">
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span class="tb-label">View</span>
+        <div class="seg-control">
+          <button class="seg-btn active" id="vizTypeScatterplot">Scatterplot</button>
+          <button class="seg-btn" id="vizTypeHeatmap">Heatmap</button>
+        </div>
+        <div class="tb-sep"></div>
+      </div>
 
-        <div style="display:flex;align-items:center;gap:0.4rem">
-          <span class="tb-label">View</span>
-          <div class="seg-control">
-            <button class="seg-btn active" id="vizTypeScatterplot">Scatterplot</button>
-            <button class="seg-btn" id="vizTypeHeatmap">Heatmap</button>
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span class="tb-label">Service</span>
+        <select class="compact-select" id="datasetSelect">
+          <option value="fall2024">Fall 2024</option>
+          <option value="spring2024">Spring 2024</option>
+        </select>
+        <div class="tb-sep"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span class="tb-label">Metric</span>
+        <div class="seg-control">
+          <button class="seg-btn active" id="metricTotal">Riders / Day</button>
+          <button class="seg-btn" id="metricPerBus">Riders / Bus</button>
+        </div>
+        <div class="tb-sep"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span class="tb-label">Time</span>
+        <div class="pill-shelf">
+          <span class="pill active" id="tpAM">AM Peak</span>
+          <span class="pill active" id="tpMID">Daytime</span>
+          <span class="pill active" id="tpPM">PM Peak</span>
+          <span class="pill active" id="tpXEV">Evening</span>
+          <span class="pill active" id="tpXNT">Night</span>
+        </div>
+        <div class="tb-sep"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span class="tb-label">Ridership</span>
+        <div class="pill-shelf">
+          <span class="pill active" id="rtBoardings">Boardings</span>
+          <span class="pill" id="rtAlightings">Alightings</span>
+        </div>
+        <div class="tb-sep"></div>
+      </div>
+
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+          Select Routes
+        </button>
+        <div class="dropdown-menu shadow-sm py-0 route-dropdown-menu" id="routeDropdown">
+          <div class="d-flex">
+            <button id="routeAll" class="w-50 btn btn-outline-secondary btn-sm no-radius">All</button>
+            <button id="routeNone" class="w-50 btn btn-outline-secondary btn-sm no-radius">None</button>
           </div>
         </div>
-
-        <div style="display:flex;align-items:center;gap:0.4rem">
-          <span class="tb-label">Service</span>
-          <select class="compact-select" id="datasetSelect">
-            <option value="fall2024">Fall 2024</option>
-            <option value="spring2024">Spring 2024</option>
-          </select>
-        </div>
-
-        <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-            Metric
-          </button>
-          <div class="dropdown-menu shadow-sm py-0">
-            <button class="dropdown-item active" id="metricTotal">Total Per Day</button>
-            <button class="dropdown-item" id="metricPerBus">Average Per Bus</button>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-            Time Period
-          </button>
-          <div class="dropdown-menu shadow-sm p-2">
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tpAM" checked><label class="form-check-label" for="tpAM">Morning Peak</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tpMID" checked><label class="form-check-label" for="tpMID">Daytime</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tpPM" checked><label class="form-check-label" for="tpPM">Afternoon Peak</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tpXEV" checked><label class="form-check-label" for="tpXEV">Evening</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tpXNT" checked><label class="form-check-label" for="tpXNT">Night</label></div>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-            Ridership Type
-          </button>
-          <div class="dropdown-menu shadow-sm p-2">
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="rtBoardings" checked><label class="form-check-label" for="rtBoardings">Boardings</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="rtAlightings"><label class="form-check-label" for="rtAlightings">Alightings</label></div>
-          </div>
-        </div>
-
-        <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-            Select Routes
-          </button>
-          <div class="dropdown-menu shadow-sm py-0 route-dropdown-menu" id="routeDropdown">
-            <div class="d-flex">
-              <button id="routeAll" class="w-50 btn btn-outline-secondary btn-sm no-radius">All</button>
-              <button id="routeNone" class="w-50 btn btn-outline-secondary btn-sm no-radius">None</button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
