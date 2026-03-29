@@ -139,6 +139,7 @@ function rebuildRouteDropdown() {
     const item = document.createElement('div');
     item.className = `rt-item${active ? ' active' : ''}`;
     item.dataset.label = name.toLowerCase();
+    item.dataset.routeNum = routeNum;
     item.innerHTML = `<div class="rt-check"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>${name}`;
     item.addEventListener('click', () => {
       const nowActive = item.classList.toggle('active');
@@ -155,23 +156,34 @@ function rebuildRouteDropdown() {
 
 rebuildRouteDropdown();
 
-document.getElementById("routeAll").addEventListener('click', () => {
-  for (const routeNum of mapOptions.routeKeys()) mapOptions.setRoute(routeNum, true);
-  routeList.querySelectorAll('.rt-item').forEach(i => i.classList.add('active'));
-  rtUpdateCount();
-  vizDrawer.updateStops();
-  clickHandler.getStops();
-  chartsHandler.update(clickHandler.clickStops);
-});
+function routesByMidTrips(min, max = Infinity) {
+  const result = new Set();
+  for (const stop of stopData.stops)
+    for (const [routeNum, route] of Object.entries(stopData.getRoutes(stop.stop_id)))
+      for (const dataId of Object.values(route)) {
+        const t = dataId['MID']?.OBSERVED_TRIPS_IDS;
+        if (t >= min && t <= max) result.add(routeNum);
+      }
+  return result;
+}
 
-document.getElementById("routeNone").addEventListener('click', () => {
-  for (const routeNum of mapOptions.routeKeys()) mapOptions.setRoute(routeNum, false);
-  routeList.querySelectorAll('.rt-item').forEach(i => i.classList.remove('active'));
+function toggleRouteGroup(group) {
+  const allActive = [...group].every(r => mapOptions.isRouteActive(r));
+  const next = !allActive;
+  for (const routeNum of group) mapOptions.setRoute(routeNum, next);
+  routeList.querySelectorAll('.rt-item').forEach(i => {
+    if (group.has(i.dataset.routeNum)) i.classList.toggle('active', next);
+  });
   rtUpdateCount();
   vizDrawer.updateStops();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
-});
+}
+
+document.getElementById("routeAll").addEventListener('click', () => toggleRouteGroup(new Set(mapOptions.routeKeys())));
+document.getElementById("routeFrequent").addEventListener('click', () => toggleRouteGroup(routesByMidTrips(23)));
+document.getElementById("routeLocal").addEventListener('click', () => toggleRouteGroup(routesByMidTrips(11, 22)));
+document.getElementById("routeAllDay").addEventListener('click', () => toggleRouteGroup(routesByMidTrips(5, 10)));
 
 // Bind the visualization type dropdown
 const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
@@ -218,30 +230,3 @@ document.addEventListener('click', e => {
     svcPanel.classList.remove('open');
   }
 });
-
-// Bind the all/none buttons
-const routeAllButton = document.getElementById("routeAll");
-routeAllButton.onclick = e => {
-  e.stopPropagation();
-  for (const routeNum of mapOptions.routeKeys()) {
-    mapOptions.setRoute(routeNum, true);
-    const checkbox = document.getElementById(`route${routeNum}`);
-    checkbox.checked = true;
-  }
-  vizDrawer.updateStops();
-  clickHandler.getStops();
-  chartsHandler.update(clickHandler.clickStops);
-}
-
-const routeNoneButton = document.getElementById("routeNone");
-routeNoneButton.onclick = e => {
-  e.stopPropagation();
-  for (const routeNum of mapOptions.routeKeys()) {
-    mapOptions.setRoute(routeNum, false);
-    const checkbox = document.getElementById(`route${routeNum}`);
-    checkbox.checked = false;
-  }
-  vizDrawer.updateStops();
-  clickHandler.getStops();
-  chartsHandler.update(clickHandler.clickStops);
-}
