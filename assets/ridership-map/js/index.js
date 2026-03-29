@@ -91,33 +91,79 @@ for (const [name, value] of Object.entries(RidershipType)) {
   };
 }
 
-// Create the route selectors
-const routeDropdown = document.getElementById("routeDropdown");
+// Route dropdown
+const rtTrigger = document.getElementById("rtTrigger");
+const rtPanel = document.getElementById("rtPanel");
+const rtSearch = document.getElementById("rtSearch");
+const rtCount = document.getElementById("rtCount");
+const routeList = document.getElementById("routeList");
+
+function rtUpdateCount() {
+  const keys = [...mapOptions.routeKeys()];
+  const active = keys.filter(r => mapOptions.isRouteActive(r)).length;
+  rtCount.textContent = active === keys.length ? 'All' : active === 0 ? 'No' : active;
+}
+
+rtTrigger.addEventListener('click', () => {
+  rtTrigger.classList.toggle('open');
+  rtPanel.classList.toggle('open');
+  if (rtPanel.classList.contains('open')) rtSearch.focus();
+});
+
+rtSearch.addEventListener('input', () => {
+  const q = rtSearch.value.toLowerCase();
+  routeList.querySelectorAll('.rt-item').forEach(item => {
+    item.classList.toggle('hidden', !item.dataset.label.includes(q));
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('rtDropdown').contains(e.target)) {
+    rtTrigger.classList.remove('open');
+    rtPanel.classList.remove('open');
+  }
+});
 
 function rebuildRouteDropdown() {
-  const firstChild = routeDropdown.firstElementChild;
-  routeDropdown.innerHTML = "";
-  routeDropdown.appendChild(firstChild);
-  let dropdownHtml = "";
+  routeList.innerHTML = '';
   for (const [routeNum, active] of mapOptions.routeEntries()) {
-    dropdownHtml += `<div class="btn-group btn-sm d-flex" role="group">`;
-    dropdownHtml += `<input type="checkbox" class="btn-check" id="route${routeNum}" autocomplete="off" ${active ? "checked" : ""}>`;
-    dropdownHtml += `<label class="btn btn-outline-info btn-sm no-radius" for="route${routeNum}">${stopData.getRouteName(routeNum)}</label>`;
-    dropdownHtml += `</div>`;
-  }
-  routeDropdown.insertAdjacentHTML("beforeend", dropdownHtml);
-  for (const routeNum of mapOptions.routeKeys()) {
-    const checkbox = document.getElementById(`route${routeNum}`);
-    checkbox.onchange = (e) => {
-      mapOptions.setRoute(routeNum, e.target.checked);
+    const name = stopData.getRouteName(routeNum);
+    const item = document.createElement('div');
+    item.className = `rt-item${active ? ' active' : ''}`;
+    item.dataset.label = name.toLowerCase();
+    item.innerHTML = `<div class="rt-check"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>${name}`;
+    item.addEventListener('click', () => {
+      const nowActive = item.classList.toggle('active');
+      mapOptions.setRoute(routeNum, nowActive);
+      rtUpdateCount();
       vizDrawer.updateStops();
       clickHandler.getStops();
       chartsHandler.update(clickHandler.clickStops);
-    }
+    });
+    routeList.appendChild(item);
   }
+  rtUpdateCount();
 }
 
 rebuildRouteDropdown();
+
+document.getElementById("routeAll").addEventListener('click', () => {
+  for (const routeNum of mapOptions.routeKeys()) mapOptions.setRoute(routeNum, true);
+  routeList.querySelectorAll('.rt-item').forEach(i => i.classList.add('active'));
+  rtUpdateCount();
+  vizDrawer.updateStops();
+  clickHandler.getStops();
+  chartsHandler.update(clickHandler.clickStops);
+});
+
+document.getElementById("routeNone").addEventListener('click', () => {
+  for (const routeNum of mapOptions.routeKeys()) mapOptions.setRoute(routeNum, false);
+  routeList.querySelectorAll('.rt-item').forEach(i => i.classList.remove('active'));
+  rtUpdateCount();
+  vizDrawer.updateStops();
+  clickHandler.getStops();
+  chartsHandler.update(clickHandler.clickStops);
+});
 
 // Bind the visualization type dropdown
 const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
