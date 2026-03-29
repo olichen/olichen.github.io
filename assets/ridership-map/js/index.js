@@ -110,11 +110,19 @@ rtTrigger.addEventListener('click', () => {
   if (rtPanel.classList.contains('open')) rtSearch.focus();
 });
 
+const rtSearchClear = document.getElementById("rtSearchClear");
 rtSearch.addEventListener('input', () => {
   const q = rtSearch.value.toLowerCase();
   routeList.querySelectorAll('.rt-item').forEach(item => {
     item.classList.toggle('hidden', !item.dataset.label.includes(q));
   });
+  rtSearchClear.classList.toggle('visible', rtSearch.value.length > 0);
+});
+rtSearchClear.addEventListener('click', () => {
+  rtSearch.value = '';
+  routeList.querySelectorAll('.rt-item').forEach(item => item.classList.remove('hidden'));
+  rtSearchClear.classList.remove('visible');
+  rtSearch.focus();
 });
 
 document.addEventListener('click', e => {
