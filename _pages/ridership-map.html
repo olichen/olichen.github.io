@@ -18,7 +18,7 @@ permalink: /ridership-map/
   <div class="toolbar-panel open" id="toolbarPanel">
     <div class="toolbar" id="toolbar">
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Walk</span>
         <div class="walk-group">
           <input type="range" id="walkTimeInput" min="1" max="20" value="10">
@@ -27,7 +27,7 @@ permalink: /ridership-map/
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">View</span>
         <div class="seg-control">
           <button class="seg-btn active" id="vizTypeScatterplot">Scatterplot</button>
@@ -36,7 +36,7 @@ permalink: /ridership-map/
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Service</span>
         <div class="svc-dropdown" id="svcDropdown">
           <div class="svc-trigger" id="svcTrigger">
@@ -59,7 +59,7 @@ permalink: /ridership-map/
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Metric</span>
         <div class="seg-control">
           <button class="seg-btn active" id="metricTotal">Riders / Day</button>
@@ -68,19 +68,19 @@ permalink: /ridership-map/
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Time</span>
         <div class="pill-shelf">
-          <span class="pill active" id="tpAM">AM Peak</span>
-          <span class="pill active" id="tpMID">Daytime</span>
-          <span class="pill active" id="tpPM">PM Peak</span>
-          <span class="pill active" id="tpXEV">Evening</span>
-          <span class="pill active" id="tpXNT">Night</span>
+          <span class="pill active" id="tpAM" title="5 AM to 9 AM">AM Peak</span>
+          <span class="pill active" id="tpMID" title="9 AM to 3 PM">Daytime</span>
+          <span class="pill active" id="tpPM" title="3 PM to 7 PM">PM Peak</span>
+          <span class="pill active" id="tpXEV" title="7 PM to 10 PM">Evening</span>
+          <span class="pill active" id="tpXNT" title="10 PM to 5 AM">Night</span>
         </div>
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Ridership</span>
         <div class="pill-shelf">
           <span class="pill active" id="rtBoardings">Boardings</span>
@@ -89,7 +89,7 @@ permalink: /ridership-map/
         <div class="tb-sep"></div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.4rem">
+      <div class="tb-group">
         <span class="tb-label">Routes</span>
         <div class="rt-dropdown" id="rtDropdown">
           <div class="rt-trigger" id="rtTrigger">
@@ -105,6 +105,8 @@ permalink: /ridership-map/
             </div>
             <div class="rt-actions">
               <span class="text-btn" id="routeAll">All</span>
+              <span class="text-btn" id="routeFrequent">Frequent</span>
+              <span class="text-btn" id="routeLocal">Local</span>
               <span class="text-btn" id="routeNone">None</span>
             </div>
             <div class="rt-list" id="routeList"></div>

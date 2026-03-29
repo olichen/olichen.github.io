@@ -32,6 +32,11 @@
   flex-wrap: wrap;
 }
 
+.tb-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
 .tb-label {
   font-size: 0.67rem;
   font-weight: 600;
