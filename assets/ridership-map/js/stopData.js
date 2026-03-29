@@ -34,14 +34,17 @@ export class StopData {
         routes[d.SERVICE_RTE_NUM] = {};
       }
       if (!this.#mapOptions.hasRoute(d.SERVICE_RTE_NUM)) {
-        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, true);
-        if (parseInt(d.SERVICE_RTE_NUM) > 800) {
-          this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, false);
-        }
+        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, false);
       }
-      const curRoute = routes[d.SERVICE_RTE_NUM];
+
+      // Default: show routes whose peak midday stop sees 5+ observed trips
+      if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 5) {
+        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, true);
+      }
+
       // Use the sequence number plus inbound/outbound as a unique identifier
       const dataId = `${d.STOP_SEQUENCE_NUM}${d.INBD_OUTBD_CD}`;
+      const curRoute = routes[d.SERVICE_RTE_NUM];
       if (!(dataId in curRoute)) {
         curRoute[dataId] = {};
       }
