@@ -11,10 +11,10 @@ export class HeatmapDrawer {
   #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 200;
+  static #HEX_RADIUS_METERS = 150;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 200;
+  static #GAUSSIAN_METERS = 150;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
@@ -129,10 +129,11 @@ export class HeatmapDrawer {
     );
     const usages = this.#bins.map(getBinUsage);
     const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
-    const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, p99]);
+    const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p99]);
+    const minUsage = this.#mapOptions.metric === Metric.Total ? 0.2 : 0.01;
     this.#paths
       .attr("fill", (d, i) => colorScale(usages[i]))
-      .attr("display", (d, i) => usages[i] < 0.01 ? "none" : null);
+      .attr("display", (d, i) => usages[i] < minUsage ? "none" : null);
   }
 
   updateStops() {
