@@ -185,12 +185,31 @@ vizTypeHeatmap.onclick = () => {
   chartsHandler.update(clickHandler.clickStops);
 };
 
-// Bind the dataset select
-const datasetSelect = document.getElementById("datasetSelect");
-datasetSelect.onchange = async function() {
-  mapOptions.setDataset(this.value === "spring2024" ? Dataset.Spring2024 : Dataset.Fall2024);
-  await reloadDataset();
-};
+// Service dropdown
+const svcTrigger = document.getElementById("svcTrigger");
+const svcPanel = document.getElementById("svcPanel");
+const svcLabel = document.getElementById("svcLabel");
+svcTrigger.addEventListener('click', () => {
+  svcTrigger.classList.toggle('open');
+  svcPanel.classList.toggle('open');
+});
+svcPanel.querySelectorAll('.svc-option').forEach(opt => {
+  opt.addEventListener('click', async () => {
+    svcPanel.querySelectorAll('.svc-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    svcLabel.textContent = opt.dataset.value === 'spring2024' ? 'Spring 2024' : 'Fall 2024';
+    svcTrigger.classList.remove('open');
+    svcPanel.classList.remove('open');
+    mapOptions.setDataset(opt.dataset.value === "spring2024" ? Dataset.Spring2024 : Dataset.Fall2024);
+    await reloadDataset();
+  });
+});
+document.addEventListener('click', e => {
+  if (!document.getElementById('svcDropdown').contains(e.target)) {
+    svcTrigger.classList.remove('open');
+    svcPanel.classList.remove('open');
+  }
+});
 
 // Bind the all/none buttons
 const routeAllButton = document.getElementById("routeAll");

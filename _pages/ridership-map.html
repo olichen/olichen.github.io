@@ -38,10 +38,24 @@ permalink: /ridership-map/
 
       <div style="display:flex;align-items:center;gap:0.4rem">
         <span class="tb-label">Service</span>
-        <select class="compact-select" id="datasetSelect">
-          <option value="fall2024">Fall 2024</option>
-          <option value="spring2024">Spring 2024</option>
-        </select>
+        <div class="svc-dropdown" id="svcDropdown">
+          <div class="svc-trigger" id="svcTrigger">
+            <span id="svcLabel">Fall 2024</span>
+            <svg class="tb-chevron" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="svc-panel" id="svcPanel">
+            <div class="svc-option selected" data-value="fall2024">
+              <svg class="svc-check" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Fall 2024
+            </div>
+            <div class="svc-option" data-value="spring2024">
+              <svg class="svc-check" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Spring 2024
+            </div>
+          </div>
+        </div>
         <div class="tb-sep"></div>
       </div>
 
