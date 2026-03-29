@@ -252,7 +252,7 @@
   margin-bottom: 0.25rem;
   border-bottom: 1px solid var(--border);
 }
-.rt-list { max-height: 180px; overflow-y: auto; }
+.rt-list { max-height: 300px; overflow-y: auto; }
 .rt-item {
   display: flex;
   align-items: center;

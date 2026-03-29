@@ -104,10 +104,23 @@ function rtUpdateCount() {
   rtCount.textContent = active === keys.length ? 'All' : active === 0 ? 'No' : active;
 }
 
+function keepInViewport(panel) {
+  panel.style.left = '0';
+  panel.style.right = 'auto';
+  const rect = panel.getBoundingClientRect();
+  if (rect.right > window.innerWidth - 8) {
+    panel.style.left = 'auto';
+    panel.style.right = '0';
+  }
+}
+
 rtTrigger.addEventListener('click', () => {
   rtTrigger.classList.toggle('open');
   rtPanel.classList.toggle('open');
-  if (rtPanel.classList.contains('open')) rtSearch.focus();
+  if (rtPanel.classList.contains('open')) {
+    keepInViewport(rtPanel);
+    rtSearch.focus();
+  }
 });
 
 const rtSearchClear = document.getElementById("rtSearchClear");
@@ -212,6 +225,7 @@ const svcLabel = document.getElementById("svcLabel");
 svcTrigger.addEventListener('click', () => {
   svcTrigger.classList.toggle('open');
   svcPanel.classList.toggle('open');
+  if (svcPanel.classList.contains('open')) keepInViewport(svcPanel);
 });
 svcPanel.querySelectorAll('.svc-option').forEach(opt => {
   opt.addEventListener('click', async () => {
