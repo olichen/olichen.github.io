@@ -11,15 +11,15 @@ export class HeatmapDrawer {
   #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 150;
+  static #HEX_RADIUS_METERS = 175;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 150;
+  static #GAUSSIAN_METERS = 125;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
-  static #ANCHOR_LAT = 47.0;
-  static #ANCHOR_LON = -123.0;
+  static #ANCHOR_LAT = 47;
+  static #ANCHOR_LON = -123;
 
   constructor(map, stopData, mapOptions) {
     this.#map = map;
@@ -30,7 +30,6 @@ export class HeatmapDrawer {
     this.#updatePositions();
     this.#updateColors();
 
-    map.on("zoomend", () => this.#updatePositions());
   }
 
   // Convert the geographic radius to pixels using the map's current projection.
@@ -130,10 +129,34 @@ export class HeatmapDrawer {
     const usages = this.#bins.map(getBinUsage);
     const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
     const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p99]);
+
+    const fractions = [1, 0.8, 0.6, 0.4, 0.2];
+    const swatchWidth = 14, swatchHeight = 14, rowHeight = 20, padding = 4;
+    const format = metric === Metric.PerBus ? 
+      (v, i) => v.toFixed(1) + (i === 0 ? "+" : "") :
+      (v, i) => String(Math.round(v)) + (i === 0 ? "+" : "");
+    const svgSel = d3.select('#legendSvg')
+      .attr('width', 65).attr('height', fractions.length * rowHeight + padding);
+    svgSel.selectAll('*').remove();
+    fractions.forEach((fraction, i) => {
+      const y = i * rowHeight + padding / 2;
+      svgSel.append('rect')
+        .attr('x', 0).attr('y', y)
+        .attr('width', swatchWidth).attr('height', swatchHeight)
+        .attr('fill', colorScale(fraction * p99)).attr('rx', 2);
+      svgSel.append('text')
+        .attr('x', swatchWidth + 5).attr('y', y + swatchHeight / 2 + 4)
+        .text(format(fraction * p99, i));
+    });
+
     const minUsage = this.#mapOptions.metric === Metric.Total ? 0.2 : 0.01;
     this.#paths
       .attr("fill", (d, i) => colorScale(usages[i]))
       .attr("display", (d, i) => usages[i] < minUsage ? "none" : null);
+  }
+
+  onZoom() {
+    this.#updatePositions();
   }
 
   updateStops() {
@@ -146,5 +169,6 @@ export class HeatmapDrawer {
 
   destroy() {
     this.#group.remove();
+    d3.select('#legendSvg').selectAll('*').remove();
   }
 }

@@ -21,11 +21,6 @@ export class ScatterplotDrawer {
 
     this.#zoom = 14;
     this.updateStops();
-
-    map.on("zoomend", e => {
-      this.#zoom = e.target.getZoom();
-      this.updateStops()
-    });
   }
 
   #initStops() {
@@ -50,6 +45,11 @@ export class ScatterplotDrawer {
   highlightStops(stopIds) {
     this.#circles
       .attr("fill", d => stopIds.has(d.stop_id) ? "red" : "steelblue");
+  }
+
+  onZoom(zoom) {
+    this.#zoom = zoom;
+    this.updateStops();
   }
 
   updateStops() {

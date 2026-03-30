@@ -13,6 +13,8 @@ export class VisualizationDrawer {
     this.#stopData = stopData;
     this.#mapOptions = mapOptions;
     this.#drawer = this.#createDrawer();
+
+    map.on("zoomend", e => this.#drawer.onZoom(e.target.getZoom()));
   }
 
   #createDrawer() {
