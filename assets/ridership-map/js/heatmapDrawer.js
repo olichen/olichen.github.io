@@ -130,13 +130,13 @@ export class HeatmapDrawer {
     const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
     const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p99]);
 
+    const max = d3.max(usages) || 1;
     const fractions = [1, 0.8, 0.6, 0.4, 0.2];
     const swatchWidth = 14, swatchHeight = 14, rowHeight = 20, padding = 4;
-    const format = metric === Metric.PerBus ? 
-      (v, i) => v.toFixed(1) + (i === 0 ? "+" : "") :
-      (v, i) => String(Math.round(v)) + (i === 0 ? "+" : "");
+    const fmt = v => metric === Metric.PerBus ? v.toFixed(1) : String(Math.round(v));
+    const label = (fraction, i) => i === 0 ? `${fmt(fraction * p99)}-${fmt(max)}` : fmt(fraction * p99);
     const svgSel = d3.select('#legendSvg')
-      .attr('width', 65).attr('height', fractions.length * rowHeight + padding);
+      .attr('width', 75).attr('height', fractions.length * rowHeight + padding);
     svgSel.selectAll('*').remove();
     fractions.forEach((fraction, i) => {
       const y = i * rowHeight + padding / 2;
@@ -146,7 +146,7 @@ export class HeatmapDrawer {
         .attr('fill', colorScale(fraction * p99)).attr('rx', 2);
       svgSel.append('text')
         .attr('x', swatchWidth + 5).attr('y', y + swatchHeight / 2 + 4)
-        .text(format(fraction * p99, i));
+        .text(label(fraction, i));
     });
 
     const minUsage = this.#mapOptions.metric === Metric.Total ? 0.2 : 0.01;
