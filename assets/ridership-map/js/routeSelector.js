@@ -74,7 +74,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
   });
 
   rtSearch.addEventListener('keydown', e => {
-    if (e.key === 'Escape') clearSearch();
+    if (e.key === 'Escape') rtSearch.value ? clearSearch() : closeRtPanel();
     else if (e.key.length === 1 && !/^[a-z0-9]$/i.test(e.key)) { e.preventDefault(); }
   });
   rtSearch.addEventListener('input', () => {
