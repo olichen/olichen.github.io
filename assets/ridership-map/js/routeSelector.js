@@ -44,7 +44,23 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
     }
   });
 
+  let frequentRoutes, localRoutes;
+
+  function rebuildRouteGroups() {
+    const maxTripsByRoute = new Map();
+    for (const stop of stopData.stops)
+      for (const [routeNum, route] of Object.entries(stopData.getRoutes(stop.stop_id)))
+        for (const dataId of Object.values(route)) {
+          const t = dataId['MID']?.OBSERVED_TRIPS_IDS;
+          if (t != null)
+            maxTripsByRoute.set(routeNum, Math.max(maxTripsByRoute.get(routeNum) ?? 0, t));
+        }
+    frequentRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t >= 23).map(([r]) => r));
+    localRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t >= 11 && t <= 22).map(([r]) => r));
+  }
+
   function rebuildRouteDropdown() {
+    rebuildRouteGroups();
     routeList.innerHTML = '';
     for (const [routeNum, active] of mapOptions.routeEntries()) {
       const name = stopData.getRouteName(routeNum);
@@ -57,6 +73,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
         const nowActive = item.classList.toggle('active');
         mapOptions.setRoute(routeNum, nowActive);
         rtUpdateCount();
+        updateGroupHighlights();
         vizDrawer.updateStops();
         clickHandler.getStops();
         chartsHandler.update(clickHandler.clickStops);
@@ -64,43 +81,43 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
       routeList.appendChild(item);
     }
     rtUpdateCount();
+    updateGroupHighlights();
   }
 
-  function routesByMidTrips(min, max = Infinity) {
-    const result = new Set();
-    for (const stop of stopData.stops)
-      for (const [routeNum, route] of Object.entries(stopData.getRoutes(stop.stop_id)))
-        for (const dataId of Object.values(route)) {
-          const t = dataId['MID']?.OBSERVED_TRIPS_IDS;
-          if (t >= min && t <= max) result.add(routeNum);
-        }
-    return result;
+  const btnAll = document.getElementById("routeAll");
+  const btnFrequent = document.getElementById("routeFrequent");
+  const btnLocal = document.getElementById("routeLocal");
+
+  function allActive(group) {
+    return [...group].every(r => mapOptions.isRouteActive(r));
+  }
+
+  function updateGroupHighlights() {
+    btnAll.classList.toggle('active', allActive(new Set(mapOptions.routeKeys())));
+    btnFrequent.classList.toggle('active', allActive(frequentRoutes));
+    btnLocal.classList.toggle('active', allActive(localRoutes));
+  }
+
+  function setRouteGroup(group, active) {
+    for (const routeNum of group) mapOptions.setRoute(routeNum, active);
+    routeList.querySelectorAll('.rt-item').forEach(i => {
+      if (group.has(i.dataset.routeNum)) i.classList.toggle('active', active);
+    });
+    rtUpdateCount();
+    updateGroupHighlights();
+    vizDrawer.updateStops();
+    clickHandler.getStops();
+    chartsHandler.update(clickHandler.clickStops);
   }
 
   function toggleRouteGroup(group) {
-    const allActive = [...group].every(r => mapOptions.isRouteActive(r));
-    const next = !allActive;
-    for (const routeNum of group) mapOptions.setRoute(routeNum, next);
-    routeList.querySelectorAll('.rt-item').forEach(i => {
-      if (group.has(i.dataset.routeNum)) i.classList.toggle('active', next);
-    });
-    rtUpdateCount();
-    vizDrawer.updateStops();
-    clickHandler.getStops();
-    chartsHandler.update(clickHandler.clickStops);
+    setRouteGroup(group, !allActive(group));
   }
 
-  document.getElementById("routeAll").addEventListener('click', () => toggleRouteGroup(new Set(mapOptions.routeKeys())));
-  document.getElementById("routeFrequent").addEventListener('click', () => toggleRouteGroup(routesByMidTrips(23)));
-  document.getElementById("routeLocal").addEventListener('click', () => toggleRouteGroup(routesByMidTrips(11, 22)));
-  document.getElementById("routeNone").addEventListener('click', () => {
-    for (const routeNum of mapOptions.routeKeys()) mapOptions.setRoute(routeNum, false);
-    routeList.querySelectorAll('.rt-item').forEach(i => i.classList.remove('active'));
-    rtUpdateCount();
-    vizDrawer.updateStops();
-    clickHandler.getStops();
-    chartsHandler.update(clickHandler.clickStops);
-  });
+  btnAll.addEventListener('click', () => toggleRouteGroup(new Set(mapOptions.routeKeys())));
+  btnFrequent.addEventListener('click', () => toggleRouteGroup(frequentRoutes));
+  btnLocal.addEventListener('click', () => toggleRouteGroup(localRoutes));
+  document.getElementById("routeNone").addEventListener('click', () => setRouteGroup(new Set(mapOptions.routeKeys()), false));
 
   rebuildRouteDropdown();
 
