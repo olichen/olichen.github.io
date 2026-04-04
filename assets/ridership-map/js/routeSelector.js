@@ -13,16 +13,35 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
     rtCount.textContent = active === keys.length ? 'All' : active === 0 ? 'No' : active;
   }
 
+  const rtSearchClear = document.getElementById("rtSearchClear");
+
+  function clearSearch() {
+    rtSearch.value = '';
+    routeList.querySelectorAll('.rt-item').forEach(item => item.classList.remove('hidden'));
+    rtSearchClear.classList.remove('visible');
+  }
+
+  function closeRtPanel() {
+    rtTrigger.classList.remove('open');
+    rtPanel.classList.remove('open');
+    clearSearch();
+  }
+
   rtTrigger.addEventListener('click', () => {
-    rtTrigger.classList.toggle('open');
-    rtPanel.classList.toggle('open');
-    if (rtPanel.classList.contains('open')) {
+    const opening = !rtPanel.classList.contains('open');
+    if (opening) {
+      rtTrigger.classList.add('open');
+      rtPanel.classList.add('open');
       keepInViewport(rtPanel);
       rtSearch.focus();
+    } else {
+      closeRtPanel();
     }
   });
 
-  const rtSearchClear = document.getElementById("rtSearchClear");
+  rtSearch.addEventListener('keydown', e => {
+    if (e.key === 'Escape') clearSearch();
+  });
   rtSearch.addEventListener('input', () => {
     const q = rtSearch.value.toLowerCase();
     routeList.querySelectorAll('.rt-item').forEach(item => {
@@ -38,10 +57,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
   });
 
   document.addEventListener('click', e => {
-    if (!document.getElementById('rtDropdown').contains(e.target)) {
-      rtTrigger.classList.remove('open');
-      rtPanel.classList.remove('open');
-    }
+    if (!document.getElementById('rtDropdown').contains(e.target)) closeRtPanel();
   });
 
   let frequentRoutes, localRoutes;
