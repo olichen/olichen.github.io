@@ -38,7 +38,7 @@ export class StopData {
       }
 
       // Default: show routes whose peak midday stop sees 5+ observed trips
-      if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 5) {
+      if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 11) {
         this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, true);
       }
 
