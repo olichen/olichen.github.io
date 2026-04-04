@@ -264,7 +264,7 @@
   cursor: pointer;
   transition: background 0.07s;
 }
-.rt-item:hover { background: var(--seg-bg); }
+.rt-item:hover, .rt-item.focused { background: var(--seg-bg); }
 .rt-item.hidden { display: none; }
 .rt-check {
   width: 13px; height: 13px;

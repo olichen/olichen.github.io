@@ -25,6 +25,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
     rtTrigger.classList.remove('open');
     rtPanel.classList.remove('open');
     clearSearch();
+    setFocusedItem(null);
   }
 
   rtTrigger.addEventListener('click', () => {
@@ -39,15 +40,51 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
     }
   });
 
+  let focusedItem = null;
+
+  function setFocusedItem(item) {
+    focusedItem?.classList.remove('focused');
+    focusedItem = item;
+    focusedItem?.classList.add('focused');
+    focusedItem?.scrollIntoView({ block: 'nearest' });
+  }
+
+  function visibleItems() {
+    return [...routeList.querySelectorAll('.rt-item:not(.hidden)')];
+  }
+
+  rtPanel.addEventListener('keydown', e => {
+    const items = visibleItems();
+    const currentIndex = items.indexOf(focusedItem);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedItem(items[currentIndex + 1] ?? items[0]);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedItem(items[currentIndex - 1] ?? items[items.length - 1]);
+    } else if ((e.key === 'Enter' || e.key === ' ') && focusedItem) {
+      e.preventDefault();
+      focusedItem.click();
+    } else if (e.key === ' ') {
+      e.preventDefault();
+    } else if (e.target !== rtSearch && /^[a-z0-9]$/i.test(e.key)) {
+      rtSearch.focus();
+    }
+  });
+
   rtSearch.addEventListener('keydown', e => {
     if (e.key === 'Escape') clearSearch();
+    else if (e.key.length === 1 && !/^[a-z0-9]$/i.test(e.key)) { e.preventDefault(); }
   });
   rtSearch.addEventListener('input', () => {
+    rtSearch.value = rtSearch.value.replace(/[^a-z0-9]/gi, '');
     const q = rtSearch.value.toLowerCase();
     routeList.querySelectorAll('.rt-item').forEach(item => {
       item.classList.toggle('hidden', !item.dataset.label.includes(q));
     });
     rtSearchClear.classList.toggle('visible', rtSearch.value.length > 0);
+    setFocusedItem(rtSearch.value.length > 0 ? visibleItems()[0] ?? null : null);
   });
   rtSearchClear.addEventListener('click', () => {
     rtSearch.value = '';

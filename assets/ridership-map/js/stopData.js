@@ -140,14 +140,14 @@ export class StopData {
 
   // Map RapidRide route names
   #routeNameMap = {
-    671: "A Line",
-    672: "B Line",
-    673: "C Line",
-    674: "D Line",
-    675: "E Line",
-    676: "F Line",
-    677: "G Line",
-    678: "H Line"
+    671: "A",
+    672: "B",
+    673: "C",
+    674: "D",
+    675: "E",
+    676: "F",
+    677: "G",
+    678: "H"
   };
   getCompassDir(stop_id) {
     const routes = this.getRoutes(stop_id);
