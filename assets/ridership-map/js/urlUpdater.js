@@ -3,10 +3,12 @@ import { TimePeriod, RidershipType } from "./toolbarOptions.js";
 export class UrlUpdater {
   #mapOptions;
   #toolbarOptions;
+  #panelHandler;
 
-  constructor(mapOptions, toolbarOptions) {
+  constructor(mapOptions, toolbarOptions, panelHandler) {
     this.#mapOptions = mapOptions;
     this.#toolbarOptions = toolbarOptions;
+    this.#panelHandler = panelHandler;
   }
 
   update() {
@@ -26,6 +28,9 @@ export class UrlUpdater {
 
     const allTypes = Object.values(RidershipType);
     p.set('types', allTypes.filter(type => t.isRidershipTypeActive(type)).join('-'));
+
+    p.set('toolbar', this.#panelHandler.toolbarOpen ? '1' : '0');
+    p.set('charts', this.#panelHandler.chartsOpen ? '1' : '0');
 
     p.set('walkTime', t.walkTime);
 
@@ -62,6 +67,9 @@ export class UrlUpdater {
       for (const type of Object.values(RidershipType))
         t.setRidershipTypeActive(type, active.has(type));
     }
+    if (p.get('toolbar') !== '0') this.#panelHandler.openToolbar(); else this.#panelHandler.closeToolbar();
+    if (p.get('charts') === '1') this.#panelHandler.openCharts(); else this.#panelHandler.closeCharts();
+
     if (p.has('walkTime')) t.setWalkTime(parseInt(p.get('walkTime')));
     if (p.has('clickLat') && p.has('clickLon'))
       t.setClickLatLon(parseFloat(p.get('clickLat')), parseFloat(p.get('clickLon')));

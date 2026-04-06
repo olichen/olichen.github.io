@@ -20,10 +20,10 @@ import { keepInViewport } from "./util.js";
 // Initialize options and restore state from URL before anything renders
 const toolbarOptions = new ToolbarOptions();
 const mapOptions = new MapOptions();
-const urlUpdater = new UrlUpdater(mapOptions, toolbarOptions);
-urlUpdater.applyFromUrl();
-
 const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
+const urlUpdater = new UrlUpdater(mapOptions, toolbarOptions, panelHandler);
+urlUpdater.applyFromUrl();
+panelHandler.setOnChange(() => urlUpdater.update());
 const map = new LMap("map", panelHandler, mapOptions.center, mapOptions.zoom);
 map.on('moveend', e => { mapOptions.setCenter(e.target.getCenter().lat, e.target.getCenter().lng); urlUpdater.update(); });
 map.on('zoomend', e => { mapOptions.setZoom(e.target.getZoom()); urlUpdater.update(); });
