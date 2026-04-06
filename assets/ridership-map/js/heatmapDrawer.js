@@ -1,11 +1,11 @@
 import * as d3 from "d3";
 import { hexbin as d3Hexbin } from "d3-hexbin";
-import { Metric } from "./mapOptions.js";
+import { Metric } from "./toolbarOptions.js";
 
 export class HeatmapDrawer {
   #map;
   #stopData;
-  #mapOptions;
+  #toolbarOptions;
   #group;
   #bins;  // [{ nx, ny, contributions: [{stopId, weight}] }]
   #paths; // D3 selection of fixed <path> elements
@@ -21,10 +21,10 @@ export class HeatmapDrawer {
   static #ANCHOR_LAT = 47;
   static #ANCHOR_LON = -123;
 
-  constructor(map, stopData, mapOptions) {
+  constructor(map, stopData, toolbarOptions) {
     this.#map = map;
     this.#stopData = stopData;
-    this.#mapOptions = mapOptions;
+    this.#toolbarOptions = toolbarOptions;
 
     this.#initStops();
     this.#updatePositions();
@@ -122,7 +122,7 @@ export class HeatmapDrawer {
 
   #updateColors() {
     if (!this.#bins) return;
-    const metric = this.#mapOptions.metric;
+    const metric = this.#toolbarOptions.metric;
     const getBinUsage = bin => d3.sum(bin.contributions, c =>
       c.weight * this.#stopData.getStopUsage(c.stopId, metric)
     );
@@ -149,7 +149,7 @@ export class HeatmapDrawer {
         .text(label(fraction, i));
     });
 
-    const minUsage = this.#mapOptions.metric === Metric.Total ? 0.2 : 0.01;
+    const minUsage = this.#toolbarOptions.metric === Metric.Total ? 0.2 : 0.01;
     this.#paths
       .attr("fill", (d, i) => colorScale(usages[i]))
       .attr("display", (d, i) => usages[i] < minUsage ? "none" : null);

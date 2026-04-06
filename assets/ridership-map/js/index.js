@@ -11,17 +11,17 @@ import { VisualizationDrawer } from "./visualizationDrawer.js";
 import { ClickHandler } from "./clickHandler.js";
 import { ChartsHandler } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
-import { Dataset, Metric, TimePeriod, RidershipType, VizType, MapOptions } from "./mapOptions.js";
+import { Dataset, Metric, TimePeriod, RidershipType, VizType, ToolbarOptions } from "./toolbarOptions.js";
 import { initRouteSelector } from "./routeSelector.js";
 import { keepInViewport } from "./util.js";
 
 // Initialize everything
-const mapOptions = new MapOptions();
+const toolbarOptions = new ToolbarOptions();
 const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
 const map = new LMap("map", panelHandler);
-let stopData = await StopData.createInstance(mapOptions);
-let chartsHandler = new ChartsHandler(stopData, mapOptions, panelHandler);
-let vizDrawer = new VisualizationDrawer(map, stopData, mapOptions);
+let stopData = await StopData.createInstance(toolbarOptions);
+let chartsHandler = new ChartsHandler(stopData, toolbarOptions, panelHandler);
+let vizDrawer = new VisualizationDrawer(map, stopData, toolbarOptions);
 const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler);
 
 panelHandler.setOnCloseCharts(() => {
@@ -32,7 +32,7 @@ panelHandler.setOnCloseCharts(() => {
 chartsHandler.update(new Set());
 
 async function reloadDataset() {
-  mapOptions.clearRoutes();
+  toolbarOptions.clearRoutes();
   await stopData.reload();
   vizDrawer.reload();
   rebuildRouteDropdown();
@@ -55,14 +55,14 @@ walkTimeInput.oninput = function() {
 const metricTotal = document.getElementById("metricTotal");
 const metricPerBus = document.getElementById("metricPerBus");
 metricTotal.onclick = () => {
-  mapOptions.setMetric(Metric.Total);
+  toolbarOptions.setMetric(Metric.Total);
   metricTotal.classList.add("active");
   metricPerBus.classList.remove("active");
   vizDrawer.updateStops();
   chartsHandler.update(clickHandler.clickStops);
 };
 metricPerBus.onclick = () => {
-  mapOptions.setMetric(Metric.PerBus);
+  toolbarOptions.setMetric(Metric.PerBus);
   metricPerBus.classList.add("active");
   metricTotal.classList.remove("active");
   vizDrawer.updateStops();
@@ -74,7 +74,7 @@ for (const [name, value] of Object.entries(TimePeriod)) {
   const pill = document.getElementById(`tp${value}`);
   pill.onclick = () => {
     const active = pill.classList.toggle('active');
-    mapOptions.setTimePeriodActive(value, active);
+    toolbarOptions.setTimePeriodActive(value, active);
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
@@ -86,7 +86,7 @@ for (const [name, value] of Object.entries(RidershipType)) {
   const pill = document.getElementById(`rt${name}`);
   pill.onclick = () => {
     const active = pill.classList.toggle('active');
-    mapOptions.setRidershipTypeActive(value, active);
+    toolbarOptions.setRidershipTypeActive(value, active);
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
@@ -94,13 +94,13 @@ for (const [name, value] of Object.entries(RidershipType)) {
 }
 
 // Route dropdown
-const { rebuildRouteDropdown } = initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler, chartsHandler);
+const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler);
 
 // Bind the visualization type dropdown
 const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
 const vizTypeHeatmap = document.getElementById("vizTypeHeatmap");
 vizTypeScatterplot.onclick = () => {
-  mapOptions.setVizType(VizType.Scatterplot);
+  toolbarOptions.setVizType(VizType.Scatterplot);
   vizTypeScatterplot.classList.add("active");
   vizTypeHeatmap.classList.remove("active");
   vizDrawer.setVizType(VizType.Scatterplot);
@@ -108,7 +108,7 @@ vizTypeScatterplot.onclick = () => {
   chartsHandler.update(clickHandler.clickStops);
 };
 vizTypeHeatmap.onclick = () => {
-  mapOptions.setVizType(VizType.Heatmap);
+  toolbarOptions.setVizType(VizType.Heatmap);
   vizTypeHeatmap.classList.add("active");
   vizTypeScatterplot.classList.remove("active");
   vizDrawer.setVizType(VizType.Heatmap);
@@ -132,7 +132,7 @@ svcPanel.querySelectorAll('.svc-option').forEach(opt => {
     svcLabel.textContent = opt.dataset.value === 'spring2024' ? 'Spring 2024' : 'Fall 2024';
     svcTrigger.classList.remove('open');
     svcPanel.classList.remove('open');
-    mapOptions.setDataset(opt.dataset.value === "spring2024" ? Dataset.Spring2024 : Dataset.Fall2024);
+    toolbarOptions.setDataset(opt.dataset.value === "spring2024" ? Dataset.Spring2024 : Dataset.Fall2024);
     await reloadDataset();
   });
 });

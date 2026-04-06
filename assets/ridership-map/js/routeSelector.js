@@ -1,6 +1,6 @@
 import { keepInViewport } from "./util.js";
 
-export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler, chartsHandler) {
+export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler) {
   const rtTrigger = document.getElementById("rtTrigger");
   const rtPanel = document.getElementById("rtPanel");
   const rtSearch = document.getElementById("rtSearch");
@@ -8,8 +8,8 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
   const routeList = document.getElementById("routeList");
 
   function rtUpdateCount() {
-    const keys = [...mapOptions.routeKeys()];
-    const active = keys.filter(r => mapOptions.isRouteActive(r)).length;
+    const keys = [...toolbarOptions.routeKeys()];
+    const active = keys.filter(r => toolbarOptions.isRouteActive(r)).length;
     rtCount.textContent = active === keys.length ? 'All' : active === 0 ? 'No' : active;
   }
 
@@ -115,7 +115,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
   function rebuildRouteDropdown() {
     rebuildRouteGroups();
     routeList.innerHTML = '';
-    for (const [routeNum, active] of mapOptions.routeEntries()) {
+    for (const [routeNum, active] of toolbarOptions.routeEntries()) {
       const name = stopData.getRouteName(routeNum);
       const item = document.createElement('div');
       item.className = `rt-item${active ? ' active' : ''}`;
@@ -124,7 +124,7 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
       item.innerHTML = `<div class="rt-check"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>${name}`;
       item.addEventListener('click', () => {
         const nowActive = item.classList.toggle('active');
-        mapOptions.setRoute(routeNum, nowActive);
+        toolbarOptions.setRoute(routeNum, nowActive);
         rtUpdateCount();
         updateGroupHighlights();
         vizDrawer.updateStops();
@@ -142,17 +142,17 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
   const btnLocal = document.getElementById("routeLocal");
 
   function allActive(group) {
-    return [...group].every(r => mapOptions.isRouteActive(r));
+    return [...group].every(r => toolbarOptions.isRouteActive(r));
   }
 
   function updateGroupHighlights() {
-    btnAll.classList.toggle('active', allActive(new Set(mapOptions.routeKeys())));
+    btnAll.classList.toggle('active', allActive(new Set(toolbarOptions.routeKeys())));
     btnFrequent.classList.toggle('active', allActive(frequentRoutes));
     btnLocal.classList.toggle('active', allActive(localRoutes));
   }
 
   function setRouteGroup(group, active) {
-    for (const routeNum of group) mapOptions.setRoute(routeNum, active);
+    for (const routeNum of group) toolbarOptions.setRoute(routeNum, active);
     routeList.querySelectorAll('.rt-item').forEach(i => {
       if (group.has(i.dataset.routeNum)) i.classList.toggle('active', active);
     });
@@ -167,10 +167,10 @@ export function initRouteSelector(mapOptions, stopData, vizDrawer, clickHandler,
     setRouteGroup(group, !allActive(group));
   }
 
-  btnAll.addEventListener('click', () => toggleRouteGroup(new Set(mapOptions.routeKeys())));
+  btnAll.addEventListener('click', () => toggleRouteGroup(new Set(toolbarOptions.routeKeys())));
   btnFrequent.addEventListener('click', () => toggleRouteGroup(frequentRoutes));
   btnLocal.addEventListener('click', () => toggleRouteGroup(localRoutes));
-  document.getElementById("routeNone").addEventListener('click', () => setRouteGroup(new Set(mapOptions.routeKeys()), false));
+  document.getElementById("routeNone").addEventListener('click', () => setRouteGroup(new Set(toolbarOptions.routeKeys()), false));
 
   rebuildRouteDropdown();
 

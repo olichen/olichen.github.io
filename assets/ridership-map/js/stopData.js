@@ -1,16 +1,16 @@
 import * as d3 from "d3";
-import { Metric, RidershipType } from "./mapOptions.js";
+import { Metric, RidershipType } from "./toolbarOptions.js";
 
 export class StopData {
   #stops;
-  #mapOptions;
+  #toolbarOptions;
   #riderData;
   #stopRiderData;
 
   get stops() { return this.#stops; }
 
-  constructor(stopData, riderData, mapOptions) {
-    this.#mapOptions = mapOptions;
+  constructor(stopData, riderData, toolbarOptions) {
+    this.#toolbarOptions = toolbarOptions;
     this.#init(stopData, riderData);
   }
 
@@ -33,13 +33,13 @@ export class StopData {
       if (!(d.SERVICE_RTE_NUM in routes)) {
         routes[d.SERVICE_RTE_NUM] = {};
       }
-      if (!this.#mapOptions.hasRoute(d.SERVICE_RTE_NUM)) {
-        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, false);
+      if (!this.#toolbarOptions.hasRoute(d.SERVICE_RTE_NUM)) {
+        this.#toolbarOptions.setRoute(d.SERVICE_RTE_NUM, false);
       }
 
       // Default: show routes whose peak midday stop sees 5+ observed trips
       if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 11) {
-        this.#mapOptions.setRoute(d.SERVICE_RTE_NUM, true);
+        this.#toolbarOptions.setRoute(d.SERVICE_RTE_NUM, true);
       }
 
       // Use the sequence number plus inbound/outbound as a unique identifier
@@ -52,15 +52,15 @@ export class StopData {
     }
   }
 
-  static async createInstance(mapOptions) {
-    const dataFolder = `/assets/ridership-map/data/${mapOptions.dataset}`;
+  static async createInstance(toolbarOptions) {
+    const dataFolder = `/assets/ridership-map/data/${toolbarOptions.dataset}`;
     const stopData = d3.csvParse(await this.getFileData(`${dataFolder}/stops.txt`), d3.autoType)
     const riderData = d3.csvParse(await this.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
-    return new StopData(stopData, riderData, mapOptions);
+    return new StopData(stopData, riderData, toolbarOptions);
   }
 
   async reload() {
-    const dataFolder = `/assets/ridership-map/data/${this.#mapOptions.dataset}`;
+    const dataFolder = `/assets/ridership-map/data/${this.#toolbarOptions.dataset}`;
     const stopData = d3.csvParse(await StopData.getFileData(`${dataFolder}/stops.txt`), d3.autoType);
     const riderData = d3.csvParse(await StopData.getFileData(`${dataFolder}/stopdata.csv`), d3.autoType);
     this.#init(stopData, riderData);
@@ -93,12 +93,12 @@ export class StopData {
       if (route_id && routeId !== route_id) {
         continue;
       }
-      if (!this.#mapOptions.isRouteActive(routeId)) {
+      if (!this.#toolbarOptions.isRouteActive(routeId)) {
         continue;
       }
       for (const dataId of Object.values(route)) {
         for (const [period, timeOfDay] of Object.entries(dataId)) {
-          if (!this.#mapOptions.isTimePeriodActive(period)) continue;
+          if (!this.#toolbarOptions.isTimePeriodActive(period)) continue;
           numBuses += timeOfDay.OBSERVED_TRIPS_IDS;
         }
       }
@@ -116,14 +116,14 @@ export class StopData {
       if (route_id && routeId !== route_id) {
         continue;
       }
-      if (!this.#mapOptions.isRouteActive(routeId)) {
+      if (!this.#toolbarOptions.isRouteActive(routeId)) {
         continue;
       }
       for (const dataId of Object.values(route)) {
         for (const [period, timeOfDay] of Object.entries(dataId)) {
-          if (!this.#mapOptions.isTimePeriodActive(period)) continue;
-          if (this.#mapOptions.isRidershipTypeActive(RidershipType.Boardings)) totalRiders += timeOfDay.AVG_TOTAL_BOARDINGS;
-          if (this.#mapOptions.isRidershipTypeActive(RidershipType.Alightings)) totalRiders += timeOfDay.AVG_TOTAL_ALIGHTINGS;
+          if (!this.#toolbarOptions.isTimePeriodActive(period)) continue;
+          if (this.#toolbarOptions.isRidershipTypeActive(RidershipType.Boardings)) totalRiders += timeOfDay.AVG_TOTAL_BOARDINGS;
+          if (this.#toolbarOptions.isRidershipTypeActive(RidershipType.Alightings)) totalRiders += timeOfDay.AVG_TOTAL_ALIGHTINGS;
         }
       }
     }

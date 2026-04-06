@@ -26,7 +26,7 @@ export const TimePeriod = {
   Night: "XNT"
 };
 
-export class MapOptions {
+export class ToolbarOptions {
   #activeRoutes = {};
   #metric = Metric.Total;
   #timePeriods = new Set(Object.values(TimePeriod));

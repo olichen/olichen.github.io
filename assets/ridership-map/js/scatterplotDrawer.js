@@ -1,10 +1,10 @@
 import * as d3 from "d3";
-import { Metric } from "./mapOptions.js";
+import { Metric } from "./toolbarOptions.js";
 
 export class ScatterplotDrawer {
   #map;
   #stopData;
-  #mapOptions;
+  #toolbarOptions;
 
   stopGroup;
   #circles;
@@ -12,10 +12,10 @@ export class ScatterplotDrawer {
   #zoom;
   #usageScale;
 
-  constructor(map, stopData, mapOptions) {
+  constructor(map, stopData, toolbarOptions) {
     this.#map = map;
     this.#stopData = stopData;
-    this.#mapOptions = mapOptions;
+    this.#toolbarOptions = toolbarOptions;
 
     this.#initStops();
 
@@ -61,7 +61,7 @@ export class ScatterplotDrawer {
 
   #updateStopRadius() {
     // Update the usage scale
-    const usageExtent = this.#stopData.getUsageExtent(this.#mapOptions.metric);
+    const usageExtent = this.#stopData.getUsageExtent(this.#toolbarOptions.metric);
     const maxUsage = Math.max(0.1, usageExtent[1]);
     const minRadius = 1 + (this.#zoom - 10) / 4;
     const maxRadius = (this.#zoom - 10) * 3 + 8;
@@ -71,7 +71,7 @@ export class ScatterplotDrawer {
     this.#circles.attr("r", d => this.#getStopRadius(d));
 
     // Update the legend
-    const metric = this.#mapOptions.metric;
+    const metric = this.#toolbarOptions.metric;
     let count = maxUsage / 81;
     let legendData = [];
     let offset = 0;
@@ -85,9 +85,9 @@ export class ScatterplotDrawer {
   }
 
   #getStopRadius(d) {
-    const usage = this.#stopData.getStopUsage(d.stop_id, this.#mapOptions.metric);
-    if (this.#mapOptions.metric === Metric.Total && usage < 0.05) return 0;
-    if (this.#mapOptions.metric === Metric.PerBus && usage < 0.01) return 0;
+    const usage = this.#stopData.getStopUsage(d.stop_id, this.#toolbarOptions.metric);
+    if (this.#toolbarOptions.metric === Metric.Total && usage < 0.05) return 0;
+    if (this.#toolbarOptions.metric === Metric.PerBus && usage < 0.01) return 0;
     return this.#usageScale(usage);
   }
 

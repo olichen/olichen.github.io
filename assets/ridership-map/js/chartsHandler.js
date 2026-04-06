@@ -1,14 +1,14 @@
 import { render } from "./vega-lite.js";
-import { Metric } from "./mapOptions.js";
+import { Metric } from "./toolbarOptions.js";
 
 export class ChartsHandler {
   #stopData;
-  #mapOptions;
+  #toolbarOptions;
   #panelHandler;
 
-  constructor(stopData, mapOptions, panelHandler) {
+  constructor(stopData, toolbarOptions, panelHandler) {
     this.#stopData = stopData;
-    this.#mapOptions = mapOptions;
+    this.#toolbarOptions = toolbarOptions;
     this.#panelHandler = panelHandler;
   }
 
@@ -17,7 +17,7 @@ export class ChartsHandler {
       this.#panelHandler.openCharts();
     }
     this.updateStats(this.#stopData, stopIds);
-    this.drawCharts(this.#stopData, stopIds, this.#mapOptions.metric);
+    this.drawCharts(this.#stopData, stopIds, this.#toolbarOptions.metric);
   }
 
   updateStats(stopData, stopIds) {

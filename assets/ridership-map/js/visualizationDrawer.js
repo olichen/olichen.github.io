@@ -1,27 +1,27 @@
 import { ScatterplotDrawer } from "./scatterplotDrawer.js";
 import { HeatmapDrawer } from "./heatmapDrawer.js";
-import { VizType } from "./mapOptions.js";
+import { VizType } from "./toolbarOptions.js";
 
 export class VisualizationDrawer {
   #map;
   #stopData;
-  #mapOptions;
+  #toolbarOptions;
   #drawer;
 
-  constructor(map, stopData, mapOptions) {
+  constructor(map, stopData, toolbarOptions) {
     this.#map = map;
     this.#stopData = stopData;
-    this.#mapOptions = mapOptions;
+    this.#toolbarOptions = toolbarOptions;
     this.#drawer = this.#createDrawer();
 
     map.on("zoomend", e => this.#drawer.onZoom(e.target.getZoom()));
   }
 
   #createDrawer() {
-    if (this.#mapOptions.vizType === VizType.Heatmap) {
-      return new HeatmapDrawer(this.#map, this.#stopData, this.#mapOptions);
+    if (this.#toolbarOptions.vizType === VizType.Heatmap) {
+      return new HeatmapDrawer(this.#map, this.#stopData, this.#toolbarOptions);
     }
-    return new ScatterplotDrawer(this.#map, this.#stopData, this.#mapOptions);
+    return new ScatterplotDrawer(this.#map, this.#stopData, this.#toolbarOptions);
   }
 
   setVizType(vizType) {
