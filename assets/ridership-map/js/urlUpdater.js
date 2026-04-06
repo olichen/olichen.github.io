@@ -32,7 +32,7 @@ export class UrlUpdater {
     p.set('toolbar', this.#panelHandler.toolbarOpen ? '1' : '0');
     p.set('charts', this.#panelHandler.chartsOpen ? '1' : '0');
 
-    p.set('walkTime', t.walkTime);
+    p.set('distance', t.distance);
 
     const { lat, lon } = t.clickLatLon;
     p.set('clickLat', lat.toFixed(4));
@@ -70,7 +70,7 @@ export class UrlUpdater {
     if (p.get('toolbar') !== '0') this.#panelHandler.openToolbar(); else this.#panelHandler.closeToolbar();
     if (p.get('charts') === '1') this.#panelHandler.openCharts(); else this.#panelHandler.closeCharts();
 
-    if (p.has('walkTime')) t.setWalkTime(parseInt(p.get('walkTime')));
+    if (p.has('distance')) t.setDistance(parseInt(p.get('distance')));
     if (p.has('clickLat') && p.has('clickLon'))
       t.setClickLatLon(parseFloat(p.get('clickLat')), parseFloat(p.get('clickLon')));
   }

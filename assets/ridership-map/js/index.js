@@ -54,12 +54,12 @@ async function reloadDataset() {
 // Bind the charts close button
 document.getElementById('chartsCloseBtn').addEventListener('click', () => panelHandler.closeCharts());
 
-// Bind the walk time slider
-const walkTimeInput = document.getElementById("walkTimeInput");
-const walkTimeLabel = document.getElementById("walkTimeLabel");
-walkTimeInput.oninput = function() {
-  walkTimeLabel.textContent = `${this.value} min`;
-  toolbarOptions.setWalkTime(this.value);
+// Bind the distance slider
+const distanceInput = document.getElementById("distanceInput");
+const distanceLabel = document.getElementById("distanceLabel");
+distanceInput.oninput = function() {
+  distanceLabel.textContent = `${this.value} m`;
+  toolbarOptions.setDistance(this.value);
   clickHandler.setClickRadius();
   clickHandler.getStops();
   urlUpdater.update();
@@ -178,8 +178,8 @@ function initUIFromOptions() {
   vizTypeScatterplot.classList.toggle('active', toolbarOptions.vizType === VizType.Scatterplot);
   vizTypeHeatmap.classList.toggle('active', toolbarOptions.vizType === VizType.Heatmap);
 
-  walkTimeInput.value = toolbarOptions.walkTime;
-  walkTimeLabel.textContent = `${toolbarOptions.walkTime} min`;
+  distanceInput.value = toolbarOptions.distance;
+  distanceLabel.textContent = `${toolbarOptions.distance} m`;
 
   const isSpring = toolbarOptions.dataset === Dataset.Spring2024;
   svcLabel.textContent = isSpring ? 'Spring 2024' : 'Fall 2024';

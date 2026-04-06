@@ -48,10 +48,10 @@ export class ClickHandler {
 
 
   setClickRadius() {
-    // Calculate 600m (very roughly a 10 minute walk with a street grid) and set the radius
+    // Calculate pixel-per-meter scale using a ~800m reference segment, then scale to distance
     const start = this.#map.latLngToPoint(47.62, -122.2893);
     const end = this.#map.latLngToPoint(47.62, -122.30);
-    const radius = this.calculateDistance(start.x - end.x, start.y - end.y) * this.#toolbarOptions.walkTime * .75 / 10;
+    const radius = this.calculateDistance(start.x - end.x, start.y - end.y) * this.#toolbarOptions.distance / 800;
     this.#clickCircle
       .attr("r", radius);
   }
@@ -79,7 +79,7 @@ export class ClickHandler {
 
     for (const stop of this.#stopData.stops) {
       const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon)
-      if (stopDistance < this.#toolbarOptions.walkTime * 600 / 10) {
+      if (stopDistance < this.#toolbarOptions.distance) {
         const additionalRiders = this.#stopData.getTotalRiders(stop.stop_id);
         if (additionalRiders > 0) {
           this.clickStops.add(stop.stop_id);
