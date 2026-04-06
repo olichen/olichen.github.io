@@ -1,6 +1,6 @@
 import { keepInViewport } from "./util.js";
 
-export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler) {
+export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, onUpdate) {
   const rtTrigger = document.getElementById("rtTrigger");
   const rtPanel = document.getElementById("rtPanel");
   const rtSearch = document.getElementById("rtSearch");
@@ -130,6 +130,7 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
         vizDrawer.updateStops();
         clickHandler.getStops();
         chartsHandler.update(clickHandler.clickStops);
+        onUpdate?.();
       });
       routeList.appendChild(item);
     }
@@ -161,6 +162,7 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
+    onUpdate?.();
   }
 
   function toggleRouteGroup(group) {

@@ -17,19 +17,22 @@ import { MapOptions } from "./mapOptions.js";
 import { UrlUpdater } from "./urlUpdater.js";
 import { keepInViewport } from "./util.js";
 
-// Initialize everything
+// Initialize options and restore state from URL before anything renders
 const toolbarOptions = new ToolbarOptions();
 const mapOptions = new MapOptions();
 const urlUpdater = new UrlUpdater(mapOptions, toolbarOptions);
+urlUpdater.applyFromUrl();
+
 const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
-const map = new LMap("map", panelHandler);
-map.on('moveend', e => mapOptions.setCenter(e.target.getCenter().lat, e.target.getCenter().lng));
-map.on('zoomend', e => mapOptions.setZoom(e.target.getZoom()));
+const map = new LMap("map", panelHandler, mapOptions.center, mapOptions.zoom);
+map.on('moveend', e => { mapOptions.setCenter(e.target.getCenter().lat, e.target.getCenter().lng); urlUpdater.update(); });
+map.on('zoomend', e => { mapOptions.setZoom(e.target.getZoom()); urlUpdater.update(); });
 
 let stopData = await StopData.createInstance(toolbarOptions);
 let chartsHandler = new ChartsHandler(stopData, toolbarOptions, panelHandler);
 let vizDrawer = new VisualizationDrawer(map, stopData, toolbarOptions);
-const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler, toolbarOptions);
+const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler, toolbarOptions, () => urlUpdater.update());
+clickHandler.setClickRadius();
 
 panelHandler.setOnCloseCharts(() => {
   clickHandler.reset();
@@ -45,6 +48,7 @@ async function reloadDataset() {
   rebuildRouteDropdown();
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
+  urlUpdater.update();
 }
 
 // Bind the charts close button
@@ -58,6 +62,7 @@ walkTimeInput.oninput = function() {
   toolbarOptions.setWalkTime(this.value);
   clickHandler.setClickRadius();
   clickHandler.getStops();
+  urlUpdater.update();
 }
 
 // Bind the metric seg-control
@@ -69,6 +74,7 @@ metricTotal.onclick = () => {
   metricPerBus.classList.remove("active");
   vizDrawer.updateStops();
   chartsHandler.update(clickHandler.clickStops);
+  urlUpdater.update();
 };
 metricPerBus.onclick = () => {
   toolbarOptions.setMetric(Metric.PerBus);
@@ -76,6 +82,7 @@ metricPerBus.onclick = () => {
   metricTotal.classList.remove("active");
   vizDrawer.updateStops();
   chartsHandler.update(clickHandler.clickStops);
+  urlUpdater.update();
 };
 
 // Bind the time period pills
@@ -87,6 +94,7 @@ for (const [name, value] of Object.entries(TimePeriod)) {
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
+    urlUpdater.update();
   };
 }
 
@@ -99,11 +107,13 @@ for (const [name, value] of Object.entries(RidershipType)) {
     vizDrawer.updateStops();
     clickHandler.getStops();
     chartsHandler.update(clickHandler.clickStops);
+    urlUpdater.update();
   };
 }
 
 // Route dropdown
-const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler);
+const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, () => urlUpdater.update());
+urlUpdater.applyRoutesFromUrl(rebuildRouteDropdown);
 
 // Bind the visualization type dropdown
 const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
@@ -115,6 +125,7 @@ vizTypeScatterplot.onclick = () => {
   vizDrawer.setVizType(VizType.Scatterplot);
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
+  urlUpdater.update();
 };
 vizTypeHeatmap.onclick = () => {
   toolbarOptions.setVizType(VizType.Heatmap);
@@ -123,6 +134,7 @@ vizTypeHeatmap.onclick = () => {
   vizDrawer.setVizType(VizType.Heatmap);
   clickHandler.getStops();
   chartsHandler.update(clickHandler.clickStops);
+  urlUpdater.update();
 };
 
 // Service dropdown
@@ -151,3 +163,30 @@ document.addEventListener('click', e => {
     svcPanel.classList.remove('open');
   }
 });
+
+// Sync all UI elements to match options restored from URL
+function initUIFromOptions() {
+  metricTotal.classList.toggle('active', toolbarOptions.metric === Metric.Total);
+  metricPerBus.classList.toggle('active', toolbarOptions.metric === Metric.PerBus);
+
+  for (const [name, value] of Object.entries(TimePeriod))
+    document.getElementById(`tp${value}`).classList.toggle('active', toolbarOptions.isTimePeriodActive(value));
+
+  for (const [name, value] of Object.entries(RidershipType))
+    document.getElementById(`rt${name}`).classList.toggle('active', toolbarOptions.isRidershipTypeActive(value));
+
+  vizTypeScatterplot.classList.toggle('active', toolbarOptions.vizType === VizType.Scatterplot);
+  vizTypeHeatmap.classList.toggle('active', toolbarOptions.vizType === VizType.Heatmap);
+
+  walkTimeInput.value = toolbarOptions.walkTime;
+  walkTimeLabel.textContent = `${toolbarOptions.walkTime} min`;
+
+  const isSpring = toolbarOptions.dataset === Dataset.Spring2024;
+  svcLabel.textContent = isSpring ? 'Spring 2024' : 'Fall 2024';
+  svcPanel.querySelectorAll('.svc-option').forEach(opt => {
+    opt.classList.toggle('selected', (opt.dataset.value === 'spring2024') === isSpring);
+  });
+}
+
+initUIFromOptions();
+urlUpdater.update();

@@ -6,7 +6,7 @@ export class LMap {
   #topLeft;
   #bottomRight;
 
-  constructor(element_id, panelHandler) {
+  constructor(element_id, panelHandler, center, zoom) {
     // map found here: https://leaflet-extras.github.io/leaflet-providers/preview/
     const mapUrl = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
     const mapAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
@@ -14,7 +14,7 @@ export class LMap {
       + ' | Data: <a href="https://kingcounty.gov/en/dept/metro">KCM</a>,'
       + ' <a href="https://seattletransitblog.com/">STB</a>';
 
-    this.#map = new L.Map(element_id, { center: [47.65, -122.3], zoom: 14 })
+    this.#map = new L.Map(element_id, { center: [center.lat, center.lon], zoom })
       .addLayer(L.tileLayer(mapUrl, { attribution: mapAttr, subdomains: "abcd", minZoom: 10, maxZoom: 18 }));
 
     // Topleft/bottomright stretch across King County

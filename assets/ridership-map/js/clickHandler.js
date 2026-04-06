@@ -10,12 +10,15 @@ export class ClickHandler {
   clickData;
   clickStops;
 
-  constructor(map, stopData, vizDrawer, chartsHandler, toolbarOptions) {
+  #onUpdate;
+
+  constructor(map, stopData, vizDrawer, chartsHandler, toolbarOptions, onUpdate) {
     this.#map = map;
     this.#stopData = stopData;
     this.#vizDrawer = vizDrawer;
     this.#chartsHandler = chartsHandler;
     this.#toolbarOptions = toolbarOptions;
+    this.#onUpdate = onUpdate;
 
     const clickGroup = map.createGroup();
     this.#clickCircle = clickGroup.append("circle")
@@ -34,6 +37,7 @@ export class ClickHandler {
       this.placeClick();
       this.setClickRadius();
       this.getStops();
+      this.#onUpdate?.();
     });
 
     this.#map.on("zoomend", () => {
@@ -66,6 +70,7 @@ export class ClickHandler {
     this.#toolbarOptions.setClickLatLon(0, 0);
     this.placeClick();
     this.getStops();
+    this.#onUpdate?.();
   }
 
   getStops() {
