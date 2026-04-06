@@ -4,18 +4,18 @@ export class ClickHandler {
   #vizDrawer;
   #chartsHandler;
 
-  #clickLatLon = { lat: 0, lon: 0 };
-  #walkTime = 10;
+  #toolbarOptions;
   #clickCircle;
   #clickPoint;
   clickData;
   clickStops;
 
-  constructor(map, stopData, vizDrawer, chartsHandler) {
+  constructor(map, stopData, vizDrawer, chartsHandler, toolbarOptions) {
     this.#map = map;
     this.#stopData = stopData;
     this.#vizDrawer = vizDrawer;
     this.#chartsHandler = chartsHandler;
+    this.#toolbarOptions = toolbarOptions;
 
     const clickGroup = map.createGroup();
     this.#clickCircle = clickGroup.append("circle")
@@ -30,8 +30,7 @@ export class ClickHandler {
     this.placeClick();
 
     this.#map.on("click", (e) => {
-      this.#clickLatLon.lat = e.latlng.lat;
-      this.#clickLatLon.lon = e.latlng.lng;
+      this.#toolbarOptions.setClickLatLon(e.latlng.lat, e.latlng.lng);
       this.placeClick();
       this.setClickRadius();
       this.getStops();
@@ -43,23 +42,18 @@ export class ClickHandler {
     });
   }
 
-  setWalkTime(walkTime) {
-    this.#walkTime = walkTime;
-    this.setClickRadius();
-    this.getStops();
-  }
 
   setClickRadius() {
     // Calculate 600m (very roughly a 10 minute walk with a street grid) and set the radius
     const start = this.#map.latLngToPoint(47.62, -122.2893);
     const end = this.#map.latLngToPoint(47.62, -122.30);
-    const radius = this.calculateDistance(start.x - end.x, start.y - end.y) * this.#walkTime * .75 / 10;
+    const radius = this.calculateDistance(start.x - end.x, start.y - end.y) * this.#toolbarOptions.walkTime * .75 / 10;
     this.#clickCircle
       .attr("r", radius);
   }
 
   placeClick() {
-    const point = this.#map.latLngToPoint(this.#clickLatLon.lat, this.#clickLatLon.lon);
+    const point = this.#map.latLngToPoint(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon);
     this.#clickCircle.attr("cx", point.x).attr("cy", point.y);
     this.#clickPoint.attr("cx", point.x).attr("cy", point.y);
   }
@@ -69,7 +63,7 @@ export class ClickHandler {
   }
 
   reset() {
-    this.#clickLatLon = { lat: 0, lon: 0 };
+    this.#toolbarOptions.setClickLatLon(0, 0);
     this.placeClick();
     this.getStops();
   }
@@ -79,8 +73,8 @@ export class ClickHandler {
     this.clickStops = new Set();
 
     for (const stop of this.#stopData.stops) {
-      const stopDistance = this.#map.getDistance(this.#clickLatLon.lat, this.#clickLatLon.lon, stop.stop_lat, stop.stop_lon)
-      if (stopDistance < this.#walkTime * 600 / 10) {
+      const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon)
+      if (stopDistance < this.#toolbarOptions.walkTime * 600 / 10) {
         const additionalRiders = this.#stopData.getTotalRiders(stop.stop_id);
         if (additionalRiders > 0) {
           this.clickStops.add(stop.stop_id);

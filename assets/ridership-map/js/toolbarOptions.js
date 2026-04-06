@@ -33,6 +33,7 @@ export class ToolbarOptions {
   #ridershipTypes = new Set([RidershipType.Boardings]);
   #dataset = Dataset.Fall2024;
   #vizType = VizType.Scatterplot;
+  #walkTime = 10;
 
   get dataset() { return this.#dataset; }
   setDataset(dataset) { this.#dataset = dataset; }
@@ -50,6 +51,13 @@ export class ToolbarOptions {
   get ridershipTypes() { return this.#ridershipTypes; }
   isRidershipTypeActive(type) { return this.#ridershipTypes.has(type); }
   setRidershipTypeActive(type, active) { active ? this.#ridershipTypes.add(type) : this.#ridershipTypes.delete(type); }
+
+  get walkTime() { return this.#walkTime; }
+  setWalkTime(walkTime) { this.#walkTime = walkTime; }
+
+  #clickLatLon = { lat: 0, lon: 0 };
+  get clickLatLon() { return this.#clickLatLon; }
+  setClickLatLon(lat, lon) { this.#clickLatLon = { lat, lon }; }
 
   clearRoutes() { this.#activeRoutes = {}; }
   setRoute(routeNum, active) { this.#activeRoutes[routeNum] = active; }

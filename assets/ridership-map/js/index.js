@@ -13,16 +13,23 @@ import { ChartsHandler } from "./chartsHandler.js";
 import { PanelHandler } from "./panelHandler.js";
 import { Dataset, Metric, TimePeriod, RidershipType, VizType, ToolbarOptions } from "./toolbarOptions.js";
 import { initRouteSelector } from "./routeSelector.js";
+import { MapOptions } from "./mapOptions.js";
+import { UrlUpdater } from "./urlUpdater.js";
 import { keepInViewport } from "./util.js";
 
 // Initialize everything
 const toolbarOptions = new ToolbarOptions();
+const mapOptions = new MapOptions();
+const urlUpdater = new UrlUpdater(mapOptions, toolbarOptions);
 const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPanel');
 const map = new LMap("map", panelHandler);
+map.on('moveend', e => mapOptions.setCenter(e.target.getCenter().lat, e.target.getCenter().lng));
+map.on('zoomend', e => mapOptions.setZoom(e.target.getZoom()));
+
 let stopData = await StopData.createInstance(toolbarOptions);
 let chartsHandler = new ChartsHandler(stopData, toolbarOptions, panelHandler);
 let vizDrawer = new VisualizationDrawer(map, stopData, toolbarOptions);
-const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler);
+const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler, toolbarOptions);
 
 panelHandler.setOnCloseCharts(() => {
   clickHandler.reset();
@@ -48,7 +55,9 @@ const walkTimeInput = document.getElementById("walkTimeInput");
 const walkTimeLabel = document.getElementById("walkTimeLabel");
 walkTimeInput.oninput = function() {
   walkTimeLabel.textContent = `${this.value} min`;
-  clickHandler.setWalkTime(this.value);
+  toolbarOptions.setWalkTime(this.value);
+  clickHandler.setClickRadius();
+  clickHandler.getStops();
 }
 
 // Bind the metric seg-control
