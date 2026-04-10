@@ -11,10 +11,10 @@ export class HeatmapDrawer {
   #paths; // D3 selection of fixed <path> elements
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 175;
+  static #HEX_RADIUS_METERS = 200;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 125;
+  static #GAUSSIAN_METERS = 150;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.

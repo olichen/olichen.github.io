@@ -24,11 +24,13 @@ export class ClickHandler {
     this.#clickCircle = clickGroup.append("circle")
       .attr("stroke", "red")
       .attr("fill", "red")
-      .attr("fill-opacity", 0.1);
+      .attr("fill-opacity", 0.1)
+      .style("pointer-events", "none");
 
     this.#clickPoint = clickGroup.append("circle")
       .attr("fill", "black")
-      .attr("r", 3);
+      .attr("r", 3)
+      .style("pointer-events", "none");
 
     this.placeClick();
 
