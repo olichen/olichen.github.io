@@ -33,7 +33,7 @@ export class LMap {
     const legend = L.control({ position: 'bottomleft' });
     legend.onAdd = function(map) {
       const div = L.DomUtil.create('div', 'legend p-2 m-2 shadow-sm rounded');
-      div.innerHTML = '<div class="d-flex flex-column align-items-center lh-1 mb-1"><b style="font-size:.85rem">Boardings</b></div>'
+      div.innerHTML = '<div class="d-flex flex-column align-items-center lh-1 mb-1"><b style="font-size:.85rem">Riders</b></div>'
         + '<div class="d-flex justify-content-center"><svg id="legendSvg"></svg></div>';
       return div;
     }

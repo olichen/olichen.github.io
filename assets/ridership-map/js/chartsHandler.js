@@ -112,7 +112,7 @@ export class ChartsHandler {
         y: {
           field: metric === Metric.PerBus ? "ridersPerBus" : "riders",
           type: "Q",
-          title: metric === Metric.PerBus ? "Boardings Per Bus" : "Boardings Per Day",
+          title: metric === Metric.PerBus ? "Riders Per Bus" : "Riders Per Day",
         },
         tooltip: [
           {
@@ -123,7 +123,7 @@ export class ChartsHandler {
           {
             field: "riders",
             type: "Q",
-            title: "Boardings Per Day",
+            title: "Riders Per Day",
             format: "d",
           },
           {
@@ -134,14 +134,14 @@ export class ChartsHandler {
           {
             field: "ridersPerBus",
             type: "Q",
-            title: "Boardings Per Bus",
+            title: "Riders Per Bus",
             format: ".1f",
           },
         ],
       },
       width: "container",
       height: CHART_HEIGHT,
-      title: "Daily Boardings By Route"
+      title: "Daily Riders By Route"
     };
 
     const chart2 = {
@@ -178,7 +178,7 @@ export class ChartsHandler {
         y: {
           field: metric === Metric.PerBus ? "ridersPerBus" : "riders",
           type: "Q",
-          title: metric === Metric.PerBus ? "Boardings Per Bus" : "Boardings Per Day",
+          title: metric === Metric.PerBus ? "Riders Per Bus" : "Riders Per Day",
         },
         tooltip: [
           {
@@ -189,7 +189,7 @@ export class ChartsHandler {
           {
             field: "riders",
             type: "Q",
-            title: "Boardings Per Day",
+            title: "Riders Per Day",
             format: "d",
           },
           {
@@ -200,14 +200,14 @@ export class ChartsHandler {
           {
             field: "ridersPerBus",
             type: "Q",
-            title: "Boardings Per Bus",
+            title: "Riders Per Bus",
             format: ".1f",
           },
         ]
       },
       width: "container",
       height: CHART_HEIGHT,
-      title: "Daily Boardings By Stop",
+      title: "Daily Riders By Stop",
     };
 
     chart1Html.innerHTML = null;

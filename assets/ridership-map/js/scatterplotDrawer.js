@@ -25,6 +25,7 @@ export class ScatterplotDrawer {
 
   #initStops() {
     const stopData = this.#stopData;
+    const toolbarOptions = this.#toolbarOptions;
 
     const mapContainer = this.#map.getContainer();
     const tooltip = d3.select(mapContainer)
@@ -38,7 +39,10 @@ export class ScatterplotDrawer {
       .attr("opacity", 0.7)
       .on("mouseover", function(event, d) {
         d3.select(this).attr("stroke", "black");
-        tooltip.text(d.stop_name).style("display", "block");
+        const metric = toolbarOptions.metric;
+        const usage = stopData.getStopUsage(d.stop_id, metric);
+        const usageStr = metric === Metric.PerBus ? usage.toFixed(1) + " riders per bus" : Math.round(usage) + " riders per day";
+        tooltip.html(`${d.stop_name}<br><span style="color:#888">${usageStr}</span>`).style("display", "block");
       })
       .on("mousemove", function(event) {
         const rect = mapContainer.getBoundingClientRect();
