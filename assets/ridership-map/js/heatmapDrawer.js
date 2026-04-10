@@ -150,9 +150,14 @@ export class HeatmapDrawer {
   #updateColors() {
     if (!this.#bins) return;
     const metric = this.#toolbarOptions.metric;
-    const getBinUsage = bin => d3.sum(bin.contributions, c =>
-      c.weight * this.#stopData.getStopUsage(c.stopId, metric)
-    );
+    const getBinUsage = bin => {
+      if (metric === Metric.PerBus) {
+        const weightedRiders = d3.sum(bin.contributions, c => c.weight * this.#stopData.getTotalRiders(c.stopId));
+        const weightedBuses = d3.sum(bin.contributions, c => c.weight * this.#stopData.getNumBuses(c.stopId));
+        return weightedRiders / weightedBuses;
+      }
+      return d3.sum(bin.contributions, c => c.weight * this.#stopData.getStopUsage(c.stopId, metric));
+    };
     const usages = this.#bins.map((bin, i) => {
       const u = getBinUsage(bin);
       bin.usage = u;
