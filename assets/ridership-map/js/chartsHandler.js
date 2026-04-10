@@ -156,24 +156,24 @@ export class ChartsHandler {
           groupby: ["stopLabel"]
         },
         { calculate: "datum.riders / datum.numBuses", as: "ridersPerBus" },
-        {
-          calculate: [
-            "lastindexof(datum.stopLabel, ' (') >= 0",
-            "  ? (length(slice(datum.stopLabel, 0, lastindexof(datum.stopLabel, ' ('))) > 10",
-            "     ? slice(datum.stopLabel, 0, 10) + '…' + slice(datum.stopLabel, lastindexof(datum.stopLabel, ' ('))",
-            "     : datum.stopLabel)",
-            "  : (length(datum.stopLabel) > 10",
-            "     ? slice(datum.stopLabel, 0, 10) + '…'",
-            "     : datum.stopLabel)",
-          ].join(" "), as: "stopLabelShort"
-        },
       ],
       encoding: {
         x: {
-          field: "stopLabelShort",
+          field: "stopLabel",
           type: "N",
           sort: { field: metric === Metric.PerBus ? "ridersPerBus" : "riders", order: "descending" },
           title: "Stop",
+          axis: {
+            labelExpr: [
+              "lastindexof(datum.label, ' (') >= 0",
+              "  ? (length(slice(datum.label, 0, lastindexof(datum.label, ' ('))) > 10",
+              "     ? slice(datum.label, 0, 10) + '…' + slice(datum.label, lastindexof(datum.label, ' ('))",
+              "     : datum.label)",
+              "  : (length(datum.label) > 10",
+              "     ? slice(datum.label, 0, 10) + '…'",
+              "     : datum.label)",
+            ].join(" "),
+          },
         },
         y: {
           field: metric === Metric.PerBus ? "ridersPerBus" : "riders",

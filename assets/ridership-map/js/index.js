@@ -39,8 +39,6 @@ panelHandler.setOnCloseCharts(() => {
   chartsHandler.update(new Set());
 });
 
-chartsHandler.update(new Set());
-
 async function reloadDataset() {
   toolbarOptions.clearRoutes();
   await stopData.reload();
@@ -114,6 +112,8 @@ for (const [name, value] of Object.entries(RidershipType)) {
 // Route dropdown
 const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, () => urlUpdater.update());
 urlUpdater.applyRoutesFromUrl(rebuildRouteDropdown);
+vizDrawer.updateStops();
+clickHandler.getStops();
 
 // Bind the visualization type dropdown
 const vizTypeScatterplot = document.getElementById("vizTypeScatterplot");
