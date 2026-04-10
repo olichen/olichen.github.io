@@ -26,15 +26,29 @@ export class ScatterplotDrawer {
   #initStops() {
     const stopData = this.#stopData;
 
+    const mapContainer = this.#map.getContainer();
+    const tooltip = d3.select(mapContainer)
+      .append("div")
+      .attr("class", "stop-tooltip")
+      .style("display", "none");
+
     this.stopGroup = this.#map.createGroup();
     this.#circles = this.stopGroup.selectAll("circle").data(stopData.stops, d => d.stop_id).join("circle")
       .attr("fill", "steelblue")
       .attr("opacity", 0.7)
       .on("mouseover", function(event, d) {
-        d3.select(this).attr("stroke", "black")
+        d3.select(this).attr("stroke", "black");
+        tooltip.text(d.stop_name).style("display", "block");
+      })
+      .on("mousemove", function(event) {
+        const rect = mapContainer.getBoundingClientRect();
+        tooltip
+          .style("left", (event.clientX - rect.left + 12) + "px")
+          .style("top", (event.clientY - rect.top - 28) + "px");
       })
       .on("mouseout", function(event, d) {
-        d3.select(this).attr("stroke", null)
+        d3.select(this).attr("stroke", null);
+        tooltip.style("display", "none");
       });
   }
 

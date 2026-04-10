@@ -111,6 +111,10 @@ export class LMap {
     return this.#map.distance(new L.LatLng(lat1, lon1), new L.LatLng(lat2, lon2));
   }
 
+  getContainer() {
+    return this.#map.getContainer();
+  }
+
   on(event, func) {
     return this.#map.on(event, func);
   }

@@ -27,6 +27,19 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
+/* -- Stop tooltip -- */
+.stop-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
 /* -- Map buttons (fullscreen, chart, settings) -- */
 .fullscreen-btn,
 .chart-btn,
