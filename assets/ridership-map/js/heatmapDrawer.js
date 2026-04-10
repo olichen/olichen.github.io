@@ -103,12 +103,39 @@ export class HeatmapDrawer {
       };
     });
 
+    const mapContainer = this.#map.getContainer();
+    const tooltip = d3.select(mapContainer)
+      .append("div")
+      .attr("class", "stop-tooltip")
+      .style("display", "none");
+
+    const toolbarOptions = this.#toolbarOptions;
+
     this.#paths = this.#group.selectAll("path")
       .data(this.#bins)
       .join("path")
       .attr("stroke", "white")
       .attr("stroke-width", 0.5)
-      .attr("opacity", 0.7);
+      .attr("opacity", 0.7)
+      .style("pointer-events", "visiblePainted")
+      .on("mouseover", function(event, d) {
+        d3.select(this).attr("stroke", "black").attr("stroke-width", 1.5);
+        const metric = toolbarOptions.metric;
+        const usageStr = metric === Metric.PerBus
+          ? (d.usage ?? 0).toFixed(1) + " riders per bus"
+          : Math.round(d.usage ?? 0) + " riders per day";
+        tooltip.text(usageStr).style("display", "block");
+      })
+      .on("mousemove", function(event) {
+        const rect = mapContainer.getBoundingClientRect();
+        tooltip
+          .style("left", (event.clientX - rect.left + 12) + "px")
+          .style("top", (event.clientY - rect.top - 28) + "px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("stroke", "white").attr("stroke-width", 0.5);
+        tooltip.style("display", "none");
+      });
   }
 
   #updatePositions() {
@@ -126,7 +153,11 @@ export class HeatmapDrawer {
     const getBinUsage = bin => d3.sum(bin.contributions, c =>
       c.weight * this.#stopData.getStopUsage(c.stopId, metric)
     );
-    const usages = this.#bins.map(getBinUsage);
+    const usages = this.#bins.map((bin, i) => {
+      const u = getBinUsage(bin);
+      bin.usage = u;
+      return u;
+    });
     const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
     const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p99]);
 
