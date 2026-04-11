@@ -103,13 +103,17 @@ permalink: /ridership-map/
               <input class="rt-search" id="rtSearch" type="text" placeholder="Search routes…" pattern="[a-zA-Z0-9]*">
               <span class="rt-search-clear" id="rtSearchClear">✕</span>
             </div>
-            <div class="rt-actions">
-              <span class="text-btn" id="routeAll" title="Toggle all routes">All</span>
-              <span class="text-btn" id="routeFrequent" title="Frequent (≤15 min headway)">Freq.</span>
-              <span class="text-btn" id="routeLocal" title="Local (15-30 min headway)">Local</span>
-              <span class="text-btn" id="routeNone" title="Deselect all routes">None</span>
+            <div class="rt-actions rt-actions-top">
+              <span class="text-btn" id="routeFrequent" title="≤15 min service">Freq.</span>
+              <span class="text-btn" id="routeLocal" title="15-30 min service">Local</span>
+              <span class="text-btn" id="routeAllDay" title="All-day service">All-Day</span>
+              <span class="text-btn" id="routePeak" title="Peak-only service">Peak</span>
             </div>
             <div class="rt-list" id="routeList"></div>
+            <div class="rt-actions rt-actions-bottom">
+              <span class="text-btn" id="routeAll" title="Select all routes">Select All</span>
+              <span class="text-btn" id="routeNone" title="Deselect all routes">Clear</span>
+            </div>
           </div>
         </div>
       </div>

@@ -207,7 +207,7 @@
   border-radius: 9px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
   padding: 0.4rem;
-  width: 175px;
+  width: 185px;
   z-index: var(--z-dropdown);
 }
 .rt-panel.open { display: block; }
@@ -248,9 +248,25 @@
 .rt-actions {
   display: flex;
   gap: 0.2rem;
+}
+.rt-actions-top {
   padding-bottom: 0.3rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
   margin-bottom: 0.25rem;
+  margin-left: -0.4rem;
+  margin-right: -0.4rem;
   border-bottom: 1px solid var(--border);
+}
+.rt-actions-bottom {
+  padding-top: 0.3rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  margin-top: 0.25rem;
+  margin-left: -0.4rem;
+  margin-right: -0.4rem;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
 }
 .rt-list { max-height: 300px; overflow-y: auto; }
 .rt-item {

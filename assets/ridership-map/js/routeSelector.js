@@ -97,19 +97,26 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
     if (!document.getElementById('rtDropdown').contains(e.target)) closeRtPanel();
   });
 
-  let frequentRoutes, localRoutes;
+  let frequentRoutes, localRoutes, allDayRoutes, peakRoutes;
 
   function rebuildRouteGroups() {
     const maxTripsByRoute = new Map();
-    for (const stop of stopData.stops)
-      for (const [routeNum, route] of Object.entries(stopData.getRoutes(stop.stop_id)))
+    for (const stop of stopData.stops) {
+      for (const [routeNum, route] of Object.entries(stopData.getRoutes(stop.stop_id))) {
+        if (!maxTripsByRoute.has(routeNum)) {
+          maxTripsByRoute.set(routeNum, 0); 
+        }
         for (const dataId of Object.values(route)) {
           const t = dataId['MID']?.OBSERVED_TRIPS_IDS;
           if (t != null)
-            maxTripsByRoute.set(routeNum, Math.max(maxTripsByRoute.get(routeNum) ?? 0, t));
+            maxTripsByRoute.set(routeNum, Math.max(maxTripsByRoute.get(routeNum), t));
         }
+      }
+    }
     frequentRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t >= 23).map(([r]) => r));
     localRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t >= 11 && t <= 22).map(([r]) => r));
+    allDayRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t >= 3 && t <= 10).map(([r]) => r));
+    peakRoutes = new Set([...maxTripsByRoute.entries()].filter(([, t]) => t <= 2).map(([r]) => r));
   }
 
   function rebuildRouteDropdown() {
@@ -138,18 +145,20 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
     updateGroupHighlights();
   }
 
-  const btnAll = document.getElementById("routeAll");
   const btnFrequent = document.getElementById("routeFrequent");
   const btnLocal = document.getElementById("routeLocal");
+  const btnAllDay = document.getElementById("routeAllDay");
+  const btnPeak = document.getElementById("routePeak");
 
   function allActive(group) {
     return [...group].every(r => toolbarOptions.isRouteActive(r));
   }
 
   function updateGroupHighlights() {
-    btnAll.classList.toggle('active', allActive(new Set(toolbarOptions.routeKeys())));
     btnFrequent.classList.toggle('active', allActive(frequentRoutes));
     btnLocal.classList.toggle('active', allActive(localRoutes));
+    btnAllDay.classList.toggle('active', allActive(allDayRoutes));
+    btnPeak.classList.toggle('active', allActive(peakRoutes));
   }
 
   function setRouteGroup(group, active) {
@@ -169,9 +178,11 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
     setRouteGroup(group, !allActive(group));
   }
 
-  btnAll.addEventListener('click', () => toggleRouteGroup(new Set(toolbarOptions.routeKeys())));
+  document.getElementById("routeAll").addEventListener('click', () => setRouteGroup(new Set(toolbarOptions.routeKeys()), true));
   btnFrequent.addEventListener('click', () => toggleRouteGroup(frequentRoutes));
   btnLocal.addEventListener('click', () => toggleRouteGroup(localRoutes));
+  btnAllDay.addEventListener('click', () => toggleRouteGroup(allDayRoutes));
+  btnPeak.addEventListener('click', () => toggleRouteGroup(peakRoutes));
   document.getElementById("routeNone").addEventListener('click', () => setRouteGroup(new Set(toolbarOptions.routeKeys()), false));
 
   rebuildRouteDropdown();
