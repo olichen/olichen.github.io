@@ -5,6 +5,7 @@ export class LMap {
   #map;
   #topLeft;
   #bottomRight;
+  #groups = [];
 
   constructor(element_id, panelHandler, center, zoom) {
     // map found here: https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -17,17 +18,11 @@ export class LMap {
     this.#map = new L.Map(element_id, { center: [center.lat, center.lon], zoom })
       .addLayer(L.tileLayer(mapUrl, { attribution: mapAttr, subdomains: "abcd", minZoom: 10, maxZoom: 18 }));
 
-    // Topleft/bottomright stretch across King County
-    this.#topLeft = this.#map.latLngToLayerPoint(new L.LatLng(48, -122.5));
-    this.#bottomRight = this.#map.latLngToLayerPoint(new L.LatLng(47, -121));
-
     // Add an overlay for the map and create an svg on that overlay
     const overlay = d3.select(this.#map.getPanes().overlayPane);
-    this.svg = overlay.append("svg")
-      .attr("width", this.#bottomRight.x - this.#topLeft.x)
-      .attr("height", this.#bottomRight.y - this.#topLeft.y)
-      .style("left", this.#topLeft.x + "px")
-      .style("top", this.#topLeft.y + "px");
+    this.svg = overlay.append("svg");
+    this.#refit();
+    this.#map.on("zoomend", () => this.#refit());
 
     // Add a legend
     const legend = L.control({ position: 'bottomleft' });
@@ -97,10 +92,24 @@ export class LMap {
     chart.addTo(this.#map);
   }
 
+  #refit() {
+    this.#topLeft     = this.#map.latLngToLayerPoint(new L.LatLng(48, -122.5));
+    this.#bottomRight = this.#map.latLngToLayerPoint(new L.LatLng(47, -121));
+    this.svg
+      .attr("width",  this.#bottomRight.x - this.#topLeft.x)
+      .attr("height", this.#bottomRight.y - this.#topLeft.y)
+      .style("left", this.#topLeft.x + "px")
+      .style("top",  this.#topLeft.y + "px");
+    for (const g of this.#groups)
+      g.attr("transform", `translate(${-this.#topLeft.x},${-this.#topLeft.y})`);
+  }
+
   createGroup() {
-    return this.svg.insert("g", ":first-child")
+    const g = this.svg.insert("g", ":first-child")
       .attr("class", "leaflet-zoom-hide")
-      .attr("transform", "translate(" + -this.#topLeft.x + "," + -this.#topLeft.y + ")");
+      .attr("transform", `translate(${-this.#topLeft.x},${-this.#topLeft.y})`);
+    this.#groups.push(g);
+    return g;
   }
 
   latLngToPoint(lat, lon) {
