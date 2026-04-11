@@ -89,7 +89,7 @@ export class ClickHandler {
             if (!(route_id in this.clickData)) {
               this.clickData[route_id] = { numBuses: 0, riders: 0 };
             }
-            this.clickData[route_id].numBuses = Math.max(this.#stopData.getNumBuses(stop.stop_id, route_id), this.clickData[route_id].numBuses);
+            this.clickData[route_id].numBuses += this.#stopData.getNumBuses(stop.stop_id, route_id);
             this.clickData[route_id].riders += this.#stopData.getTotalRiders(stop.stop_id, route_id);
           }
         }

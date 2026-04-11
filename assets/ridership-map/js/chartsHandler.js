@@ -43,7 +43,7 @@ export class ChartsHandler {
       for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
         routeSet.add(routeId);
         const buses = stopData.getNumBuses(stopId, routeId);
-        routeBuses[routeId] = Math.max(routeBuses[routeId] ?? 0, buses);
+        routeBuses[routeId] = (routeBuses[routeId] ?? 0) + buses;
       }
     }
 
@@ -95,7 +95,7 @@ export class ChartsHandler {
         {
           aggregate: [
             { op: "sum", field: "riders", type: "Q", as: "riders" },
-            { op: "max", field: "numBuses", type: "Q", as: "numBuses" },
+            { op: "sum", field: "numBuses", type: "Q", as: "numBuses" },
           ],
           groupby: ["routeName"]
         },
