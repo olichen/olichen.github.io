@@ -21,6 +21,10 @@ export class HeatmapDrawer {
   static #ANCHOR_LAT = 47;
   static #ANCHOR_LON = -123;
 
+  // Tuning constant for PerBus presence weighting: controls how quickly
+  // the displayed value fills in as weighted bus support increases.
+  static #PRESENCE_S = 10;
+
   constructor(map, stopData, toolbarOptions) {
     this.#map = map;
     this.#stopData = stopData;
@@ -152,9 +156,18 @@ export class HeatmapDrawer {
     const metric = this.#toolbarOptions.metric;
     const getBinUsage = bin => {
       if (metric === Metric.PerBus) {
-        const weightedRiders = d3.sum(bin.contributions, c => c.weight * this.#stopData.getTotalRiders(c.stopId));
-        const weightedBuses = d3.sum(bin.contributions, c => c.weight * this.#stopData.getNumBuses(c.stopId));
-        return weightedRiders / weightedBuses;
+        let weightedRiders = 0, weightedBuses = 0;
+        for (const c of bin.contributions) {
+          const riders = this.#stopData.getTotalRiders(c.stopId);
+          if (riders > 0) {
+            weightedRiders += c.weight * riders;
+            weightedBuses += c.weight * this.#stopData.getNumBuses(c.stopId);
+          }
+        }
+        if (weightedBuses === 0) return 0;
+        const localRate = weightedRiders / weightedBuses;
+        const presence = 1 - Math.exp(-weightedBuses / HeatmapDrawer.#PRESENCE_S);
+        return localRate * presence;
       }
       return d3.sum(bin.contributions, c => c.weight * this.#stopData.getStopUsage(c.stopId, metric));
     };
