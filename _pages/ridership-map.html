@@ -19,15 +19,6 @@ permalink: /ridership-map/
     <div class="toolbar" id="toolbar">
 
       <div class="tb-group">
-        <span class="tb-label">Distance</span>
-        <div class="walk-group">
-          <input type="range" id="distanceInput" min="100" max="2000" step="100" value="600">
-          <span class="walk-val" id="distanceLabel">600 m</span>
-        </div>
-        <div class="tb-sep"></div>
-      </div>
-
-      <div class="tb-group">
         <span class="tb-label">View</span>
         <div class="seg-control">
           <button class="seg-btn active" id="vizTypeScatterplot">Scatterplot</button>
@@ -127,6 +118,13 @@ permalink: /ridership-map/
     <button class="charts-close-btn" id="chartsCloseBtn" title="Close">✕</button>
     <div class="charts-body">
       <div class="stats-panel">
+        <div class="stats-radius">
+          <div class="stats-radius-header">
+            <span class="stats-radius-label">Radius</span>
+            <span class="stats-radius-val" id="distanceLabel">600 m</span>
+          </div>
+          <input type="range" id="distanceInput" min="100" max="2000" step="100" value="600">
+        </div>
         <div class="stat-capsule">
           <span class="stat-value" id="statRidership">—</span>
           <span class="stat-label">Daily Riders</span>

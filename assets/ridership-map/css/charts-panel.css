@@ -70,6 +70,44 @@
   border-right: 1px solid var(--border);
 }
 
+.stats-radius {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stats-radius-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stats-radius-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stats-radius-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--seg-primary);
+}
+
+.stats-radius input[type=range] {
+  width: 100%;
+  accent-color: var(--seg-primary);
+  cursor: pointer;
+}
+
 .stat-capsule {
   flex: 1;
   display: flex;
