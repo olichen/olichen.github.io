@@ -8,8 +8,10 @@ export class HeatmapDrawer {
   #toolbarOptions;
   #isTouchDevice;
   #group;
-  #bins;  // [{ nx, ny, contributions: [{stopId, weight}] }]
-  #paths; // D3 selection of fixed <path> elements
+  #bins;        // [{ nx, ny, contributions: [{stopId, weight}] }]
+  #paths;       // D3 selection of fixed <path> elements
+  #tooltip;     // D3 selection of the tooltip div
+  #tooltipLatLng; // Leaflet LatLng of the active hex center (touch only)
 
   // Geographic hex radius in meters
   static #HEX_RADIUS_METERS = 200;
@@ -110,10 +112,11 @@ export class HeatmapDrawer {
     });
 
     const mapContainer = this.#map.getContainer();
-    const tooltip = d3.select(mapContainer)
+    this.#tooltip = d3.select(mapContainer)
       .append("div")
       .attr("class", "stop-tooltip")
       .style("display", "none");
+    const tooltip = this.#tooltip;
 
     const toolbarOptions = this.#toolbarOptions;
     const showTooltip = (event, d, element) => {
@@ -133,6 +136,7 @@ export class HeatmapDrawer {
     const hideTooltip = (element) => {
       d3.select(element).attr("stroke", "white").attr("stroke-width", 0.5);
       tooltip.style("display", "none");
+      this.#tooltipLatLng = null;
     };
 
     this.#paths = this.#group.selectAll("path")
@@ -144,6 +148,7 @@ export class HeatmapDrawer {
       .style("pointer-events", "visiblePainted");
 
     if (this.#isTouchDevice) {
+      const this$1 = this;
       let activeElement = null;
       this.#paths.on("click", function(event, d) {
         if (activeElement && activeElement !== this) hideTooltip(activeElement);
@@ -152,6 +157,11 @@ export class HeatmapDrawer {
           activeElement = null;
         } else {
           showTooltip(event, d, this);
+          const radius = this$1.#hexRadius();
+          const anchor = this$1.#map.latLngToPoint(HeatmapDrawer.#ANCHOR_LAT, HeatmapDrawer.#ANCHOR_LON);
+          this$1.#tooltipLatLng = this$1.#map.layerPointToLatLng(
+            { x: d.nx * radius + anchor.x, y: d.ny * radius + anchor.y }
+          );
           activeElement = this;
         }
       });
@@ -161,6 +171,7 @@ export class HeatmapDrawer {
           activeElement = null;
         }
       }, { capture: true });
+      this.#map.on("move", () => this.#repositionTooltip());
     } else {
       this.#paths
         .on("mouseover", function(event, d) { showTooltip(event, d, this); })
@@ -172,6 +183,14 @@ export class HeatmapDrawer {
         })
         .on("mouseout", function() { hideTooltip(this); });
     }
+  }
+
+  #repositionTooltip() {
+    if (!this.#tooltipLatLng || !this.#tooltip) return;
+    const pt = this.#map.latLngToContainerPoint(this.#tooltipLatLng.lat, this.#tooltipLatLng.lng);
+    this.#tooltip
+      .style("left", (pt.x + 12) + "px")
+      .style("top",  (pt.y - 28) + "px");
   }
 
   #updatePositions() {

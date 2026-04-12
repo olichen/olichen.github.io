@@ -105,7 +105,7 @@ export class LMap {
   }
 
   createGroup() {
-    const g = this.svg.insert("g", ":first-child")
+    const g = this.svg.append("g")
       .attr("class", "leaflet-zoom-hide")
       .attr("transform", `translate(${-this.#topLeft.x},${-this.#topLeft.y})`);
     this.#groups.push(g);
@@ -114,6 +114,14 @@ export class LMap {
 
   latLngToPoint(lat, lon) {
     return this.#map.latLngToLayerPoint(new L.LatLng(lat, lon));
+  }
+
+  layerPointToLatLng(point) {
+    return this.#map.layerPointToLatLng(point);
+  }
+
+  latLngToContainerPoint(lat, lon) {
+    return this.#map.latLngToContainerPoint(new L.LatLng(lat, lon));
   }
 
   getDistance(lat1, lon1, lat2, lon2) {

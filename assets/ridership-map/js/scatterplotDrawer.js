@@ -13,6 +13,8 @@ export class ScatterplotDrawer {
   #usageScale;
 
   #isTouchDevice;
+  #tooltip;
+  #tooltipLatLng;
 
   constructor(map, stopData, toolbarOptions, isTouchDevice) {
     this.#map = map;
@@ -31,10 +33,11 @@ export class ScatterplotDrawer {
     const toolbarOptions = this.#toolbarOptions;
 
     const mapContainer = this.#map.getContainer();
-    const tooltip = d3.select(mapContainer)
+    this.#tooltip = d3.select(mapContainer)
       .append("div")
       .attr("class", "stop-tooltip")
       .style("display", "none");
+    const tooltip = this.#tooltip;
 
     this.stopGroup = this.#map.createGroup();
     const showTooltip = (event, d, element) => {
@@ -53,6 +56,7 @@ export class ScatterplotDrawer {
     const hideTooltip = (element) => {
       d3.select(element).attr("stroke", null);
       tooltip.style("display", "none");
+      this.#tooltipLatLng = null;
     };
 
     this.#circles = this.stopGroup.selectAll("circle").data(stopData.stops, d => d.stop_id).join("circle")
@@ -60,6 +64,7 @@ export class ScatterplotDrawer {
       .attr("opacity", 0.7);
 
     if (this.#isTouchDevice) {
+      const this$1 = this;
       let activeElement = null;
       this.#circles.on("click", function(event, d) {
         if (activeElement && activeElement !== this) hideTooltip(activeElement);
@@ -68,6 +73,7 @@ export class ScatterplotDrawer {
           activeElement = null;
         } else {
           showTooltip(event, d, this);
+          this$1.#tooltipLatLng = { lat: d.stop_lat, lng: d.stop_lon };
           activeElement = this;
         }
       });
@@ -77,6 +83,7 @@ export class ScatterplotDrawer {
           activeElement = null;
         }
       }, { capture: true });
+      this.#map.on("move", () => this.#repositionTooltip());
     } else {
       this.#circles
         .on("mouseover", function(event, d) { showTooltip(event, d, this); })
@@ -88,6 +95,14 @@ export class ScatterplotDrawer {
         })
         .on("mouseout", function() { hideTooltip(this); });
     }
+  }
+
+  #repositionTooltip() {
+    if (!this.#tooltipLatLng || !this.#tooltip) return;
+    const pt = this.#map.latLngToContainerPoint(this.#tooltipLatLng.lat, this.#tooltipLatLng.lng);
+    this.#tooltip
+      .style("left", (pt.x + 12) + "px")
+      .style("top",  (pt.y - 28) + "px");
   }
 
   destroy() {
