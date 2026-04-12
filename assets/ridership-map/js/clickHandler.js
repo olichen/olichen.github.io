@@ -12,7 +12,7 @@ export class ClickHandler {
 
   #onUpdate;
 
-  constructor(map, stopData, vizDrawer, chartsHandler, toolbarOptions, onUpdate) {
+  constructor(map, stopData, vizDrawer, chartsHandler, toolbarOptions, onUpdate, isTouchDevice) {
     this.#map = map;
     this.#stopData = stopData;
     this.#vizDrawer = vizDrawer;
@@ -34,7 +34,7 @@ export class ClickHandler {
 
     this.placeClick();
 
-    this.#map.on("click", (e) => {
+    this.#map.on(isTouchDevice ? "contextmenu" : "click", (e) => {
       this.#toolbarOptions.setClickLatLon(e.latlng.lat, e.latlng.lng);
       this.placeClick();
       this.setClickRadius();

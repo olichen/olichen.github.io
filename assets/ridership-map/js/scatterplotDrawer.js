@@ -12,10 +12,13 @@ export class ScatterplotDrawer {
   #zoom;
   #usageScale;
 
-  constructor(map, stopData, toolbarOptions) {
+  #isTouchDevice;
+
+  constructor(map, stopData, toolbarOptions, isTouchDevice) {
     this.#map = map;
     this.#stopData = stopData;
     this.#toolbarOptions = toolbarOptions;
+    this.#isTouchDevice = isTouchDevice;
 
     this.#initStops();
 
@@ -34,26 +37,57 @@ export class ScatterplotDrawer {
       .style("display", "none");
 
     this.stopGroup = this.#map.createGroup();
+    const showTooltip = (event, d, element) => {
+      d3.select(element).attr("stroke", "black");
+      const metric = toolbarOptions.metric;
+      const usage = stopData.getStopUsage(d.stop_id, metric);
+      const usageStr = metric === Metric.PerBus ? usage.toFixed(1) + " riders per bus" : Math.round(usage) + " riders per day";
+      const rect = mapContainer.getBoundingClientRect();
+      const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+      const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+      tooltip.html(`${d.stop_name}<br><span style="color:#888">${usageStr}</span>`).style("display", "block")
+        .style("left", (clientX - rect.left + 12) + "px")
+        .style("top", (clientY - rect.top - 28) + "px");
+    };
+
+    const hideTooltip = (element) => {
+      d3.select(element).attr("stroke", null);
+      tooltip.style("display", "none");
+    };
+
     this.#circles = this.stopGroup.selectAll("circle").data(stopData.stops, d => d.stop_id).join("circle")
       .attr("fill", "steelblue")
-      .attr("opacity", 0.7)
-      .on("mouseover", function(event, d) {
-        d3.select(this).attr("stroke", "black");
-        const metric = toolbarOptions.metric;
-        const usage = stopData.getStopUsage(d.stop_id, metric);
-        const usageStr = metric === Metric.PerBus ? usage.toFixed(1) + " riders per bus" : Math.round(usage) + " riders per day";
-        tooltip.html(`${d.stop_name}<br><span style="color:#888">${usageStr}</span>`).style("display", "block");
-      })
-      .on("mousemove", function(event) {
-        const rect = mapContainer.getBoundingClientRect();
-        tooltip
-          .style("left", (event.clientX - rect.left + 12) + "px")
-          .style("top", (event.clientY - rect.top - 28) + "px");
-      })
-      .on("mouseout", function(event, d) {
-        d3.select(this).attr("stroke", null);
-        tooltip.style("display", "none");
+      .attr("opacity", 0.7);
+
+    if (this.#isTouchDevice) {
+      let activeElement = null;
+      this.#circles.on("click", function(event, d) {
+        if (activeElement && activeElement !== this) hideTooltip(activeElement);
+        if (activeElement === this) {
+          hideTooltip(this);
+          activeElement = null;
+        } else {
+          showTooltip(event, d, this);
+          activeElement = this;
+        }
       });
+      mapContainer.addEventListener("click", e => {
+        if (activeElement && !activeElement.contains(e.target)) {
+          hideTooltip(activeElement);
+          activeElement = null;
+        }
+      }, { capture: true });
+    } else {
+      this.#circles
+        .on("mouseover", function(event, d) { showTooltip(event, d, this); })
+        .on("mousemove", function(event) {
+          const rect = mapContainer.getBoundingClientRect();
+          tooltip
+            .style("left", (event.clientX - rect.left + 12) + "px")
+            .style("top", (event.clientY - rect.top - 28) + "px");
+        })
+        .on("mouseout", function() { hideTooltip(this); });
+    }
   }
 
   destroy() {

@@ -6,6 +6,7 @@ export class HeatmapDrawer {
   #map;
   #stopData;
   #toolbarOptions;
+  #isTouchDevice;
   #group;
   #bins;  // [{ nx, ny, contributions: [{stopId, weight}] }]
   #paths; // D3 selection of fixed <path> elements
@@ -25,10 +26,11 @@ export class HeatmapDrawer {
   // the displayed value fills in as weighted bus support increases.
   static #PRESENCE_S = 10;
 
-  constructor(map, stopData, toolbarOptions) {
+  constructor(map, stopData, toolbarOptions, isTouchDevice) {
     this.#map = map;
     this.#stopData = stopData;
     this.#toolbarOptions = toolbarOptions;
+    this.#isTouchDevice = isTouchDevice;
 
     this.#initStops();
     this.#updatePositions();
@@ -114,6 +116,24 @@ export class HeatmapDrawer {
       .style("display", "none");
 
     const toolbarOptions = this.#toolbarOptions;
+    const showTooltip = (event, d, element) => {
+      d3.select(element).attr("stroke", "black").attr("stroke-width", 1.5);
+      const metric = toolbarOptions.metric;
+      const usageStr = metric === Metric.PerBus
+        ? (d.usage ?? 0).toFixed(1) + " riders per bus"
+        : Math.round(d.usage ?? 0) + " riders per day";
+      const rect = mapContainer.getBoundingClientRect();
+      const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+      const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+      tooltip.text(usageStr).style("display", "block")
+        .style("left", (clientX - rect.left + 12) + "px")
+        .style("top", (clientY - rect.top - 28) + "px");
+    };
+
+    const hideTooltip = (element) => {
+      d3.select(element).attr("stroke", "white").attr("stroke-width", 0.5);
+      tooltip.style("display", "none");
+    };
 
     this.#paths = this.#group.selectAll("path")
       .data(this.#bins)
@@ -121,25 +141,37 @@ export class HeatmapDrawer {
       .attr("stroke", "white")
       .attr("stroke-width", 0.5)
       .attr("opacity", 0.7)
-      .style("pointer-events", "visiblePainted")
-      .on("mouseover", function(event, d) {
-        d3.select(this).attr("stroke", "black").attr("stroke-width", 1.5);
-        const metric = toolbarOptions.metric;
-        const usageStr = metric === Metric.PerBus
-          ? (d.usage ?? 0).toFixed(1) + " riders per bus"
-          : Math.round(d.usage ?? 0) + " riders per day";
-        tooltip.text(usageStr).style("display", "block");
-      })
-      .on("mousemove", function(event) {
-        const rect = mapContainer.getBoundingClientRect();
-        tooltip
-          .style("left", (event.clientX - rect.left + 12) + "px")
-          .style("top", (event.clientY - rect.top - 28) + "px");
-      })
-      .on("mouseout", function() {
-        d3.select(this).attr("stroke", "white").attr("stroke-width", 0.5);
-        tooltip.style("display", "none");
+      .style("pointer-events", "visiblePainted");
+
+    if (this.#isTouchDevice) {
+      let activeElement = null;
+      this.#paths.on("click", function(event, d) {
+        if (activeElement && activeElement !== this) hideTooltip(activeElement);
+        if (activeElement === this) {
+          hideTooltip(this);
+          activeElement = null;
+        } else {
+          showTooltip(event, d, this);
+          activeElement = this;
+        }
       });
+      mapContainer.addEventListener("click", e => {
+        if (activeElement && !activeElement.contains(e.target)) {
+          hideTooltip(activeElement);
+          activeElement = null;
+        }
+      }, { capture: true });
+    } else {
+      this.#paths
+        .on("mouseover", function(event, d) { showTooltip(event, d, this); })
+        .on("mousemove", function(event) {
+          const rect = mapContainer.getBoundingClientRect();
+          tooltip
+            .style("left", (event.clientX - rect.left + 12) + "px")
+            .style("top", (event.clientY - rect.top - 28) + "px");
+        })
+        .on("mouseout", function() { hideTooltip(this); });
+    }
   }
 
   #updatePositions() {

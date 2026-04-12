@@ -24,14 +24,15 @@ const panelHandler = new PanelHandler('map-container', 'toolbarPanel', 'chartsPa
 const urlUpdater = new UrlUpdater(mapOptions, toolbarOptions, panelHandler);
 urlUpdater.applyFromUrl();
 panelHandler.setOnChange(() => urlUpdater.update());
+const isTouchDevice = window.matchMedia("(hover: none)").matches;
 const map = new LMap("map", panelHandler, mapOptions.center, mapOptions.zoom);
 map.on('moveend', e => { mapOptions.setCenter(e.target.getCenter().lat, e.target.getCenter().lng); urlUpdater.update(); });
 map.on('zoomend', e => { mapOptions.setZoom(e.target.getZoom()); urlUpdater.update(); });
 
 let stopData = await StopData.createInstance(toolbarOptions);
-let chartsHandler = new ChartsHandler(stopData, toolbarOptions, panelHandler);
-let vizDrawer = new VisualizationDrawer(map, stopData, toolbarOptions);
-const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler, toolbarOptions, () => urlUpdater.update());
+let chartsHandler = new ChartsHandler(stopData, toolbarOptions, panelHandler, isTouchDevice);
+let vizDrawer = new VisualizationDrawer(map, stopData, toolbarOptions, isTouchDevice);
+const clickHandler = new ClickHandler(map, stopData, vizDrawer, chartsHandler, toolbarOptions, () => urlUpdater.update(), isTouchDevice);
 clickHandler.setClickRadius();
 
 panelHandler.setOnCloseCharts(() => {
@@ -110,7 +111,7 @@ for (const [name, value] of Object.entries(RidershipType)) {
 }
 
 // Route dropdown
-const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, () => urlUpdater.update());
+const { rebuildRouteDropdown } = initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, () => urlUpdater.update(), isTouchDevice);
 urlUpdater.applyRoutesFromUrl(rebuildRouteDropdown);
 vizDrawer.updateStops();
 clickHandler.getStops();

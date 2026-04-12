@@ -6,12 +6,14 @@ export class VisualizationDrawer {
   #map;
   #stopData;
   #toolbarOptions;
+  #isTouchDevice;
   #drawer;
 
-  constructor(map, stopData, toolbarOptions) {
+  constructor(map, stopData, toolbarOptions, isTouchDevice) {
     this.#map = map;
     this.#stopData = stopData;
     this.#toolbarOptions = toolbarOptions;
+    this.#isTouchDevice = isTouchDevice;
     this.#drawer = this.#createDrawer();
 
     map.on("zoomend", e => this.#drawer.onZoom(e.target.getZoom()));
@@ -19,9 +21,9 @@ export class VisualizationDrawer {
 
   #createDrawer() {
     if (this.#toolbarOptions.vizType === VizType.Heatmap) {
-      return new HeatmapDrawer(this.#map, this.#stopData, this.#toolbarOptions);
+      return new HeatmapDrawer(this.#map, this.#stopData, this.#toolbarOptions, this.#isTouchDevice);
     }
-    return new ScatterplotDrawer(this.#map, this.#stopData, this.#toolbarOptions);
+    return new ScatterplotDrawer(this.#map, this.#stopData, this.#toolbarOptions, this.#isTouchDevice);
   }
 
   setVizType(vizType) {

@@ -1,6 +1,6 @@
 import { keepInViewport } from "./util.js";
 
-export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, onUpdate) {
+export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHandler, chartsHandler, onUpdate, isTouchDevice) {
   const rtTrigger = document.getElementById("rtTrigger");
   const rtPanel = document.getElementById("rtPanel");
   const rtSearch = document.getElementById("rtSearch");
@@ -34,7 +34,7 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
       rtTrigger.classList.add('open');
       rtPanel.classList.add('open');
       keepInViewport(rtPanel);
-      rtSearch.focus();
+      if (!isTouchDevice) rtSearch.focus();
     } else {
       closeRtPanel();
     }
@@ -90,7 +90,7 @@ export function initRouteSelector(toolbarOptions, stopData, vizDrawer, clickHand
     rtSearch.value = '';
     routeList.querySelectorAll('.rt-item').forEach(item => item.classList.remove('hidden'));
     rtSearchClear.classList.remove('visible');
-    rtSearch.focus();
+    if (!isTouchDevice) rtSearch.focus();
   });
 
   document.addEventListener('click', e => {
