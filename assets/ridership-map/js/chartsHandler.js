@@ -66,7 +66,7 @@ export class ChartsHandler {
     const chart2Html = document.getElementById("chart2");
 
     if (!stopIds || stopIds.size === 0) {
-      chart1Html.innerHTML = `<div class="border h-100 text-center align-content-center">${this.#isTouchDevice ? 'Press and hold' : 'Click'} a location on the map to see more information</div>`;
+      chart1Html.innerHTML = `<div class="border h-100 text-center align-content-center">${this.#isTouchDevice ? 'Press and hold' : 'Click'} a location on the map to see more information about nearby stops</div>`;
       chart2Html.innerHTML = chart1Html.innerHTML;
       return;
     }

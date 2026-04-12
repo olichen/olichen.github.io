@@ -20,14 +20,14 @@ export class UrlUpdater {
     p.set('zoom', this.#mapOptions.zoom);
 
     p.set('metric', t.metric);
-    p.set('dataset', t.dataset);
+    p.set('data', t.dataset);
     p.set('viz', t.vizType);
 
     const allPeriods = Object.values(TimePeriod);
-    p.set('periods', allPeriods.filter(period => t.isTimePeriodActive(period)).join('-'));
+    p.set('time', allPeriods.filter(period => t.isTimePeriodActive(period)).join('-'));
 
     const allTypes = Object.values(RidershipType);
-    p.set('types', allTypes.filter(type => t.isRidershipTypeActive(type)).join('-'));
+    p.set('riders', allTypes.filter(type => t.isRidershipTypeActive(type)).join('-'));
 
     p.set('toolbar', this.#panelHandler.toolbarOpen ? '1' : '0');
     p.set('charts', this.#panelHandler.chartsOpen ? '1' : '0');
@@ -55,15 +55,15 @@ export class UrlUpdater {
     if (p.has('zoom'))
       this.#mapOptions.setZoom(parseInt(p.get('zoom')));
     if (p.has('metric')) t.setMetric(p.get('metric'));
-    if (p.has('dataset')) t.setDataset(p.get('dataset'));
+    if (p.has('data')) t.setDataset(p.get('data'));
     if (p.has('viz')) t.setVizType(p.get('viz'));
-    if (p.has('periods')) {
-      const active = new Set(p.get('periods').split('-'));
+    if (p.has('time')) {
+      const active = new Set(p.get('time').split('-'));
       for (const period of Object.values(TimePeriod))
         t.setTimePeriodActive(period, active.has(period));
     }
-    if (p.has('types')) {
-      const active = new Set(p.get('types').split('-'));
+    if (p.has('riders')) {
+      const active = new Set(p.get('riders').split('-'));
       for (const type of Object.values(RidershipType))
         t.setRidershipTypeActive(type, active.has(type));
     }
