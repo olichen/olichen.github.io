@@ -20,7 +20,7 @@ export class ClickHandler {
     this.#toolbarOptions = toolbarOptions;
     this.#onUpdate = onUpdate;
 
-    const clickGroup = map.createGroup();
+    const clickGroup = map.getOverlayGroup();
     this.#clickCircle = clickGroup.append("circle")
       .attr("stroke", "red")
       .attr("fill", "red")

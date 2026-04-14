@@ -73,7 +73,7 @@ export class HeatmapDrawer {
   // Bin centers are stored normalized (in units of the reference radius) so they
   // can be rescaled to any zoom level in updateStops() without re-binning.
   #initStops() {
-    this.#group = this.#map.createGroup();
+    this.#group = this.#map.getVizGroup();
 
     const radius = this.#hexRadius();
     const sigma = radius * HeatmapDrawer.#GAUSSIAN_METERS / HeatmapDrawer.#HEX_RADIUS_METERS;
@@ -268,7 +268,7 @@ export class HeatmapDrawer {
   }
 
   destroy() {
-    this.#group.remove();
+    this.#group.selectAll("*").remove();
     d3.select('#legendSvg').selectAll('*').remove();
   }
 }

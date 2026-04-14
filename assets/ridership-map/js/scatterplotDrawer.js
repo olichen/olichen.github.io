@@ -39,7 +39,7 @@ export class ScatterplotDrawer {
       .style("display", "none");
     const tooltip = this.#tooltip;
 
-    this.stopGroup = this.#map.createGroup();
+    this.stopGroup = this.#map.getVizGroup();
     const showTooltip = (event, d, element) => {
       d3.select(element).attr("stroke", "black");
       const metric = toolbarOptions.metric;
@@ -106,7 +106,7 @@ export class ScatterplotDrawer {
   }
 
   destroy() {
-    this.stopGroup.remove();
+    this.stopGroup.selectAll("*").remove();
   }
 
   highlightStops(stopIds) {

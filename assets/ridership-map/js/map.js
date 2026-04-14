@@ -5,7 +5,8 @@ export class LMap {
   #map;
   #topLeft;
   #bottomRight;
-  #groups = [];
+  #vizGroup;
+  #overlayGroup;
 
   constructor(element_id, panelHandler, center, zoom) {
     // map found here: https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -21,6 +22,8 @@ export class LMap {
     // Add an overlay for the map and create an svg on that overlay
     const overlay = d3.select(this.#map.getPanes().overlayPane);
     this.svg = overlay.append("svg");
+    this.#vizGroup     = this.svg.append("g").attr("class", "leaflet-zoom-hide");
+    this.#overlayGroup = this.svg.append("g").attr("class", "leaflet-zoom-hide");
     this.#refit();
     this.#map.on("zoomend", () => this.#refit());
 
@@ -100,17 +103,13 @@ export class LMap {
       .attr("height", this.#bottomRight.y - this.#topLeft.y)
       .style("left", this.#topLeft.x + "px")
       .style("top",  this.#topLeft.y + "px");
-    for (const g of this.#groups)
-      g.attr("transform", `translate(${-this.#topLeft.x},${-this.#topLeft.y})`);
+    const t = `translate(${-this.#topLeft.x},${-this.#topLeft.y})`;
+    this.#vizGroup.attr("transform", t);
+    this.#overlayGroup.attr("transform", t);
   }
 
-  createGroup() {
-    const g = this.svg.append("g")
-      .attr("class", "leaflet-zoom-hide")
-      .attr("transform", `translate(${-this.#topLeft.x},${-this.#topLeft.y})`);
-    this.#groups.push(g);
-    return g;
-  }
+  getVizGroup()     { return this.#vizGroup; }
+  getOverlayGroup() { return this.#overlayGroup; }
 
   latLngToPoint(lat, lon) {
     return this.#map.latLngToLayerPoint(new L.LatLng(lat, lon));
