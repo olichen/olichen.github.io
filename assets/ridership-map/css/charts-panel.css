@@ -138,9 +138,8 @@
 
 /* -- Chart panes -- */
 .chart-pane {
-  flex: 1;
+  flex: 0 0 auto;
   min-width: 350px;
-  max-width: 600px;
   padding: 8px;
   border-left: 1px solid var(--border);
 }

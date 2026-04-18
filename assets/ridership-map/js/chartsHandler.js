@@ -90,6 +90,12 @@ export class ChartsHandler {
       }
     }
 
+    const BAR_STEP = 12;
+    const BASE_WIDTH = 400;
+
+    const chart1Width = Math.max(BASE_WIDTH, new Set(stopValues.map(d => d.routeName)).size * BAR_STEP);
+    const chart2Width = Math.max(BASE_WIDTH, new Set(stopValues.map(d => d.stopLabel)).size * BAR_STEP);
+
     const chart1 = {
       mark: "bar",
       data: { values: stopValues },
@@ -141,7 +147,7 @@ export class ChartsHandler {
           },
         ],
       },
-      width: "container",
+      width: chart1Width,
       height: CHART_HEIGHT,
       title: "Daily Riders By Route"
     };
@@ -207,10 +213,14 @@ export class ChartsHandler {
           },
         ]
       },
-      width: "container",
+      width: chart2Width,
       height: CHART_HEIGHT,
       title: "Daily Riders By Stop",
     };
+
+    const PANE_PADDING = 16; // 8px each side
+    chart1Html.parentElement.style.width = `${chart1Width + PANE_PADDING}px`;
+    chart2Html.parentElement.style.width = `${chart2Width + PANE_PADDING}px`;
 
     chart1Html.innerHTML = null;
     await render(chart1, chart1Html);
