@@ -139,6 +139,7 @@
 /* -- Chart panes -- */
 .chart-pane {
   flex: 0 0 auto;
+  width: fit-content;
   min-width: 350px;
   padding: 8px;
   border-left: 1px solid var(--border);

@@ -218,10 +218,6 @@ export class ChartsHandler {
       title: "Daily Riders By Stop",
     };
 
-    const PANE_PADDING = 16; // 8px each side
-    chart1Html.parentElement.style.width = `${chart1Width + PANE_PADDING}px`;
-    chart2Html.parentElement.style.width = `${chart2Width + PANE_PADDING}px`;
-
     chart1Html.innerHTML = null;
     await render(chart1, chart1Html);
     chart2Html.innerHTML = null;
