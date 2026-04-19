@@ -2,18 +2,24 @@
   "scripts": {
     "build-dev": "esbuild assets/ridership-map/js/index.js --bundle --format=esm --splitting --loader:.png=empty --outdir=assets/dist/",
     "build": "esbuild assets/ridership-map/js/index.js --bundle --format=esm --splitting --minify --loader:.png=empty --outdir=assets/dist/",
-    "watch": "esbuild assets/ridership-map/js/index.js --bundle --format=esm --splitting --loader:.png=empty --outdir=assets/dist/ --watch"
+    "watch": "esbuild assets/ridership-map/js/index.js --bundle --format=esm --splitting --loader:.png=empty --outdir=assets/dist/ --watch",
+    "build-density-dev": "esbuild assets/density-map/js/index.js --bundle --format=esm --loader:.png=empty --outfile=assets/dist/density.js",
+    "build-density": "esbuild assets/density-map/js/index.js --bundle --format=esm --minify --loader:.png=empty --outfile=assets/dist/density.js",
+    "watch-density": "esbuild assets/density-map/js/index.js --bundle --format=esm --loader:.png=empty --outfile=assets/dist/density.js --watch",
+    "build-tracts": "mapshaper assets/density-map/data/tract20.shp -proj wgs84 -simplify 30% -o format=topojson assets/density-map/data/tract20.json"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
     "d3": "^7.9.0",
     "d3-hexbin": "^0.2.2",
     "leaflet": "^1.9.4",
+    "topojson-client": "^3.1.0",
     "vega": "^6.2.0",
     "vega-lite": "^6.4.2",
     "vega-tooltip": "^1.1.0"
   },
   "devDependencies": {
-    "esbuild": "^0.27.3"
+    "esbuild": "^0.27.3",
+    "mapshaper": "^0.6.121"
   }
 }
