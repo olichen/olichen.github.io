@@ -10,7 +10,50 @@ permalink: /density-map/
   <link rel="stylesheet" href="/assets/dist/density.css">
 </head>
 <body>
-  <div id="map"></div>
+  <div id="map-container">
+    <div class="toolbar-panel open" id="toolbarPanel">
+      <div class="toolbar" id="toolbar">
+
+        <div class="tb-group">
+          <span class="tb-label">Metric</span>
+          <div class="svc-dropdown" id="metricTypeDropdown">
+            <div class="svc-trigger" id="metricTypeTrigger">
+              <span id="metricTypeLabel">Population Density</span>
+              <svg class="tb-chevron" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="svc-panel" id="metricTypePanel">
+              <div class="svc-option selected" data-value="popDensity">Population Density</div>
+              <div class="svc-option" data-value="pctChange">Percent Change</div>
+              <div class="svc-option" data-value="numChange">Numerical Change</div>
+            </div>
+          </div>
+          <div class="tb-sep"></div>
+        </div>
+
+
+        <div class="tb-group">
+          <span class="tb-label">Base Year</span>
+          <div class="tb-slider-wrap">
+            <input type="range" id="yearInput" min="2010" max="2025" step="1" value="2020">
+            <span class="tb-slider-val" id="yearLabel">2020</span>
+          </div>
+          <div class="tb-sep"></div>
+        </div>
+
+        <div class="tb-group">
+          <span class="tb-label">End Year</span>
+          <div class="tb-slider-wrap">
+            <input type="range" id="endYearInput" min="2010" max="2025" step="1" value="2025">
+            <span class="tb-slider-val" id="endYearLabel">2025</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
   <script type="module" src="/assets/dist/density.js"></script>
 </body>
 </html>
