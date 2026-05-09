@@ -5,7 +5,8 @@ export const VizType = {
 
 export const Dataset = {
   Spring2024: "24-spring",
-  Fall2024: "24-fall"
+  Fall2024: "24-fall",
+  Spring2025: "25-spring"
 };
 
 export const Metric = {
@@ -31,7 +32,7 @@ export class ToolbarOptions {
   #metric = Metric.Total;
   #timePeriods = new Set(Object.values(TimePeriod));
   #ridershipTypes = new Set([RidershipType.Boardings]);
-  #dataset = Dataset.Fall2024;
+  #dataset = Dataset.Spring2025;
   #vizType = VizType.Scatterplot;
   #distance = 600;
 
