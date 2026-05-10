@@ -58,7 +58,7 @@ const distanceInput = document.getElementById("distanceInput");
 const distanceLabel = document.getElementById("distanceLabel");
 distanceInput.oninput = function() {
   distanceLabel.textContent = `${this.value} m`;
-  toolbarOptions.setDistance(this.value);
+  toolbarOptions.setDistance(Number(this.value));
   clickHandler.setClickRadius();
   clickHandler.getStops();
   urlUpdater.update();

@@ -82,12 +82,12 @@ export class ClickHandler {
     const isPointMode = this.#toolbarOptions.distance === 0;
 
     if (isPointMode) {
-      // Find the closest stop within 50m
+      // Find the closest stop within 30m
       let closestStop = null;
       let closestDist = Infinity;
       for (const stop of this.#stopData.stops) {
         const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon);
-        if (stopDistance < 50 && stopDistance < closestDist && this.#stopData.getTotalRiders(stop.stop_id) > 0) {
+        if (stopDistance < 30 && stopDistance < closestDist && this.#stopData.getTotalRiders(stop.stop_id) > 0) {
           closestStop = stop;
           closestDist = stopDistance;
         }
