@@ -154,7 +154,7 @@ svcPanel.querySelectorAll('.svc-option').forEach(opt => {
     svcLabel.textContent = opt.textContent.trim();
     svcTrigger.classList.remove('open');
     svcPanel.classList.remove('open');
-    const datasetMap = { spring2024: Dataset.Spring2024, fall2024: Dataset.Fall2024, spring2025: Dataset.Spring2025 };
+    const datasetMap = { spring2024: Dataset.Spring2024, fall2024: Dataset.Fall2024, spring2025: Dataset.Spring2025, fall2025: Dataset.Fall2025 };
     toolbarOptions.setDataset(datasetMap[opt.dataset.value]);
     await reloadDataset();
   });
@@ -183,8 +183,8 @@ function initUIFromOptions() {
   distanceInput.value = toolbarOptions.distance;
   distanceLabel.textContent = `${toolbarOptions.distance} m`;
 
-  const datasetLabelMap = { [Dataset.Spring2024]: 'Spring 2024', [Dataset.Fall2024]: 'Fall 2024', [Dataset.Spring2025]: 'Spring 2025' };
-  const datasetValueMap = { [Dataset.Spring2024]: 'spring2024', [Dataset.Fall2024]: 'fall2024', [Dataset.Spring2025]: 'spring2025' };
+  const datasetLabelMap = { [Dataset.Spring2024]: 'Spring 2024', [Dataset.Fall2024]: 'Fall 2024', [Dataset.Spring2025]: 'Spring 2025', [Dataset.Fall2025]: 'Fall 2025' };
+  const datasetValueMap = { [Dataset.Spring2024]: 'spring2024', [Dataset.Fall2024]: 'fall2024', [Dataset.Spring2025]: 'spring2025', [Dataset.Fall2025]: 'fall2025' };
   svcLabel.textContent = datasetLabelMap[toolbarOptions.dataset];
   svcPanel.querySelectorAll('.svc-option').forEach(opt => {
     opt.classList.toggle('selected', opt.dataset.value === datasetValueMap[toolbarOptions.dataset]);
