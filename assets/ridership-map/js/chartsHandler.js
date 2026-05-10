@@ -149,7 +149,7 @@ export class ChartsHandler {
       },
       width: chart1Width,
       height: CHART_HEIGHT,
-      title: "Daily Riders By Route"
+      title: metric === Metric.PerBus ? "Riders Per Bus By Route" : "Daily Riders By Route"
     };
 
     const chart2 = {
@@ -215,7 +215,7 @@ export class ChartsHandler {
       },
       width: chart2Width,
       height: CHART_HEIGHT,
-      title: "Daily Riders By Stop",
+      title: metric === Metric.PerBus ? "Riders Per Bus By Stop" : "Daily Riders By Stop",
     };
 
     chart1Html.innerHTML = null;

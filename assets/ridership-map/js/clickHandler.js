@@ -79,18 +79,42 @@ export class ClickHandler {
     this.clickData = {};
     this.clickStops = new Set();
 
-    for (const stop of this.#stopData.stops) {
-      const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon)
-      if (stopDistance < this.#toolbarOptions.distance) {
-        const additionalRiders = this.#stopData.getTotalRiders(stop.stop_id);
-        if (additionalRiders > 0) {
-          this.clickStops.add(stop.stop_id);
-          for (const route_id of Object.keys(this.#stopData.getRoutes(stop.stop_id))) {
-            if (!(route_id in this.clickData)) {
-              this.clickData[route_id] = { numBuses: 0, riders: 0 };
+    const isPointMode = this.#toolbarOptions.distance === 0;
+
+    if (isPointMode) {
+      // Find the closest stop within 50m
+      let closestStop = null;
+      let closestDist = Infinity;
+      for (const stop of this.#stopData.stops) {
+        const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon);
+        if (stopDistance < 50 && stopDistance < closestDist && this.#stopData.getTotalRiders(stop.stop_id) > 0) {
+          closestStop = stop;
+          closestDist = stopDistance;
+        }
+      }
+      if (closestStop) {
+        this.clickStops.add(closestStop.stop_id);
+        for (const route_id of Object.keys(this.#stopData.getRoutes(closestStop.stop_id))) {
+          this.clickData[route_id] = {
+            numBuses: this.#stopData.getNumBuses(closestStop.stop_id, route_id),
+            riders: this.#stopData.getTotalRiders(closestStop.stop_id, route_id)
+          };
+        }
+      }
+    } else {
+      for (const stop of this.#stopData.stops) {
+        const stopDistance = this.#map.getDistance(this.#toolbarOptions.clickLatLon.lat, this.#toolbarOptions.clickLatLon.lon, stop.stop_lat, stop.stop_lon)
+        if (stopDistance < this.#toolbarOptions.distance) {
+          const additionalRiders = this.#stopData.getTotalRiders(stop.stop_id);
+          if (additionalRiders > 0) {
+            this.clickStops.add(stop.stop_id);
+            for (const route_id of Object.keys(this.#stopData.getRoutes(stop.stop_id))) {
+              if (!(route_id in this.clickData)) {
+                this.clickData[route_id] = { numBuses: 0, riders: 0 };
+              }
+              this.clickData[route_id].numBuses += this.#stopData.getNumBuses(stop.stop_id, route_id);
+              this.clickData[route_id].riders += this.#stopData.getTotalRiders(stop.stop_id, route_id);
             }
-            this.clickData[route_id].numBuses += this.#stopData.getNumBuses(stop.stop_id, route_id);
-            this.clickData[route_id].riders += this.#stopData.getTotalRiders(stop.stop_id, route_id);
           }
         }
       }
