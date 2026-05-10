@@ -66,9 +66,27 @@ export class ChartsHandler {
     const chart2Html = document.getElementById("chart2");
 
     if (!stopIds || stopIds.size === 0) {
-      chart1Html.innerHTML = `<div class="border h-100 text-center align-content-center">${this.#isTouchDevice ? 'Press and hold' : 'Click'} a location on the map to see more information about nearby stops</div>`;
+      chart1Html.innerHTML = `<div class="border h-100 text-center align-content-center px-2">${this.#isTouchDevice ? 'Press and hold' : 'Click'} a location on the map to see more information about nearby stops</div>`;
       chart2Html.innerHTML = chart1Html.innerHTML;
       return;
+    }
+
+    // Compute numBuses per route, deduplicating by INBD_OUTBD_CD so that
+    // multiple stops in the same direction don't multiply the bus count.
+    const routeDirBuses = {};
+    for (const stopId of stopIds) {
+      for (const routeId of Object.keys(stopData.getRoutes(stopId))) {
+        const dir = stopData.getRouteDir(stopId, routeId) ?? 'UNKNOWN';
+        const key = `${routeId}|${dir}`;
+        if (!(key in routeDirBuses)) {
+          routeDirBuses[key] = stopData.getNumBuses(stopId, routeId);
+        }
+      }
+    }
+    const routeBusesMap = {};
+    for (const [key, buses] of Object.entries(routeDirBuses)) {
+      const routeId = key.split('|')[0];
+      routeBusesMap[routeId] = (routeBusesMap[routeId] ?? 0) + buses;
     }
 
     const stopValues = [];
@@ -85,12 +103,13 @@ export class ChartsHandler {
           stopLabel,
           routeName: stopData.getRouteName(routeId),
           numBuses: stopData.getNumBuses(stopId, routeId),
+          routeNumBuses: routeBusesMap[routeId],
           riders: stopRiders
         });
       }
     }
 
-    const BAR_STEP = 12;
+    const BAR_STEP = 16;
     const BASE_WIDTH = 400;
 
     const chart1Width = Math.max(BASE_WIDTH, new Set(stopValues.map(d => d.routeName)).size * BAR_STEP);
@@ -103,7 +122,7 @@ export class ChartsHandler {
         {
           aggregate: [
             { op: "sum", field: "riders", type: "Q", as: "riders" },
-            { op: "sum", field: "numBuses", type: "Q", as: "numBuses" },
+            { op: "max", field: "routeNumBuses", type: "Q", as: "numBuses" },
           ],
           groupby: ["routeName"]
         },
@@ -116,6 +135,7 @@ export class ChartsHandler {
           type: "N",
           sort: "-y",
           title: "Route",
+          axis: { labelAngle: -45 },
         },
         y: {
           field: metric === Metric.PerBus ? "ridersPerBus" : "riders",
@@ -172,13 +192,14 @@ export class ChartsHandler {
           sort: { field: metric === Metric.PerBus ? "ridersPerBus" : "riders", order: "descending" },
           title: "Stop",
           axis: {
+            labelAngle: -45,
             labelExpr: [
               "lastindexof(datum.label, ' (') >= 0",
-              "  ? (length(slice(datum.label, 0, lastindexof(datum.label, ' ('))) > 10",
-              "     ? slice(datum.label, 0, 10) + '…' + slice(datum.label, lastindexof(datum.label, ' ('))",
+              "  ? (length(slice(datum.label, 0, lastindexof(datum.label, ' ('))) > 15",
+              "     ? slice(datum.label, 0, 13) + '…' + slice(datum.label, lastindexof(datum.label, ' ('))",
               "     : datum.label)",
-              "  : (length(datum.label) > 10",
-              "     ? slice(datum.label, 0, 10) + '…'",
+              "  : (length(datum.label) > 13",
+              "     ? slice(datum.label, 0, 13) + '…'",
               "     : datum.label)",
             ].join(" "),
           },

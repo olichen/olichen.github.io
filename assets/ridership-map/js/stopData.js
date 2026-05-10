@@ -149,6 +149,17 @@ export class StopData {
     677: "G",
     678: "H"
   };
+  getRouteDir(stop_id, route_id) {
+    const route = this.getRoutes(stop_id)[route_id];
+    if (!route) return null;
+    for (const dataId of Object.values(route)) {
+      for (const record of Object.values(dataId)) {
+        return record.INBD_OUTBD_CD;
+      }
+    }
+    return null;
+  }
+
   getCompassDir(stop_id) {
     const routes = this.getRoutes(stop_id);
     for (const route of Object.values(routes)) {
