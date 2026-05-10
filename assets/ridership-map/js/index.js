@@ -41,8 +41,12 @@ panelHandler.setOnCloseCharts(() => {
 });
 
 async function reloadDataset() {
+  const savedRoutes = Object.fromEntries(toolbarOptions.routeEntries());
   toolbarOptions.clearRoutes();
   await stopData.reload();
+  for (const routeNum of toolbarOptions.routeKeys()) {
+    toolbarOptions.setRoute(routeNum, savedRoutes[routeNum] ?? false);
+  }
   vizDrawer.reload();
   rebuildRouteDropdown();
   clickHandler.getStops();
