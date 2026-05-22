@@ -6,8 +6,9 @@
     "build-density-dev": "esbuild assets/density-map/js/index.js --bundle --format=esm --loader:.png=empty --outfile=assets/dist/density.js",
     "build-density": "esbuild assets/density-map/js/index.js --bundle --format=esm --minify --loader:.png=empty --outfile=assets/dist/density.js",
     "watch-density": "esbuild assets/density-map/js/index.js --bundle --format=esm --loader:.png=empty --outfile=assets/dist/density.js --watch",
-    "build-tracts": "mapshaper assets/density-map/data/tract/tract20.shp -proj wgs84 -simplify 30% -o format=topojson assets/density-map/data/tract/tract20.json",
-    "build-blocks": "mapshaper assets/density-map/data/block/block20.shp -proj wgs84 -simplify 5% -filter-fields GEOID20,NAME,ALANDMI,POP2010,POP2011,POP2012,POP2013,POP2014,POP2015,POP2016,POP2017,POP2018,POP2019,POP2020,POP2021,POP2022,POP2023,POP2024,POP2025 -o format=topojson quantization=1e5 assets/density-map/data/block/block20.json"
+    "build-tracts": "mapshaper assets/density-map/data/tract/tract20.shp -proj wgs84 -simplify 30% -filter-fields GEOID20,NAMELSAD,NAME,ALANDMI,POP2010,POP2011,POP2012,POP2013,POP2014,POP2015,POP2016,POP2017,POP2018,POP2019,POP2020,POP2021,POP2022,POP2023,POP2024,POP2025 -o format=topojson assets/density-map/data/tract/tract20.json",
+    "build-blocks": "mapshaper assets/density-map/data/block/block20.shp -proj wgs84 -simplify 30% -filter-fields GEOID20,NAME,ALANDMI,POP2010,POP2011,POP2012,POP2013,POP2014,POP2015,POP2016,POP2017,POP2018,POP2019,POP2020,POP2021,POP2022,POP2023,POP2024,POP2025 -o format=topojson quantization=1e5 assets/density-map/data/block/block20.json",
+    "build-block-groups": "mapshaper assets/density-map/data/blockgroup/SAEP_Census_Block_Groups.shp -proj wgs84 -simplify 30% -filter-fields GEOID20,NAMELSAD,ALANDMI,POP2010,POP2011,POP2012,POP2013,POP2014,POP2015,POP2016,POP2017,POP2018,POP2019,POP2020,POP2021,POP2022,POP2023,POP2024,POP2025 -o format=topojson assets/density-map/data/blockgroup/blockgroup20.json"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",

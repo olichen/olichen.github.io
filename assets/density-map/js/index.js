@@ -45,8 +45,9 @@ new ResizeObserver(([entry]) => {
 }).observe(toolbar);
 
 const geographyFiles = {
-  tract:      '/assets/density-map/data/tract/tract20.json',
-  block: '/assets/density-map/data/block/block20.json',
+  tract:       '/assets/density-map/data/tract/tract20.json',
+  blockgroup:  '/assets/density-map/data/blockgroup/blockgroup20.json',
+  block:       '/assets/density-map/data/block/block20.json',
 };
 
 const topoData = await d3.json(geographyFiles.tract);
