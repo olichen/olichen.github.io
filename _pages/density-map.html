@@ -15,6 +15,23 @@ permalink: /density-map/
       <div class="toolbar" id="toolbar">
 
         <div class="tb-group">
+          <span class="tb-label">Geography</span>
+          <div class="svc-dropdown" id="geographyDropdown">
+            <div class="svc-trigger" id="geographyTrigger">
+              <span id="geographyLabel">Census Tract</span>
+              <svg class="tb-chevron" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="svc-panel" id="geographyPanel">
+              <div class="svc-option selected" data-value="tract">Census Tract</div>
+              <div class="svc-option" data-value="block">Block Group</div>
+            </div>
+          </div>
+          <div class="tb-sep"></div>
+        </div>
+
+        <div class="tb-group">
           <span class="tb-label">Metric</span>
           <div class="svc-dropdown" id="metricTypeDropdown">
             <div class="svc-trigger" id="metricTypeTrigger">
@@ -34,16 +51,16 @@ permalink: /density-map/
 
 
         <div class="tb-group">
-          <span class="tb-label">Base Year</span>
+          <span class="tb-label">Start Year</span>
           <div class="tb-slider-wrap">
-            <input type="range" id="yearInput" min="2010" max="2025" step="1" value="2020">
-            <span class="tb-slider-val" id="yearLabel">2020</span>
+            <input type="range" id="startYearInput" min="2010" max="2025" step="1" value="2020">
+            <span class="tb-slider-val" id="startYearLabel">2020</span>
           </div>
           <div class="tb-sep"></div>
         </div>
 
         <div class="tb-group">
-          <span class="tb-label">End Year</span>
+          <span class="tb-label">Current Year</span>
           <div class="tb-slider-wrap">
             <input type="range" id="endYearInput" min="2010" max="2025" step="1" value="2025">
             <span class="tb-slider-val" id="endYearLabel">2025</span>

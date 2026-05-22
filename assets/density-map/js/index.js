@@ -44,8 +44,22 @@ new ResizeObserver(([entry]) => {
   setTimeout(() => mapContainer.classList.add('animate'), 0);
 }).observe(toolbar);
 
-const topoData = await d3.json('/assets/density-map/data/tract20.json');
-const features = topojson.feature(topoData, topoData.objects.tract20).features;
+const geographyFiles = {
+  tract:      '/assets/density-map/data/tract/tract20.json',
+  block: '/assets/density-map/data/block/block20.json',
+};
+
+const topoData = await d3.json(geographyFiles.tract);
+let features = topojson.feature(topoData, Object.values(topoData.objects)[0]).features;
+let featureBounds = features.map(f => d3.geoBounds(f));
+
+function getVisibleFeatures() {
+  const b = map.getBounds();
+  return features.filter((_, i) => {
+    const [[w, s], [e, n]] = featureBounds[i];
+    return w <= b.getEast() && e >= b.getWest() && s <= b.getNorth() && n >= b.getSouth();
+  });
+}
 
 function getDensity(f, year) {
   const p = f.properties;
@@ -65,7 +79,7 @@ const colorChange = (min, max) => d3.scaleDiverging(
 
 // State
 let currentMetricType = 'popDensity';
-let baseYear = 2020;
+let startYear = 2020;
 let endYear = 2025;
 
 function getPctChange(f, year, endYear) {
@@ -87,19 +101,19 @@ const colorNumChange = d3.scaleDivergingSymlog(
                : d3.interpolateRgb('#ffffff', '#1a3a6b')((t - 0.5) * 2)
 ).domain([-5000, 0, 50000]).constant(5000).clamp(true);
 
-let currentChangeScale = makeChangeScale(baseYear);
+let currentChangeScale = makeChangeScale(startYear);
 
 function getFill(f) {
-  if (currentMetricType === 'popDensity') { const d = getDensity(f, baseYear); return d > 0 ? colorDensity(d) : '#ccc'; }
-  if (currentMetricType === 'pctChange')  return currentChangeScale(getPctChange(f, baseYear, endYear));
-  if (currentMetricType === 'numChange')  return colorNumChange(getNumChange(f, baseYear, endYear));
+  if (currentMetricType === 'popDensity') { const d = getDensity(f, endYear); return d > 0 ? colorDensity(d) : '#ccc'; }
+  if (currentMetricType === 'pctChange')  return currentChangeScale(getPctChange(f, startYear, endYear));
+  if (currentMetricType === 'numChange')  return colorNumChange(getNumChange(f, startYear, endYear));
   return '#ccc';
 }
 
 function getTooltipValue(f) {
-  if (currentMetricType === 'popDensity') return `${d3.format(',.0f')(getDensity(f, baseYear))} per mi²`;
-  if (currentMetricType === 'pctChange')  return `${d3.format('+.1f')(getPctChange(f, baseYear, endYear))}% (${baseYear}→${endYear})`;
-  if (currentMetricType === 'numChange')  return `${d3.format('+,.0f')(getNumChange(f, baseYear, endYear))} per mi² (${baseYear}→${endYear})`;
+  if (currentMetricType === 'popDensity') return `${d3.format(',.0f')(getDensity(f, endYear))} per mi²`;
+  if (currentMetricType === 'pctChange')  return `${d3.format('+.1f')(getPctChange(f, startYear, endYear))}% (${startYear}→${endYear})`;
+  if (currentMetricType === 'numChange')  return `${d3.format('+,.0f')(getNumChange(f, startYear, endYear))} per mi² (${startYear}→${endYear})`;
   return '';
 }
 
@@ -122,30 +136,38 @@ const tooltip = d3.select(map.getContainer())
 
 const leafletContainer = map.getContainer();
 
-const tracts = g.selectAll('path')
-  .data(features)
-  .join('path')
-  .attr('fill', f => getFill(f))
-  .attr('fill-opacity', 0.75)
-  .attr('stroke', '#fff')
-  .attr('stroke-width', 0.4)
-  .style('pointer-events', 'visiblePainted')
-  .on('mouseover', function(event, f) {
-    d3.select(this).attr('stroke', '#333').attr('stroke-width', 1.5);
-    tooltip
-      .html(`${f.properties.NAMELSAD ?? f.properties.NAME20}<br><span style="color:#888">${getTooltipValue(f)}</span>`)
-      .style('display', 'block');
-  })
-  .on('mousemove', function(event) {
-    const rect = leafletContainer.getBoundingClientRect();
-    tooltip
-      .style('left', (event.clientX - rect.left + 12) + 'px')
-      .style('top',  (event.clientY - rect.top  - 28) + 'px');
-  })
-  .on('mouseout', function() {
-    d3.select(this).attr('stroke', '#fff').attr('stroke-width', 0.4);
-    tooltip.style('display', 'none');
+let tracts;
+
+// Geography dropdown
+const geographyTrigger = document.getElementById('geographyTrigger');
+const geographyPanel   = document.getElementById('geographyPanel');
+const geographyLabel   = document.getElementById('geographyLabel');
+
+geographyTrigger.addEventListener('click', () => {
+  geographyTrigger.classList.toggle('open');
+  geographyPanel.classList.toggle('open');
+});
+
+geographyPanel.querySelectorAll('.svc-option').forEach(opt => {
+  opt.addEventListener('click', async () => {
+    geographyPanel.querySelectorAll('.svc-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    geographyLabel.textContent = opt.textContent.trim();
+    geographyTrigger.classList.remove('open');
+    geographyPanel.classList.remove('open');
+    const topoData = await d3.json(geographyFiles[opt.dataset.value]);
+    features = topojson.feature(topoData, Object.values(topoData.objects)[0]).features;
+    featureBounds = features.map(f => d3.geoBounds(f));
+    refit();
   });
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('geographyDropdown').contains(e.target)) {
+    geographyTrigger.classList.remove('open');
+    geographyPanel.classList.remove('open');
+  }
+});
 
 // Metric type dropdown (Population Density / Percent Change / Numerical Change)
 const metricTypeTrigger = document.getElementById('metricTypeTrigger');
@@ -165,7 +187,7 @@ metricTypePanel.querySelectorAll('.svc-option').forEach(opt => {
     metricTypeTrigger.classList.remove('open');
     metricTypePanel.classList.remove('open');
     currentMetricType = opt.dataset.value;
-    endYearInput.disabled = currentMetricType === 'popDensity';
+    startYearInput.disabled = currentMetricType === 'popDensity';
     tracts.attr('fill', f => getFill(f));
   });
 });
@@ -179,25 +201,23 @@ document.addEventListener('click', e => {
 
 
 // Year sliders
-const yearInput    = document.getElementById('yearInput');
-const yearLabel    = document.getElementById('yearLabel');
+const startYearInput = document.getElementById('startYearInput');
+const startYearLabel = document.getElementById('startYearLabel');
 const endYearInput = document.getElementById('endYearInput');
 const endYearLabel = document.getElementById('endYearLabel');
-endYearInput.disabled = true; // disabled by default (Population Density selected)
+startYearInput.disabled = true; // disabled by default (Population Density selected)
 
-yearInput.addEventListener('input', () => {
-  yearLabel.textContent = yearInput.value;
-  baseYear = +yearInput.value;
-  if (currentMetricType === 'pctChange') currentChangeScale = makeChangeScale(baseYear);
+startYearInput.addEventListener('input', () => {
+  startYearLabel.textContent = startYearInput.value;
+  startYear = +startYearInput.value;
+  if (currentMetricType === 'pctChange') currentChangeScale = makeChangeScale(startYear);
   tracts.attr('fill', f => getFill(f));
 });
 
 endYearInput.addEventListener('input', () => {
   endYearLabel.textContent = endYearInput.value;
   endYear = +endYearInput.value;
-  if (currentMetricType === 'pctChange' || currentMetricType === 'numChange') {
-    tracts.attr('fill', f => getFill(f));
-  }
+  tracts.attr('fill', f => getFill(f));
 });
 
 function refit() {
@@ -209,7 +229,36 @@ function refit() {
     .style('left',  topLeft.x + 'px')
     .style('top',   topLeft.y + 'px');
   g.attr('transform', `translate(${-topLeft.x},${-topLeft.y})`);
-  tracts.attr('d', path);
+
+  tracts = g.selectAll('path')
+    .data(getVisibleFeatures(), f => f.properties.GEOID20)
+    .join(
+      enter => enter.append('path')
+        .attr('fill-opacity', 0.75)
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 0.4)
+        .style('pointer-events', 'visiblePainted')
+        .on('mouseover', function(event, f) {
+          d3.select(this).attr('stroke', '#333').attr('stroke-width', 1.5);
+          tooltip
+            .html(`${f.properties.NAMELSAD ?? f.properties.NAME20 ?? f.properties.NAME}<br><span style="color:#888">${getTooltipValue(f)}</span>`)
+            .style('display', 'block');
+        })
+        .on('mousemove', function(event) {
+          const rect = leafletContainer.getBoundingClientRect();
+          tooltip
+            .style('left', (event.clientX - rect.left + 12) + 'px')
+            .style('top',  (event.clientY - rect.top  - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          d3.select(this).attr('stroke', '#fff').attr('stroke-width', 0.4);
+          tooltip.style('display', 'none');
+        }),
+      update => update,
+      exit => exit.remove()
+    )
+    .attr('fill', f => getFill(f))
+    .attr('d', path);
 }
 
 map.on('zoomend moveend', refit);

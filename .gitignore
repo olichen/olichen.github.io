@@ -8,3 +8,9 @@ vendor
 *.swp
 node_modules/
 suggestions/
+assets/density-map/data/**/*.shp
+assets/density-map/data/**/*.dbf
+assets/density-map/data/**/*.shx
+assets/density-map/data/**/*.prj
+assets/density-map/data/**/*.cpg
+assets/density-map/data/**/*.xml
