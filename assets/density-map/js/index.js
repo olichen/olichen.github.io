@@ -100,7 +100,7 @@ function getNumChange(f, year, endYear) {
 const colorNumChange = d3.scaleDivergingSymlog(
   t => t < 0.5 ? d3.interpolateRgb('#d73027', '#ffffff')(t * 2)
                : d3.interpolateRgb('#ffffff', '#1a3a6b')((t - 0.5) * 2)
-).domain([-5000, 0, 50000]).constant(5000).clamp(true);
+).domain([-50000, 0, 50000]).constant(5000).clamp(true);
 
 let currentChangeScale = makeChangeScale(startYear);
 
@@ -113,9 +113,13 @@ function getFill(f) {
 
 function getTooltipValue(f) {
   if (currentMetricType === 'popDensity') return `${d3.format(',.0f')(getDensity(f, endYear))} per mi²`;
-  if (currentMetricType === 'pctChange')  return `${d3.format('+.1f')(getPctChange(f, startYear, endYear))}% (${startYear}→${endYear})`;
-  if (currentMetricType === 'numChange')  return `${d3.format('+,.0f')(getNumChange(f, startYear, endYear))} per mi² (${startYear}→${endYear})`;
+  if (currentMetricType === 'pctChange')  return `${d3.format('+.1f')(getPctChange(f, startYear, endYear))}% (${getDensityChangeStr(f, startYear, endYear)})`;
+  if (currentMetricType === 'numChange')  return `${d3.format('+,.0f')(getNumChange(f, startYear, endYear))} per mi² (${getDensityChangeStr(f, startYear, endYear)})`;
   return '';
+}
+
+function getDensityChangeStr(f, startYear, endYear) {
+  return `${d3.format(',.0f')(getDensity(f, startYear))}→${d3.format(',.0f')(getDensity(f, endYear))}`;
 }
 
 // SVG overlay
@@ -242,7 +246,7 @@ function refit() {
         .on('mouseover', function(event, f) {
           d3.select(this).attr('stroke', '#333').attr('stroke-width', 1.5);
           tooltip
-            .html(`${f.properties.NAMELSAD ?? f.properties.NAME20 ?? f.properties.NAME}<br><span style="color:#888">${getTooltipValue(f)}</span>`)
+            .html(`GEOID ${f.properties.GEOID20}<br><span style="color:#888">${getTooltipValue(f)}</span>`)
             .style('display', 'block');
         })
         .on('mousemove', function(event) {
@@ -261,6 +265,10 @@ function refit() {
     .attr('fill', f => getFill(f))
     .attr('d', path);
 }
+
+// should be NAME for tract (Tract NAME)
+// should be GEOID for blockgroup
+// should be NAME for block?
 
 map.on('zoomend moveend', refit);
 refit();
