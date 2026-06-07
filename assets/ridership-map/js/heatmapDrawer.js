@@ -14,10 +14,10 @@ export class HeatmapDrawer {
   #tooltipLatLng; // Leaflet LatLng of the active hex center (touch only)
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 200;
+  static #HEX_RADIUS_METERS = 150;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 150;
+  static #GAUSSIAN_METERS = 100;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
