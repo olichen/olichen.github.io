@@ -14,10 +14,10 @@ export class HeatmapDrawer {
   #tooltipLatLng; // Leaflet LatLng of the active hex center (touch only)
 
   // Geographic hex radius in meters
-  static #HEX_RADIUS_METERS = 150;
+  static #HEX_RADIUS_METERS = 175;
 
   // Gaussian blur sigma in meters
-  static #GAUSSIAN_METERS = 100;
+  static #GAUSSIAN_METERS = 125;
 
   // Fixed geographic anchor — the hexbin lattice is always relative to this point,
   // so bin centers stay geographically stable across zoom levels.
@@ -227,14 +227,14 @@ export class HeatmapDrawer {
       bin.usage = u;
       return u;
     });
-    const p99 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.99) || 1;
-    const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p99]);
+    const p98 = d3.quantile(usages.filter(v => v > 0).sort(d3.ascending), 0.98) || 1;
+    const colorScale = d3.scaleSequential(d3.interpolateRgb("#ffffcc", "#1a3a6b")).domain([0, p98]);
 
     const max = d3.max(usages) || 1;
     const fractions = [1, 0.8, 0.6, 0.4, 0.2];
     const swatchWidth = 14, swatchHeight = 14, rowHeight = 20, padding = 4;
     const fmt = v => metric === Metric.PerBus ? v.toFixed(1) : String(Math.round(v));
-    const label = (fraction, i) => i === 0 ? `${fmt(fraction * p99)}-${fmt(max)}` : fmt(fraction * p99);
+    const label = (fraction, i) => i === 0 ? `${fmt(fraction * p98)}-${fmt(max)}` : fmt(fraction * p98);
     const svgSel = d3.select('#legendSvg')
       .attr('width', 75).attr('height', fractions.length * rowHeight + padding);
     svgSel.selectAll('*').remove();
@@ -243,7 +243,7 @@ export class HeatmapDrawer {
       svgSel.append('rect')
         .attr('x', 0).attr('y', y)
         .attr('width', swatchWidth).attr('height', swatchHeight)
-        .attr('fill', colorScale(fraction * p99)).attr('rx', 2);
+        .attr('fill', colorScale(fraction * p98)).attr('rx', 2);
       svgSel.append('text')
         .attr('x', swatchWidth + 5).attr('y', y + swatchHeight / 2 + 4)
         .text(label(fraction, i));
