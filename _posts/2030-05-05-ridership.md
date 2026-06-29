@@ -5,7 +5,7 @@ date: 2026-01-01
 categories: transit king-county-metro ridership
 ---
 
-I like riding the bus. It's a more pleasant experience than driving through the city (and certainly much better than circling for parking!), and sitting alongside my fellow Seattleites makes me feel like a participant in the ebb and flow of the city rather than sealed off from it.
+As a resident of Seattle, I've come to appreciate the humble bus. Riding the bus is a more pleasant experience than driving through the city (and certainly much better than circling for parking!), and sitting alongside my fellow Seattleites makes me feel like a participant in the ebb and flow of the city rather than sealed off from it.
 
 Over time, I've gotten a sense for the rhythms of the routes that pass by my home: where people get on, where people get off, and when the bus fills up or empties out. Seeing that, I wondered if I could get that same view more broadly, across the entire city or even the entire region, rather than just the tiny slice visible from my front door.
 
