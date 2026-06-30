@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Mapping King County Metro Ridership"
-date: 2026-07-01
+date: 2026-06-30
 categories: transit king-county-metro ridership
 ---
 
