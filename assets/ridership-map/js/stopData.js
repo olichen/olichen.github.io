@@ -37,8 +37,8 @@ export class StopData {
         this.#toolbarOptions.setRoute(d.SERVICE_RTE_NUM, false);
       }
 
-      // Default: show routes whose peak midday stop sees 5+ observed trips
-      if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 11) {
+      // Default: show routes whose peak midday stop sees 3+ observed trips
+      if (d.DAY_PART_CD === 'MID' && d.OBSERVED_TRIPS_IDS >= 3) {
         this.#toolbarOptions.setRoute(d.SERVICE_RTE_NUM, true);
       }
 
