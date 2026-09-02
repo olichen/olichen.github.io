@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 
-const mapUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const mapUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_2rfh_1_e9ac6587bd1eabee25a402ac';
 const mapAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
   + ' | &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
